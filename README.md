@@ -37,9 +37,9 @@ This software is being developed to optimize organizational facilities and reinv
  </details>
  
 > <b>Kgothalang Moifo: </b> <br>
- * <a href=""> GitHub  Profile  Page</a><br>
- * <a href=""> LinkedIn  Account </a><br>
- * <a href=""> GitHub  Account </a><br>
+ * <a href="https://kg.github.io/"> GitHub  Profile  Page</a><br>
+ * <a href="https://www.linkedin.com/in/kgothalang-moifo-0a773b1a9"> LinkedIn  Account </a><br>
+ * <a href="https://github.com/kg-3rd"> GitHub  Account </a><br>
  <details>
   <summary><b>Description</b></summary>
  </details>
