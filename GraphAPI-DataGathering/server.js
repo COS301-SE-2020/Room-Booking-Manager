@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json())
-
+const { Connection, Request } = require("tedious");
 var port = 9000;
 
 app.post('/sample/put/data', function(req, res) {
@@ -121,4 +121,83 @@ function sendData()
   console.log( "Description : " + description);
  
 }
-//
+// Database connection 
+
+
+
+
+    // config for your database
+ 
+    const config1 = {
+        authentication: {
+          options: {
+            userName: "threshold", // 
+            password: "thresh#301" // 
+          },
+          type: "default"
+        },
+        server: "rbmserver.database.windows.net", // 
+        options: {
+          database: "RBM Database", //
+          encrypt: true
+        }
+      };
+      
+      const connection = new Connection(config1);
+    
+// Attempt to connect and execute queries if connection goes through
+connection.on("connect", err => {
+    if (err) {
+      console.error(err.message);
+    } else {
+      queryDatabase();
+    }
+  });
+
+var roomsFound = [];
+var rooms = 0;
+  function queryDatabase() {
+    console.log("Reading rows from the Table...");
+    const request = new Request(
+        `SELECT [RoomID] FROM [FloorPlan]`, // SELECT ALL FROM WHERE ROOMSTATUS == EMPTY etc. 
+        (err, rowCount) => {
+          if (err) {
+            console.error(err.message);
+          } else {
+            console.log(`${rowCount} row(s) returned`);
+          }
+        }
+      );
+    
+      request.on("row", columns => {
+        columns.forEach(column => {
+          console.log("%s\t%s", column.metadata.colName, column.value);
+          roomsFound.push(column.value);
+          rooms++;
+        });
+      });
+    
+      connection.execSql(request);
+      
+     setTimeout(findRoom,12000);
+    }
+
+
+   function findRoom(){
+    connection.close();
+    console.log("The following 2 rooms were found from the Database : "); 
+    for(var i=0;i<rooms;i++)
+    {
+      console.log( roomsFound[i]);
+    }
+
+    // Do some calculations get best room 
+
+
+
+    // pick Room
+
+    console.log(" The following room was determined to be the best : " + roomsFound[0]);
+//  
+    console.log( " Updating user with room found ");
+   }
