@@ -200,4 +200,70 @@ var rooms = 0;
     console.log(" The following room was determined to be the best : " + roomsFound[0]);
 //  
     console.log( " Updating user with room found ");
+
+    console.log("Checking acceptance");
+
+    var apiData = "";
+    accessBearer = 'Bearer '+access;
+    var events = {
+      method: 'get',
+      //url: 'https://graph.microsoft.com/v1.0/users',
+      // NOTE : TIME ZONE ISSUES, in Query always -by 2, method to adjust date from emails given date
+      url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendarView?startDateTime=2020-07-15T07:00:00&endDateTime=2020-07-15T10:00:00',
+      //url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events?select=subject,organizer,attendees,start,end',
+      headers: { 
+        'Authorization': accessBearer,
+        'Prefer': 'outlook.timezone="South Africa Standard Time"'
+      },
+      data : data
+    };
+    
+    axios(events)
+    .then(function (response) {
+      apiData += JSON.stringify(response.data);
+      //console.log(JSON.stringify(response.data));
+      var eData = JSON.parse(apiData);  
+      var acceptance = eData.value[0].attendees[0].response.status;
+      if(acceptance == "accepted")
+      {
+        accept();
+      }
+      else if(acceptance == "declined")
+      {
+        decline();
+      }
+      else
+      {
+        //setTimeout(checkAcceptance,12000);//repeat function after interval to check acceptance
+      }
+
+    
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+    function accept()// insert a the meeting in the meetings table
+    {
+      const connection = new Connection(config1);
+      const request = new Request(
+        `INSERT INTO [] () VALUES()`,
+        //`SELECT [RoomID] FROM [FloorPlan]`, // SELECT ALL FROM WHERE ROOMSTATUS == EMPTY etc. 
+        (err, response) => {
+          if (err) {
+            console.error(err.message);
+          } else {
+            console.log(`${response}`);
+          }
+        }
+      );
+    
+      connection.execSql(request);
+      connection.close();
+    }
+
+    function decline()//
+    {
+
+    }
    }
