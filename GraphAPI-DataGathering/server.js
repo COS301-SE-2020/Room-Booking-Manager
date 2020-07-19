@@ -232,10 +232,11 @@ var rooms = 0;
       //url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events?select=subject,organizer,attendees,start,end',
       headers: { 
         'Authorization': accessBearer,
-        'Prefer': 'outlook.timezone="South Africa Standard Time"'
+        'Content-Type': 'application/json'
+        // 'Prefer': 'outlook.timezone="South Africa Standard Time"'
       },
       data : data,
-      formData: {
+      body: {
         'location': {
                   'displayName': 'Texas'
               }
