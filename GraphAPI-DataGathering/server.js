@@ -72,7 +72,7 @@ var config1 = {
   method: 'get',
   //url: 'https://graph.microsoft.com/v1.0/users',
   // NOTE : TIME ZONE ISSUES, in Query always -by 2, method to adjust date from emails given date
-  url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendarView?startDateTime=2020-07-15T07:00:00&endDateTime=2020-07-15T10:00:00',
+  url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendarView?startDateTime=2020-07-20T03:00:00&endDateTime=2020-07-27T02:30:00',
   //url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events?select=subject,organizer,attendees,start,end',
   headers: { 
     'Authorization': accessBearer,
@@ -248,7 +248,7 @@ var rooms = 0;
     // };
    
 
-    axios.patch('https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events/AAMkAGNmMmE1MzY1LWU5MjAtNDgwZS1hODA1LTAxZmE3MDZjN2Y4MABGAAAAAADtYPw4__duQpoAUtqbk_dvBwATlvcwiTJsQINLpRQn-5KEAAAAAAENAAATlvcwiTJsQINLpRQn-5KEAAARXYr5AAA=',
+    axios.patch('https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events/AAMkAGNmMmE1MzY1LWU5MjAtNDgwZS1hODA1LTAxZmE3MDZjN2Y4MABGAAAAAADtYPw4__duQpoAUtqbk_dvBwATlvcwiTJsQINLpRQn-5KEAAAAAAENAAATlvcwiTJsQINLpRQn-5KEAAAV8-T2AAA=',
     {
       location: 
       {
