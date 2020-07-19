@@ -1,7 +1,5 @@
-
 var express = require('express');
 var bodyParser = require('body-parser');
-// var microsoftGraph = require("@microsoft/microsoft-graph-client");
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json())
@@ -202,6 +200,7 @@ var rooms = 0;
 //  
     console.log( " Updating user with room found ");
     accessBearer = 'Bearer '+access;
+    console.log( accessBearer);
   // var client = microsoftGraph.Client.init({
   //     authProvider: (done) => {
   //         done(null, accessBearer);
@@ -224,29 +223,45 @@ var rooms = 0;
 
     var apiData = "";
     
-    var events = {
-      method: 'PATCH',
-      //url: 'https://graph.microsoft.com/v1.0/users',
-      // NOTE : TIME ZONE ISSUES, in Query always -by 2, method to adjust date from emails given date
-      url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events/AAMkAGNmMmE1MzY1LWU5MjAtNDgwZS1hODA1LTAxZmE3MDZjN2Y4MABGAAAAAADtYPw4__duQpoAUtqbk_dvBwATlvcwiTJsQINLpRQn-5KEAAAAAAENAAATlvcwiTJsQINLpRQn-5KEAAARXYr5AAA=',
-      //url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events?select=subject,organizer,attendees,start,end',
-      headers: { 
-        'Authorization': accessBearer,
-        'Content-Type': 'application/json'
-        // 'Prefer': 'outlook.timezone="South Africa Standard Time"'
-      },
-      data : data,
-      body: {
-        'location': {
-                  'displayName': 'Texas'
-              }
-      }
-    };
+    // var events = {
+    //   method: 'patch',
+    //   //url: 'https://graph.microsoft.com/v1.0/users',
+    //   // NOTE : TIME ZONE ISSUES, in Query always -by 2, method to adjust date from emails given date
+    //   url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events/AAMkAGNmMmE1MzY1LWU5MjAtNDgwZS1hODA1LTAxZmE3MDZjN2Y4MABGAAAAAADtYPw4__duQpoAUtqbk_dvBwATlvcwiTJsQINLpRQn-5KEAAAAAAENAAATlvcwiTJsQINLpRQn-5KEAAARXYr5AAA=',
+    //   //url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events?select=subject,organizer,attendees,start,end',
+    //   headers: { 
+    //     'Authorization': accessBearer,
+    //     'Content-Type': 'application/json'
+    //     // 'Prefer': 'outlook.timezone="South Africa Standard Time"'
+    //   },
+      
+    //   data: {
+    //     'location': {
+    //               'displayName': 'Texas'
+    //           }
+    //   },
+    //   // transformResponse: [(data) => {
+    //   //   // transform the response
     
-    axios(events)
-    .then(function (response) {
+    //   //   return data;
+    //   // }]
+    // };
+   
+
+    axios.patch('https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events/AAMkAGNmMmE1MzY1LWU5MjAtNDgwZS1hODA1LTAxZmE3MDZjN2Y4MABGAAAAAADtYPw4__duQpoAUtqbk_dvBwATlvcwiTJsQINLpRQn-5KEAAAAAAENAAATlvcwiTJsQINLpRQn-5KEAAARXYr5AAA=',
+    {
+      location: 
+      {
+        displayName: 'Texas'
+      }
+    },
+    { 
+      headers: {
+      Authorization: `${accessBearer}`
+      }
+    }).then(function (response) {
       apiData += JSON.stringify(response.data);
-      console.log(JSON.stringify(response.data));
+      console.log("success");
       var eData = JSON.parse(apiData);  
       var acceptance = eData.attendees[0].status.response;
       
