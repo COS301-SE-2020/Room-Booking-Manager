@@ -220,15 +220,15 @@ var rooms = 0;
   //     }
   // });
 
-    console.log("Checking acceptance");
+    
 
     var apiData = "";
     
     var events = {
-      method: 'patch',
+      method: 'PATCH',
       //url: 'https://graph.microsoft.com/v1.0/users',
       // NOTE : TIME ZONE ISSUES, in Query always -by 2, method to adjust date from emails given date
-      url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendarView?startDateTime=2020-07-15T07:00:00&endDateTime=2020-07-15T08:00:00',
+      url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events/AAMkAGNmMmE1MzY1LWU5MjAtNDgwZS1hODA1LTAxZmE3MDZjN2Y4MABGAAAAAADtYPw4__duQpoAUtqbk_dvBwATlvcwiTJsQINLpRQn-5KEAAAAAAENAAATlvcwiTJsQINLpRQn-5KEAAARXYr5AAA=',
       //url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events?select=subject,organizer,attendees,start,end',
       headers: { 
         'Authorization': accessBearer,
@@ -247,20 +247,23 @@ var rooms = 0;
       apiData += JSON.stringify(response.data);
       console.log(JSON.stringify(response.data));
       var eData = JSON.parse(apiData);  
-      var acceptance = eData.value[0].attendees[0].status.response;
-      console.log("user response " + acceptance);
-      // if(acceptance == "accepted")
-      // {
-      //   accept();
-      // }
-      // else if(acceptance == "declined")
-      // {
-      //   decline();
-      // }
-      // else
-      // {
-      //   //setTimeout(checkAcceptance,12000);//repeat function after interval to check acceptance
-      // }
+      var acceptance = eData.attendees[0].status.response;
+      
+      console.log("Checking acceptance");
+      if(acceptance == "accepted")
+      {
+        console.log("user response " + acceptance);
+        //accept();
+      }
+      else if(acceptance == "declined")
+      {
+        console.log("user response " + acceptance);
+        //decline();
+      }
+      else
+      {
+        //setTimeout(checkAcceptance,12000);//repeat function after interval to check acceptance
+      }
 
     
     })
@@ -268,6 +271,7 @@ var rooms = 0;
       console.log(error);
     });
 
+    
     function accept()// insert a the meeting in the meetings table
     {
       const connection = new Connection(config1);
