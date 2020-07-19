@@ -1,6 +1,7 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
+// var microsoftGraph = require("@microsoft/microsoft-graph-client");
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json())
@@ -200,42 +201,66 @@ var rooms = 0;
     console.log(" The following room was determined to be the best : " + roomsFound[0]);
 //  
     console.log( " Updating user with room found ");
+    accessBearer = 'Bearer '+access;
+  // var client = microsoftGraph.Client.init({
+  //     authProvider: (done) => {
+  //         done(null, accessBearer);
+  //     }
+  // });
+
+  // client.api('/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendarView?startDateTime=2020-07-15T07:00:00&endDateTime=2020-07-15T08:00:00').patch({
+  //     'location': {
+  //         'displayName': 'Texas'
+  //     }
+  // }, (err, res) => {
+  //     if (err) {
+  //         console.log('err: ', err);
+  //     } else {
+  //         console.log('res: ', res);
+  //     }
+  // });
 
     console.log("Checking acceptance");
 
     var apiData = "";
-    accessBearer = 'Bearer '+access;
+    
     var events = {
-      method: 'get',
+      method: 'patch',
       //url: 'https://graph.microsoft.com/v1.0/users',
       // NOTE : TIME ZONE ISSUES, in Query always -by 2, method to adjust date from emails given date
-      url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendarView?startDateTime=2020-07-15T07:00:00&endDateTime=2020-07-15T10:00:00',
+      url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendarView?startDateTime=2020-07-15T07:00:00&endDateTime=2020-07-15T08:00:00',
       //url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events?select=subject,organizer,attendees,start,end',
       headers: { 
         'Authorization': accessBearer,
         'Prefer': 'outlook.timezone="South Africa Standard Time"'
       },
-      data : data
+      data : data,
+      formData: {
+        'location': {
+                  'displayName': 'Texas'
+              }
+      }
     };
     
     axios(events)
     .then(function (response) {
       apiData += JSON.stringify(response.data);
-      //console.log(JSON.stringify(response.data));
+      console.log(JSON.stringify(response.data));
       var eData = JSON.parse(apiData);  
-      var acceptance = eData.value[0].attendees[0].response.status;
-      if(acceptance == "accepted")
-      {
-        accept();
-      }
-      else if(acceptance == "declined")
-      {
-        decline();
-      }
-      else
-      {
-        //setTimeout(checkAcceptance,12000);//repeat function after interval to check acceptance
-      }
+      var acceptance = eData.value[0].attendees[0].status.response;
+      console.log("user response " + acceptance);
+      // if(acceptance == "accepted")
+      // {
+      //   accept();
+      // }
+      // else if(acceptance == "declined")
+      // {
+      //   decline();
+      // }
+      // else
+      // {
+      //   //setTimeout(checkAcceptance,12000);//repeat function after interval to check acceptance
+      // }
 
     
     })
@@ -247,7 +272,7 @@ var rooms = 0;
     {
       const connection = new Connection(config1);
       const request = new Request(
-        `INSERT INTO [] () VALUES()`,
+        `INSERT INTO [Meeting] () VALUES()`,
         //`SELECT [RoomID] FROM [FloorPlan]`, // SELECT ALL FROM WHERE ROOMSTATUS == EMPTY etc. 
         (err, response) => {
           if (err) {
