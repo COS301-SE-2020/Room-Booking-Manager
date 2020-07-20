@@ -674,6 +674,11 @@ queryDatabase()
       
 
       // var acceptance = eData.attendees[0].status.response;
+      var meetingID = event.id;
+      var startTime = event.start.dateTime;
+      var endTime = event.end.dateTime;
+      var room = event.location.displayName;
+      var _attendees = "";
       var org_email = event.organizer.emailAddress.address;
       var att_email = "";
       var att_response = "";
@@ -687,38 +692,47 @@ queryDatabase()
           if(att_response == "accepted")
           {
             console.log(att_email + " " + att_response);
-            accept();
+            _attendees += att_email + ",";
+            //accept();
           }
           else if(att_response == "declined")
           {
             console.log(att_email + " " + att_response);
-            decline();
+            //decline();
           }
           else
           {
-            setTimeout(checkAcceptance,10000);
+            //setTimeout(checkAcceptance,10000);
           }
         }
-      }
+      }  
+    accept(meetingID,startTime,endTime,_attendees,room);
     }
-    function accept()// insert a the meeting in the meetings table
+    function accept(mID,sTime,eTime,org,att,room)// insert a the meeting in the meetings table
     {
       console.log("Accepted:Insert");
-      // const connection = new Connection(config1);
-      // const request = new Request(
-      //   `INSERT INTO [Meeting] () VALUES()`,
-      //   //`SELECT [RoomID] FROM [FloorPlan]`, // SELECT ALL FROM WHERE ROOMSTATUS == EMPTY etc. 
-      //   (err, response) => {
-      //     if (err) {
-      //       console.error(err.message);
-      //     } else {
-      //       console.log(`${response}`);
-      //     }
-      //   }
-      // );
-    
-      // connection.execSql(request);
-      // connection.close();
+      const conn = new Connection(config1);
+     conn.on("connect", err => {
+        if (err) {
+         
+          console.error(err.message);
+        } else {
+          console.log("Create request");
+          const request = new Request(
+            `INSERT INTO Meetings (MeetingID,StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID) VALUES('${mID}','${sTime}','${eTime}','${org}','${att}','${null}','${room}')`,
+            //`SELECT [RoomID] FROM [FloorPlan]`, // SELECT ALL FROM WHERE ROOMSTATUS == EMPTY etc. 
+            (err, response) => {
+              if (err) {
+                console.error(err.message);
+              } else {
+                console.log(`${response}`);
+                conn.close();
+              }
+            }
+          );
+          conn.execSql(request);
+        }
+      });
     }
 
     function decline()//
