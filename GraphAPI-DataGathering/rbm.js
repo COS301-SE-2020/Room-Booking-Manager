@@ -711,7 +711,7 @@ queryDatabase()
     function accept(mID,sTime,eTime,org,att,room)// insert a the meeting in the meetings table
     {
       console.log("Accepted:Insert");
-      const conn = new Connection(config1);
+      const conn = new Connection(config);
      conn.on("connect", err => {
         if (err) {
          
