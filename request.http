@@ -1,0 +1,8 @@
+POST http://localhost:65000/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "table" : "FloorPlan",
+	"request" : "view",
+    "data" : {"RoomID":"1Q2"}
+}
