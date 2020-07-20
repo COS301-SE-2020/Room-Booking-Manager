@@ -200,7 +200,7 @@ var rooms = 0;
 //  
     console.log( " Updating user with room found ");
     accessBearer = 'Bearer '+access;
-    console.log( accessBearer);
+    //console.log( accessBearer);
   // var client = microsoftGraph.Client.init({
   //     authProvider: (done) => {
   //         done(null, accessBearer);
@@ -247,7 +247,7 @@ var rooms = 0;
     //   // }]
     // };
    
-
+    var eData;
     axios.patch('https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events/AAMkAGNmMmE1MzY1LWU5MjAtNDgwZS1hODA1LTAxZmE3MDZjN2Y4MABGAAAAAADtYPw4__duQpoAUtqbk_dvBwATlvcwiTJsQINLpRQn-5KEAAAAAAENAAATlvcwiTJsQINLpRQn-5KEAAAV8-T2AAA=',
     {
       location: 
@@ -260,55 +260,95 @@ var rooms = 0;
       Authorization: `${accessBearer}`
       }
     }).then(function (response) {
+
       apiData += JSON.stringify(response.data);
       console.log("success");
-      var eData = JSON.parse(apiData);  
-      var acceptance = eData.attendees[0].status.response;
-      
-      console.log("Checking acceptance");
-      if(acceptance == "accepted")
-      {
-        console.log("user response " + acceptance);
-        //accept();
-      }
-      else if(acceptance == "declined")
-      {
-        console.log("user response " + acceptance);
-        //decline();
-      }
-      else
-      {
-        //setTimeout(checkAcceptance,12000);//repeat function after interval to check acceptance
-      }
-
-    
+      eData = JSON.parse(apiData);  
+      checkAcceptance();//check attendeess that accepted the meeting
     })
     .catch(function (error) {
       console.log(error);
     });
 
-    
-    function accept()// insert a the meeting in the meetings table
+    async function checkAcceptance()
     {
-      const connection = new Connection(config1);
-      const request = new Request(
-        `INSERT INTO [Meeting] () VALUES()`,
-        //`SELECT [RoomID] FROM [FloorPlan]`, // SELECT ALL FROM WHERE ROOMSTATUS == EMPTY etc. 
-        (err, response) => {
-          if (err) {
-            console.error(err.message);
-          } else {
-            console.log(`${response}`);
+      console.log("Checking acceptance");
+      var _response ="";
+      var event;
+      var configg = {
+        method: 'get',
+        //url: 'https://graph.microsoft.com/v1.0/users',
+        // NOTE : TIME ZONE ISSUES, in Query always -by 2, method to adjust date from emails given date
+        url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events/AAMkAGNmMmE1MzY1LWU5MjAtNDgwZS1hODA1LTAxZmE3MDZjN2Y4MABGAAAAAADtYPw4__duQpoAUtqbk_dvBwATlvcwiTJsQINLpRQn-5KEAAAAAAENAAATlvcwiTJsQINLpRQn-5KEAAAV8-T2AAA=',
+        //url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events?select=subject,organizer,attendees,start,end',
+        headers: { 
+          'Authorization': accessBearer,
+          'Prefer': 'outlook.timezone="South Africa Standard Time"'
+        },
+        data : data
+      };
+      
+      await axios(configg)
+      .then(function (response) {
+        _response += JSON.stringify(response.data);
+        console.log(JSON.stringify(response.data));
+        event = JSON.parse(_response);  
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+      
+      
+      // var acceptance = eData.attendees[0].status.response;
+      var org_email = event.organizer.emailAddress.address;
+      var att_email = "";
+      var att_response = "";
+      for(let index in event.attendees) //go through all attendees
+      {
+        
+        att_response = event.attendees[index].status.response; // store attendee response
+        att_email = event.attendees[index].emailAddress.address; // store attendee email
+        if(att_email != org_email) //check if attendee is not organizer of the meeting
+        {
+          if(att_response == "accepted")
+          {
+            console.log(att_email + " " + att_response);
+            accept();
+          }
+          else if(att_response == "declined")
+          {
+            console.log(att_email + " " + att_response);
+            decline();
+          }
+          else
+          {
+            setTimeout(checkAcceptance,10000);
           }
         }
-      );
+      }
+    }
+    function accept()// insert a the meeting in the meetings table
+    {
+      console.log("Accepted:Insert");
+      // const connection = new Connection(config1);
+      // const request = new Request(
+      //   `INSERT INTO [Meeting] () VALUES()`,
+      //   //`SELECT [RoomID] FROM [FloorPlan]`, // SELECT ALL FROM WHERE ROOMSTATUS == EMPTY etc. 
+      //   (err, response) => {
+      //     if (err) {
+      //       console.error(err.message);
+      //     } else {
+      //       console.log(`${response}`);
+      //     }
+      //   }
+      // );
     
-      connection.execSql(request);
-      connection.close();
+      // connection.execSql(request);
+      // connection.close();
     }
 
     function decline()//
     {
-
+      console.log("Declined:Insert");
     }
    }
