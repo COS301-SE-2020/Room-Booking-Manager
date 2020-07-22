@@ -3,8 +3,6 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = process.env.PORT || 65000;
 
-var connected = false;
-
 var sql = require("mssql");
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -47,10 +45,10 @@ function callAPI(table, option, data, res) {
             primaryKey = "RoomID";
             recordID = data.RoomID;
         } else if (table == "EmployeeDetails") {
-            primaryKey = "EmployeeID";
-            recordID = data.EmployeeID;
+            primaryKey = "EmpEmail";
+            recordID = data.EmpEmail;
         } else if (table == "Meetings") {
-            primaryKey = "EmployeeID";
+            primaryKey = "MeetingID";
             recordID = data.MeetingID;
         }
 
@@ -95,7 +93,7 @@ function read_record(table, primaryKey, recordID, res) {
                     console.log("Error: Failed To Find Record With ID = " + recordID);
                     res.send("Error: Failed To Find Record With ID = " + recordID);
                 } else {
-                    console.log("Record Successfully Retrieved! (ID = " + recordID + ")");
+                    console.log("Success: Record Retrieved! ID = " + recordID);
                     res.send(recordset.recordset);
                 }
             }
@@ -104,14 +102,11 @@ function read_record(table, primaryKey, recordID, res) {
 }
 
 function view_records(table, res) {
-    // roomID, FloorNumber, Amenities, numParticipants, Distance
-
     sql.connect(config, function (err) {
         if (err) console.log(err);
 
         // create Request object
         var request = new sql.Request();
-
         var sqlQuery = "SELECT * FROM " + table + ";";
 
         // query to the database and get the records
@@ -141,7 +136,7 @@ function FP_create_record(body_data, res) {
         var request = new sql.Request();
         var sqlQuery =
             "INSERT INTO FloorPlan VALUES ('" +
-            body_data.roomID +
+            body_data.RoomID +
             "','" +
             body_data.RoomName +
             "','" +
@@ -151,8 +146,6 @@ function FP_create_record(body_data, res) {
             "','" +
             body_data.Amenity +
             "','" +
-            body_data.is_External +
-            "','" +
             body_data.Building +
             "','" +
             body_data.Whiteboard +
@@ -161,7 +154,9 @@ function FP_create_record(body_data, res) {
             "','" +
             body_data.Monitor +
             "','" +
-            body_data.is_Available +
+            body_data.isExternal +
+            "','" +
+            body_data.isAvailable +
             "');";
 
         request.query(sqlQuery, function (err, recordset) {
@@ -169,8 +164,8 @@ function FP_create_record(body_data, res) {
                 console.log(err);
                 res.send("Error: Failed to insert.");
             } else {
-                console.log("Record Successfully Created! (ID = " + body_data.roomID + ")");
-                res.send("Record Successfully Created. (ID = " + body_data.roomID + ")");
+                console.log("Success: Record Created! ID = " + body_data.RoomID);
+                res.send("Success: Record Created. ID = " + body_data.RoomID);
             }
         });
     });
@@ -183,7 +178,9 @@ function FP_update_record(body_data, res) {
         var request = new sql.Request();
 
         var sqlQuery =
-            "UPDATE FloorPlan SET RoomName = '" +
+            "UPDATE FloorPlan SET RoomID = '" +
+            body_data.RoomID +
+            "', RoomName = '" +
             body_data.RoomName +
             "', FloorNumber = '" +
             body_data.FloorNumber +
@@ -191,18 +188,18 @@ function FP_update_record(body_data, res) {
             body_data.maxSeats +
             "', Amenity = '" +
             body_data.Amenity +
-            "', is_External = '" +
-            body_data.is_External +
             "', Building = '" +
             body_data.Building +
             "', Whiteboard = '" +
             body_data.Whiteboard +
             "', Projector = '" +
             body_data.Projector +
-            "', is_Available = '" +
-            is_Available +
             "', Monitor = '" +
             body_data.Monitor +
+            "', isExternal = '" +
+            body_data.isExternal +
+            "', isAvailable = '" +
+            isAvailable +
             "' WHERE RoomID = '" +
             body_data.RoomID +
             "';";
@@ -212,8 +209,8 @@ function FP_update_record(body_data, res) {
                 console.log(err);
                 res.send("Error: Failed to update.");
             } else {
-                console.log("Record Successfully Updated! (ID = " + body_data.RoomID + ")");
-                res.send("Record Successfully Updated. (ID = " + body_data.RoomID + ")");
+                console.log("Success: Record Updated! (ID = " + body_data.RoomID + ")");
+                res.send("Success: Record Updated.ID = " + body_data.RoomID);
             }
         });
     });
@@ -244,8 +241,8 @@ function delete_record(table, primaryKey, recordID, res) {
                             console.log(err);
                             res.send("Error: Failed To Delete Record.");
                         } else {
-                            console.log("Record Successfully Deleted! (ID = " + recordID + ")");
-                            res.send("Record Successfully Deleted. (ID = " + recordID + ")");
+                            console.log("Success: Record Deleted! ID = " + recordID);
+                            res.send("Success: Record Deleted. ID = " + recordID);
                         }
                     });
                 }
@@ -262,27 +259,20 @@ function UD_create_record(body_data, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
 
-        var rFirstName = body_data.FirstName;
-        var rLastName = body_data.LastName;
-        var rEmail = body_data.Email;
-        var rPassword = body_data.EmpPassword;
-        var rIsAdmin = body_data.is_Admin;
-        var rLocationID = body_data.locationID;
-
         var request = new sql.Request();
         var sqlQuery =
-            "INSERT INTO EmployeeDetails (FirstName, LastName, Email, EmpPassword, is_Admin, LocationID) VALUES (" +
-            rFirstName +
+            "INSERT INTO EmployeeDetails VALUES ('" +
+            body_data.FirstName +
             "','" +
-            rLastName +
+            body_data.LastName +
             "','" +
-            rEmail +
+            body_data.EmpEmail +
             "','" +
-            rPassword +
+            body_data.EmpPassword +
             "','" +
-            rIsAdmin +
+            body_data.isAdmin +
             "','" +
-            rLocationID +
+            body_data.LocationID +
             "');";
 
         request.query(sqlQuery, function (err, recordset) {
@@ -290,8 +280,8 @@ function UD_create_record(body_data, res) {
                 console.log(err);
                 res.send("Error: Failed To Insert.");
             } else {
-                console.log("Record Successfully Created! (ID = " + body_data.EmployeeID + ")");
-                res.send("Record Successfully Created. (ID = " + body_data.EmployeeID + ")");
+                console.log("Success: Record Created! ID = " + body_data.EmpEmail);
+                res.send("Success: Record Created. ID = " + body_data.EmpEmail);
             }
         });
     });
@@ -301,32 +291,22 @@ function UD_update_record(body_data, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
 
-        var rID = body_data.EmployeeID;
-        var rFirstName = body_data.FirstName;
-        var rLastName = body_data.LastName;
-        var rEmail = body_data.Email;
-        var rPassword = body_data.EmpPassword;
-        var rIsAdmin = body_data.is_Admin;
-        var rLocationID = body_data.locationID;
-
         var request = new sql.Request();
         var sqlQuery =
             "UPDATE EmployeeDetails SET FirstName = '" +
-            rFirstName +
+            body_data.FirstName +
             "', LastName = '" +
-            rLastName +
-            "', Email = '" +
-            rEmail +
-            "', officeRoomID = '" +
-            rOfficeRoomID +
+            body_data.LastName +
+            "', EmpEmail = '" +
+            body_data.EmpEmail +
             "', EmpPassword = '" +
-            rPassword +
+            body_data.EmpPassword +
             "', LocationID = '" +
-            rLocationID +
-            "', is_Admin = '" +
-            rIsAdmin +
-            "' WHERE EmployeeID = '" +
-            rID +
+            body_data.LocationID +
+            "', isAdmin = '" +
+            body_data.isAdmin +
+            "' WHERE EmpEmail = '" +
+            body_data.EmpEmail +
             "';";
 
         request.query(sqlQuery, function (err, recordset) {
@@ -334,8 +314,8 @@ function UD_update_record(body_data, res) {
                 console.log(err);
                 res.send("Error: Failed to update.");
             } else {
-                console.log("Record Successfully Updated! (ID = " + rID + ")");
-                res.send("Record Successfully Updated. (ID = " + rID + ")");
+                console.log("Success: Record Updated! ID = " + body_data.EmpEmail);
+                res.send("Success: Record Updated. ID = " + body_data.EmpEmail);
             }
         });
     });
@@ -351,7 +331,7 @@ function DIST_create_record(body_data, res) {
 
         var request = new sql.Request();
         var sqlQuery =
-            "INSERT INTO Distance VALUES (" +
+            "INSERT INTO Distance VALUES ('" +
             body_data.Rooms +
             "','" +
             body_data.Texas +
@@ -361,6 +341,8 @@ function DIST_create_record(body_data, res) {
             body_data.Mississippi +
             "','" +
             body_data.NewJersey +
+            "','" +
+            body_data.NewYork +
             "','" +
             body_data.California +
             "','" +
@@ -380,8 +362,8 @@ function DIST_create_record(body_data, res) {
                 console.log(err);
                 res.send("Error: Failed To Insert.");
             } else {
-                console.log("Record Successfully Created! (ID = " + body_data.Rooms + ")");
-                res.send("Record Successfully Created. (ID = " + body_data.Rooms + ")");
+                console.log("Success: Record Created! ID = " + body_data.Rooms);
+                res.send("Success: Record Created. ID = " + body_data.Rooms);
             }
         });
     });
@@ -402,6 +384,8 @@ function DIST_update_record(body_data, res) {
             body_data.Mississippi +
             "', NewJersey = '" +
             body_data.NewJersey +
+            "', NewYork = '" +
+            body_data.NewYork +
             "', California = '" +
             body_data.California +
             "', Florida = '" +
@@ -423,8 +407,8 @@ function DIST_update_record(body_data, res) {
                 console.log(err);
                 res.send("Error: Failed to update.");
             } else {
-                console.log("Record Successfully Updated!");
-                res.send("Record Successfully Updated.");
+                console.log("Success: Record Updated! ID = " + body_data.Rooms);
+                res.send("Success: Record Updated. ID = " + body_data.Rooms);
             }
         });
     });
@@ -442,9 +426,11 @@ function MEET_create_record(body_data, res) {
 
         var sqlQuery =
             "INSERT INTO Meetings VALUES (" +
-            body_data.StartTime +
+            body_data.MeetingID +
+            "," +
+            new Date(body_data.StartTime).toISOString() +
             "','" +
-            body_data.EndTime +
+            new Date(body_data.EndTime).toISOString() +
             "','" +
             body_data.Organizer +
             "','" +
@@ -460,8 +446,8 @@ function MEET_create_record(body_data, res) {
                 console.log(err);
                 res.send("Error: Failed To Insert.");
             } else {
-                console.log("Record Successfully Created!");
-                res.send("Record Successfully Created.");
+                console.log("Success: Record Created! ID = " + body_data.MeetingID);
+                res.send("Success: Record Created. ID = " + body_data.MeetingID);
             }
         });
     });
@@ -475,9 +461,9 @@ function MEET_update_record(body_data, res) {
 
         var sqlQuery =
             "UPDATE Meetings SET StartTime = '" +
-            body_data.StartTime +
+            new Date(body_data.StartTime).toISOString() +
             "', EndTime = '" +
-            body_data.EndTime +
+            new Date(body_data.EndTime).toISOString() +
             "', Organizer = '" +
             body_data.Organizer +
             "', Participants = '" +
@@ -495,73 +481,12 @@ function MEET_update_record(body_data, res) {
                 console.log(err);
                 res.send("Error: Failed To Insert.");
             } else {
-                console.log("Record Successfully Created!");
-                res.send("Record Successfully Created.");
+                console.log("Success: Record Update! ID = " + body_data.MeetingID);
+                res.send("Success: Record Update. ID = " + body_data.MeetingID);
             }
         });
     });
 }
-
-// // TABLE AI MODEL:
-// function AI_create_record(body_data, res){ // used to insert a record:
-
-//     // officeRoomID, Meeting, userID, TimeMeet
-
-//     sql.connect(config, function(err){
-//         if(err) console.log(err);
-
-//         var rID = body_data.officeRoomID;
-//         var rMeeting = body_data.Meeting;
-//         var rUserID = body_data.userID;
-//         var rTimeMeet = new Date(body_data.TimeMeet);
-
-//         var request = new sql.Request();
-//         var sqlQuery = "INSERT INTO AIModel (officeRoomID, Meeting, userID, TimeMeet) VALUES ('"+rID+"','"+rMeeting+"','"+rUserID+"','"+rTimeMeet+"');";
-
-//         request.query(sqlQuery, function (err, recordset) {
-//             if (err){
-//                 console.log(err);
-//                 res.send("Error: Failed To Insert.");
-//             }
-//             else{
-//                 console.log("Record Successfully Created! (ID = "+rID+")");
-//                 res.send("Record Successfully Created. (ID = "+rID+")");
-//             }
-//         });
-//     });
-
-// }
-
-// function AI_update_record(body_data, res){
-
-//     // officeRoomID, Meeting, userID, TimeMeet
-
-//         sql.connect(config, function(err){
-//             if(err) console.log(err);
-
-//             // roomID, FloorNumber, Amenities, numParticipants, Distance
-//             var rID = body_data.officeRoomID;
-//             var rMeeting = body_data.Meeting;
-//             var rUserID = body_data.userID;
-//             var rTimeMeet = new Date(toString(body_data.TimeMeet));
-
-//             var request = new sql.Request();
-//             var sqlQuery = "UPDATE AIModel SET Meeting = '"+rMeeting+"', userID = '"+rUserID+"', TimeMeet = '"+rTimeMeet+"' WHERE officeRoomID = '"+rID+"';";
-
-//             request.query(sqlQuery, function (err, recordset) {
-//                 if (err){
-//                     console.log(err);
-//                     res.send("Error: Failed to update.");
-//                 }
-//                 else{
-//                     console.log("Record Successfully Updated! (ID = "+rID+")");
-//                     res.send("Record Successfully Updated. (ID = "+rID+")");
-//                 }
-//             });
-
-//     });
-
-// }
 
 var server = app.listen(port, function () {
     console.log("Server Is Running On Port " + port);
