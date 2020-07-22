@@ -60,7 +60,16 @@ var i=0; // initial message count
       var ext = extractEventIDval;
        // console.log("EXT VALUE" + JSON.stringify(ext.attendees));
        // console.log("ATTENDEES SPECIFIC VALUE" + ext.attendees);
-        var room = await findRoom(mail.from[0].address, ext);
+        // var room = await findRoom(mail.from[0].address, ext);
+        var room = "";
+        FindRoom()
+          .then(result=>{
+              room = result;
+          })
+          .catch(err=>{
+              console.log(err)
+          });
+
         console.log("ROOM FOUND : " + room);
         var roo = 'Berlin';
         var updateRoom = await updateEvent(test.event,accessToken,roo);
@@ -69,400 +78,407 @@ var i=0; // initial message count
       //console.log("Event has been deleted:"+deleterEvent);
   }
   
-  // findRoom
-async function findRoom(organizer,ext){
-//Access the drivers
-let sql = require("mssql");
 
-var t= JSON.parse(ext);
-var subject = t.event.subject;
-//Configure Database
-const config = {
-    authentication: {
-        options: {
-          userName: "threshold", 
-          password: "thresh#301" 
-        },
-        type: "default"
-    },
-    server: 'rbmserver.database.windows.net', 
-    database: 'RBM Database',
-    encrypt: true
-};
 
-let OrganizerEmail = organizer;
-let AttendeesEmail = t; // for loop
 
-//Store all Emails in 1 Array
-//AttendeesEmail.push(OrganizerEmail);
-for(let i = 0; i < AttendeesEmail.event.attendees.temp.length; i++)
+//----------------------------------------------------------------------------------------------
+//-----------------------------------START OF FIND ROOM FUNCTION--------------------------------
+//----------------------------------------------------------------------------------------------
+async function FindRoom()
 {
-    AttendeesEmail.event.attendees.temp[i].name = "'" + AttendeesEmail.event.attendees.temp[i].name + "'"; 
-}
+    //Access the drivers
+    let sql = require("mssql");
 
-//Variables
-let Whiteboard = "Whiteboard = 1";
-let Projector = "Projector = 1";
-let Monitor = "Monitor = 1";
-let WhiteboardProjector = "Whiteboard = 1 AND Projector = 1";
-let WhiteboardMonitor = "Whiteboard =1 AND Monitor = 1";
-
-let Amenity = subject;
-
-//
-//Search Body which is a string and find Amenity
-//
-
-// let AmenityRequired = ("Amenity Required:  projector, board"); //String to search
-// AmenityRequired = AmenityRequired.toLowerCase();
-
-
-// let searchBoard = AmenityRequired.search("board");
-// let searchProjector = AmenityRequired.search("projector");
-// let searchMonitor = AmenityRequired.search("monitor");
-
-// if(searchBoard != -1)
-//   Amenity = Whiteboard;
-
-// if(searchMonitor != -1)
-//   Amenity = Monitor;
-
-// if(searchProjector != -1)
-//   Amenity = Projector;
-
-// if( searchBoard != -1 && searchProjector != -1)
-//   Amenity = WhiteboardProjector;
-
-// if(searchBoard != -1 && searchMonitor != -1)
-//   Amenity = WhiteboardMonitor;
-
-//Amenity = Whiteboard;
-
-//Amenity Variable
-let roomName = [];
-let roomfound;
-
-//Distance Variable
-let LocationID = [];
-let sizeEmployee = AttendeesEmail.length;
-let distance = [];
-let averageDistance = [];
-let total = 0;
-let shortest = 10000;
-let index;
-
-
-// Function to Query the Database
-async function queryDatabase () {
-
-    //Connect to Database
-    let pool = await sql.connect(config);
-
-    //
-    //---------------------AMENITIES OPTIMIZATION----------------------
-    //
-
-    //Query to the database for AMENITIES
-    let sqlQuery = "SELECT * FROM FloorPlan WHERE " + Amenity + "AND is_Available = 1";
-    if(Amenity == "")
-        sqlQuery = "SELECT * FROM FloorPlan WHERE is_Available = 1";
-
-    let sqlRequest = await pool.request()
-        .input('', sql.VarChar)
-        .query(sqlQuery);
-
-        // console.table(sqlRequest.recordset);
-        for(let i=0;i<sqlRequest.rowsAffected;i++)
-        {
-            roomName[i] = sqlRequest.recordsets[0][i].RoomName;
-        }
-
-
-    //
-    //---------------------DISTANCE OPTIMIZATION----------------------
-    //
+    //Configure Database
+    const config = {
+        authentication: {
+            options: {
+            userName: "threshold", 
+            password: "thresh#301" 
+            },
+            type: "default"
+        },
+        server: 'rbmserver.database.windows.net', 
+        database: 'RBM Database',
+        encrypt: true
+    };
     
-    //Query database for users location ID
-    
+    let OrganizerEmail = "AdeleV@teamthreshold.onmicrosoft.com";
+    let AttendeesEmail = ["COS301@teamthreshold.onmicrosoft.com"];
 
-    //Get Location ID of the Employees
-    sqlQuery = "SELECT * FROM EmployeeDetails WHERE EmpEmail = " + AttendeesEmail[0];
-    for(let i = 1; i < sizeEmployee; i++)
+    //Store all Emails in 1 Array
+    AttendeesEmail.push(OrganizerEmail);
+    for(let i = 0; i < AttendeesEmail.length; i++)
     {
-        if(i != sizeEmployee)
-        {
-            sqlQuery = sqlQuery + " OR EmpEmail = ";
-        }
-        sqlQuery = sqlQuery + AttendeesEmail[i];
-        
+        AttendeesEmail[i] = "'" + AttendeesEmail[i] + "'"; 
     }
 
-    sqlRequest = await pool.request()
-        .input('', sql.VarChar)
-        .query(sqlQuery);
+    //Variables
+    let Whiteboard = "Whiteboard = 1";
+    let Projector = "Projector = 1";
+    let Monitor = "Monitor = 1";
+    let WhiteboardProjector = "Whiteboard = 1 AND Projector = 1";
+    let WhiteboardMonitor = "Whiteboard =1 AND Monitor = 1";
 
-        // console.table(sqlRequest.recordset);
-        for(let i = 0; i < sizeEmployee; i++)
-        {
-            LocationID[i] = (sqlRequest.recordsets[0][i].LocationID)
-        }
+    let Amenity = "";
+
+    //
+    //Search Body which is a string and find Amenity
+    //
+
+    // let AmenityRequired = ("Amenity Required:  projector, board"); //String to search
+    // AmenityRequired = AmenityRequired.toLowerCase();
 
 
+    // let searchBoard = AmenityRequired.search("board");
+    // let searchProjector = AmenityRequired.search("projector");
+    // let searchMonitor = AmenityRequired.search("monitor");
 
-    
-    //Convert in order to use as sql string
-    for(let i = 0; i < LocationID.length; i++)
-    {
-        LocationID[i] = "'" + LocationID[i] + "'";
-    }
-    
-    //Get Location ID of the Employees
-    sqlQuery = "SELECT "
-    for(let i = 0; i < roomName.length; i++)
-    {
-        if(i < roomName.length - 1)
-            sqlQuery = sqlQuery + roomName[i] + ", " ;
-        else
-            sqlQuery = sqlQuery + roomName[i];
+    // if(searchBoard != -1)
+    //   Amenity = Whiteboard;
 
-    }
-    
-    sqlQuery = sqlQuery + " FROM Distance WHERE Rooms = " + LocationID[0];
-    for(let i = 1; i < sizeEmployee; i++)
-    {
-        if(i != sizeEmployee)
-        {
-            sqlQuery = sqlQuery + " OR Rooms = ";
-        }
-        sqlQuery = sqlQuery + LocationID[i];
-        
-    }
+    // if(searchMonitor != -1)
+    //   Amenity = Monitor;
 
-    sqlRequest = await pool.request()
-        .input('', sql.Int)
-        .query(sqlQuery);
+    // if(searchProjector != -1)
+    //   Amenity = Projector;
 
-        // console.table(sqlRequest.recordset);
+    // if( searchBoard != -1 && searchProjector != -1)
+    //   Amenity = WhiteboardProjector;
+
+    // if(searchBoard != -1 && searchMonitor != -1)
+    //   Amenity = WhiteboardMonitor;
+
+    Amenity = Whiteboard;
+
+    //Amenity Variable
+    let roomName = [];
+    let roomfound;
+
+    //Distance Variable
+    let LocationID = [];
+    let sizeEmployee = AttendeesEmail.length;
+    let distance = [];
+    let averageDistance = [];
+    let total = 0;
+    let shortest = 10000;
+    let index;
+
+
+    // Function to Query the Database
+    async function QueryDatabase () {
+
 
         //
-        //Get Average Distance to each meeting room
+        //---------------------AMENITIES OPTIMIZATION----------------------
+        //        
+
+        //Connect to Database
+        let pool = await sql.connect(config);
+
+
+        //Query to the database for AMENITIES
+        let sqlQuery = "SELECT * FROM FloorPlan WHERE " + Amenity + "AND isAvailable = 1";
+        if(Amenity == "")
+            sqlQuery = "SELECT * FROM FloorPlan WHERE isAvailable = 1";
+
+        let sqlRequest = await pool.request()
+            .input('', sql.VarChar)
+            .query(sqlQuery);
+
+            // console.table(sqlRequest.recordset);
+            for(let i=0;i<sqlRequest.rowsAffected;i++)
+            {
+                roomName[i] = sqlRequest.recordsets[0][i].RoomName;
+            }
+
+
         //
-
-        //Texas
-        total = 0;
-        if(sqlRequest.recordsets[0][0].Texas != undefined)
-        {
-            for(let i = 0; i < sizeEmployee; i++)
-            {
-                distance[i] = (sqlRequest.recordsets[0][i].Texas);
-            }
-    
-            for(let i = 0; i < distance.length; i++)
-            {
-                total += distance[i];
-            }      
-            averageDistance.push( total/distance.length);      
-        }
-
-        //Colorado
-        total = 0;
-        if(sqlRequest.recordsets[0][0].Colorado != undefined)
-        {
-            for(let i = 0; i < sizeEmployee; i++)
-            {
-                distance[i] = (sqlRequest.recordsets[0][i].Colorado);
-            }
-    
-            for(let i = 0; i < distance.length; i++)
-            {
-                total += distance[i];
-            }      
-            averageDistance.push( total/distance.length);      
-        }
-
-        //Mississippi
-        total = 0;
-        if(sqlRequest.recordsets[0][0].Mississippi != undefined)
-        {
-            for(let i = 0; i < sizeEmployee; i++)
-            {
-                distance[i] = (sqlRequest.recordsets[0][i].Mississippi);
-            }
-    
-            for(let i = 0; i < distance.length; i++)
-            {
-                total += distance[i];
-            }      
-            averageDistance.push( total/distance.length);      
-        }        
-
-        //New Jersey
-        total = 0;
-        if(sqlRequest.recordsets[0][0].NewJersey != undefined)
-        {
-            for(let i = 0; i < sizeEmployee; i++)
-            {
-                distance[i] = (sqlRequest.recordsets[0][i].NewJersey);
-            }
-    
-            for(let i = 0; i < distance.length; i++)
-            {
-                total += distance[i];
-            }      
-            averageDistance.push( total/distance.length);      
-        }  
-
-    
-        //New York
-        total = 0;
-        if(sqlRequest.recordsets[0][0].NewYork != undefined)
-        {
-            for(let i = 0; i < sizeEmployee; i++)
-            {
-                distance[i] = (sqlRequest.recordsets[0][i].NewYork);
-            }
-    
-            for(let i = 0; i < distance.length; i++)
-            {
-                total += distance[i];
-            }      
-            averageDistance.push( total/distance.length);      
-        } 
+        //---------------------DISTANCE OPTIMIZATION----------------------
+        //
         
-        //Pennsylvania
-        total = 0;
-        if(sqlRequest.recordsets[0][0].Pennsylvania != undefined)
-        {
-            for(let i = 0; i < sizeEmployee; i++)
-            {
-                distance[i] = (sqlRequest.recordsets[0][i].Pennsylvania);
-            }
-    
-            for(let i = 0; i < distance.length; i++)
-            {
-                total += distance[i];
-            }      
-            averageDistance.push( total/distance.length);      
-        }        
+        //Query database for users location ID
         
-        //California
-        total = 0;
-        if(sqlRequest.recordsets[0][0].California != undefined)
-        {
-            for(let i = 0; i < sizeEmployee; i++)
-            {
-                distance[i] = (sqlRequest.recordsets[0][i].California);
-            }
-    
-            for(let i = 0; i < distance.length; i++)
-            {
-                total += distance[i];
-            }      
-            averageDistance.push( total/distance.length);      
-        } 
 
-        //Georgia
-        total = 0;
-        if(sqlRequest.recordsets[0][0].Georgia != undefined)
+        //Get Location ID of the Employees
+        sqlQuery = "SELECT * FROM EmployeeDetails WHERE EmpEmail = " + AttendeesEmail[0];
+        for(let i = 1; i < sizeEmployee; i++)
         {
-            for(let i = 0; i < sizeEmployee; i++)
+            if(i != sizeEmployee)
             {
-                distance[i] = (sqlRequest.recordsets[0][i].Georgia);
+                sqlQuery = sqlQuery + " OR EmpEmail = ";
             }
-    
-            for(let i = 0; i < distance.length; i++)
-            {
-                total += distance[i];
-            }      
-            averageDistance.push( total/distance.length);      
+            sqlQuery = sqlQuery + AttendeesEmail[i];
+            
         }
 
-        //Florida
-        total = 0;
-        if(sqlRequest.recordsets[0][0].Florida != undefined)
-        {
-            for(let i = 0; i < sizeEmployee; i++)
-            {
-                distance[i] = (sqlRequest.recordsets[0][i].Florida);
-            }
-    
-            for(let i = 0; i < distance.length; i++)
-            {
-                total += distance[i];
-            }      
-            averageDistance.push( total/distance.length);      
-        }
-
-        //Tennessee
-        total = 0;
-        if(sqlRequest.recordsets[0][0].Tennessee != undefined)
-        {
-            for(let i = 0; i < sizeEmployee; i++)
-            {
-                distance[i] = (sqlRequest.recordsets[0][i].Tennessee);
-            }
-    
-            for(let i = 0; i < distance.length; i++)
-            {
-                total += distance[i];
-            }      
-            averageDistance.push( total/distance.length);      
-        }
-
-        //Washington
-        total = 0;
-        if(sqlRequest.recordsets[0][0].Washington != undefined)
-        {
-            for(let i = 0; i < sizeEmployee; i++)
-            {
-                distance[i] = (sqlRequest.recordsets[0][i].Washington);
-            }
-    
-            for(let i = 0; i < distance.length; i++)
-            {
-                total += distance[i];
-            }      
-            averageDistance.push( total/distance.length);      
-        }
-
-        //Get the actual room name
-        for(let i=0; i<averageDistance.length; i++)
-        {
-            if(averageDistance[i] < shortest)
-                shortest = averageDistance[i];   
-        }
-        index = averageDistance.indexOf(shortest);
-        roomfound = roomName[index];
-        
-        //Update in the Database
-        let updateRoom = "'" + roomfound + "'";
         sqlRequest = await pool.request()
-        .input('', sql.BIT)
-        .query("UPDATE FloorPlan SET is_Available = 0 WHERE RoomName = " + updateRoom);
+            .input('', sql.VarChar)
+            .query(sqlQuery);
+
+            // console.table(sqlRequest.recordset);
+            for(let i = 0; i < sizeEmployee; i++)
+            {
+                LocationID[i] = (sqlRequest.recordsets[0][i].LocationID)
+            }
+
+
 
         
-    pool.close();
-    sql.close();  
+        //Convert in order to use as sql string
+        for(let i = 0; i < LocationID.length; i++)
+        {
+            LocationID[i] = "'" + LocationID[i] + "'";
+        }
+        
+        //Get Location ID of the Employees
+        sqlQuery = "SELECT "
+        for(let i = 0; i < roomName.length; i++)
+        {
+            if(i < roomName.length - 1)
+                sqlQuery = sqlQuery + roomName[i] + ", " ;
+            else
+                sqlQuery = sqlQuery + roomName[i];
 
-    return nonDB();
-}
+        }
+        
+        sqlQuery = sqlQuery + " FROM Distance WHERE Rooms = " + LocationID[0];
+        for(let i = 1; i < sizeEmployee; i++)
+        {
+            if(i != sizeEmployee)
+            {
+                sqlQuery = sqlQuery + " OR Rooms = ";
+            }
+            sqlQuery = sqlQuery + LocationID[i];
+            
+        }
 
-function nonDB (){
-    console.log("The most suitable meeting room is: " + roomfound);
-    //
-    // The REST OF THE CODE GOES BELOW (SEND USER NOTIFICATION)
-    //
-    return roomfound;
-}
 
-queryDatabase()
-    .catch(err=>{
+        sqlRequest = await pool.request()
+            .input('', sql.Int)
+            .query(sqlQuery);
+
+            // console.table(sqlRequest.recordset);
+
+            //
+            //Get Average Distance to each meeting room
+            //
+
+            //Texas
+            total = 0;
+            if(sqlRequest.recordsets[0][0].Texas != undefined)
+            {
+                for(let i = 0; i < sizeEmployee; i++)
+                {
+                    distance[i] = (sqlRequest.recordsets[0][i].Texas);
+                }
+        
+                for(let i = 0; i < distance.length; i++)
+                {
+                    total += distance[i];
+                }      
+                averageDistance.push( total/distance.length);      
+            }
+
+            //Colorado
+            total = 0;
+            if(sqlRequest.recordsets[0][0].Colorado != undefined)
+            {
+                for(let i = 0; i < sizeEmployee; i++)
+                {
+                    distance[i] = (sqlRequest.recordsets[0][i].Colorado);
+                }
+        
+                for(let i = 0; i < distance.length; i++)
+                {
+                    total += distance[i];
+                }      
+                averageDistance.push( total/distance.length);      
+            }
+
+            //Mississippi
+            total = 0;
+            if(sqlRequest.recordsets[0][0].Mississippi != undefined)
+            {
+                for(let i = 0; i < sizeEmployee; i++)
+                {
+                    distance[i] = (sqlRequest.recordsets[0][i].Mississippi);
+                }
+        
+                for(let i = 0; i < distance.length; i++)
+                {
+                    total += distance[i];
+                }      
+                averageDistance.push( total/distance.length);      
+            }        
+
+            //New Jersey
+            total = 0;
+            if(sqlRequest.recordsets[0][0].NewJersey != undefined)
+            {
+                for(let i = 0; i < sizeEmployee; i++)
+                {
+                    distance[i] = (sqlRequest.recordsets[0][i].NewJersey);
+                }
+        
+                for(let i = 0; i < distance.length; i++)
+                {
+                    total += distance[i];
+                }      
+                averageDistance.push( total/distance.length);      
+            }  
+
+        
+            //New York
+            total = 0;
+            if(sqlRequest.recordsets[0][0].NewYork != undefined)
+            {
+                for(let i = 0; i < sizeEmployee; i++)
+                {
+                    distance[i] = (sqlRequest.recordsets[0][i].NewYork);
+                }
+        
+                for(let i = 0; i < distance.length; i++)
+                {
+                    total += distance[i];
+                }      
+                averageDistance.push( total/distance.length);      
+            } 
+            
+            //Pennsylvania
+            total = 0;
+            if(sqlRequest.recordsets[0][0].Pennsylvania != undefined)
+            {
+                for(let i = 0; i < sizeEmployee; i++)
+                {
+                    distance[i] = (sqlRequest.recordsets[0][i].Pennsylvania);
+                }
+        
+                for(let i = 0; i < distance.length; i++)
+                {
+                    total += distance[i];
+                }      
+                averageDistance.push( total/distance.length);      
+            }        
+            
+            //California
+            total = 0;
+            if(sqlRequest.recordsets[0][0].California != undefined)
+            {
+                for(let i = 0; i < sizeEmployee; i++)
+                {
+                    distance[i] = (sqlRequest.recordsets[0][i].California);
+                }
+        
+                for(let i = 0; i < distance.length; i++)
+                {
+                    total += distance[i];
+                }      
+                averageDistance.push( total/distance.length);      
+            } 
+
+            //Georgia
+            total = 0;
+            if(sqlRequest.recordsets[0][0].Georgia != undefined)
+            {
+                for(let i = 0; i < sizeEmployee; i++)
+                {
+                    distance[i] = (sqlRequest.recordsets[0][i].Georgia);
+                }
+        
+                for(let i = 0; i < distance.length; i++)
+                {
+                    total += distance[i];
+                }      
+                averageDistance.push( total/distance.length);      
+            }
+
+            //Florida
+            total = 0;
+            if(sqlRequest.recordsets[0][0].Florida != undefined)
+            {
+                for(let i = 0; i < sizeEmployee; i++)
+                {
+                    distance[i] = (sqlRequest.recordsets[0][i].Florida);
+                }
+        
+                for(let i = 0; i < distance.length; i++)
+                {
+                    total += distance[i];
+                }      
+                averageDistance.push( total/distance.length);      
+            }
+
+            //Tennessee
+            total = 0;
+            if(sqlRequest.recordsets[0][0].Tennessee != undefined)
+            {
+                for(let i = 0; i < sizeEmployee; i++)
+                {
+                    distance[i] = (sqlRequest.recordsets[0][i].Tennessee);
+                }
+        
+                for(let i = 0; i < distance.length; i++)
+                {
+                    total += distance[i];
+                }      
+                averageDistance.push( total/distance.length);      
+            }
+
+            //Washington
+            total = 0;
+            if(sqlRequest.recordsets[0][0].Washington != undefined)
+            {
+                for(let i = 0; i < sizeEmployee; i++)
+                {
+                    distance[i] = (sqlRequest.recordsets[0][i].Washington);
+                }
+        
+                for(let i = 0; i < distance.length; i++)
+                {
+                    total += distance[i];
+                }      
+                averageDistance.push( total/distance.length);      
+            }
+
+            //Get the actual room name
+            for(let i=0; i<averageDistance.length; i++)
+            {
+                if(averageDistance[i] < shortest)
+                    shortest = averageDistance[i];   
+            }
+            index = averageDistance.indexOf(shortest);
+            roomfound = roomName[index];
+            
+            //Update in the Database
+            // let updateRoom = "'" + roomfound + "'";
+            // sqlRequest = await pool.request()
+            //     .input('', sql.BIT)
+            //     .query("UPDATE FloorPlan SET is_Available = 0 WHERE RoomName = " + updateRoom);
+
+            
         pool.close();
-        sql.close();
-        console.log(err)
-    })
+        sql.close();  
 
+        return roomfound;
+    }
+
+    return QueryDatabase()
+        .then(result=>{;
+                return result;
+        })
+        .catch(err=>{
+            sql.close();
+            console.log(err)
+        }); 
 }
+
+//--------------------------------------------------------------------------------------------
+//-----------------------------------END OF FIND ROOM FUNCTION--------------------------------
+//--------------------------------------------------------------------------------------------
+
+
+
 
 
   // This function gets and returns the API token 
