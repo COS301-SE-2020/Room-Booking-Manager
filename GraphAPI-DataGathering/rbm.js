@@ -65,17 +65,27 @@ var i=0; // initial message count
         FindRoom()
           .then(result=>{
               room = result;
+              UpdateDelete()
+                .catch(err=>{
+                  console.log(err)
+              });
           })
           .catch(err=>{
               console.log(err)
           });
 
-        console.log("ROOM FOUND : " + room);
-        var roo = 'Berlin';
-        var updateRoom = await updateEvent(test.event,accessToken,roo);
-        //var ext = JSON.parse(ext);
-     // var deleterEvent = await deleteEvent(test.event.id,accessToken);
-      //console.log("Event has been deleted:"+deleterEvent);
+        // setTimeout(afterTimeout, 15000); //Timeout event
+        async function UpdateDelete()
+        {
+          console.log("ROOM FOUND : " + room);
+          var roo = 'Berlin';
+          var updateRoom = await updateEvent(test.event,accessToken,room);
+          //var ext = JSON.parse(ext);
+          // var deleterEvent = await deleteEvent(test.event.id,accessToken);
+          //console.log("Event has been deleted:"+deleterEvent);
+        }
+        
+ 
   }
   
 
