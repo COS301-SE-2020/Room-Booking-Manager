@@ -186,12 +186,12 @@ async function queryDatabase () {
     
 
     //Get Location ID of the Employees
-    sqlQuery = "SELECT * FROM EmployeeDetails WHERE Email = " + AttendeesEmail[0];
+    sqlQuery = "SELECT * FROM EmployeeDetails WHERE EmpEmail = " + AttendeesEmail[0];
     for(let i = 1; i < sizeEmployee; i++)
     {
         if(i != sizeEmployee)
         {
-            sqlQuery = sqlQuery + " OR Email = ";
+            sqlQuery = sqlQuery + " OR EmpEmail = ";
         }
         sqlQuery = sqlQuery + AttendeesEmail[i];
         
