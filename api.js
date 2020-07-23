@@ -84,11 +84,12 @@ function callAPI(table, option, data, res) {
 function read_record(table, primaryKey, recordID, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
+        else {
+            var sqlQuery =
+                "SELECT * FROM " + table + " WHERE " + primaryKey + "= '" + recordID + "';";
 
-        var request = new sql.Request();
-        var sqlQuery = "SELECT * FROM " + table + " WHERE " + primaryKey + "= '" + recordID + "';";
-
-        runSQL("read", sqlQuery, recordID, res);
+            runSQL("read", sqlQuery, primaryKey, recordID, res);
+        }
     });
 }
 
@@ -96,11 +97,19 @@ function view_records(table, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
 
-        // create Request object
-        var request = new sql.Request();
         var sqlQuery = "SELECT * FROM " + table + ";";
 
-        runSQL("view", sqlQuery, "", res);
+        runSQL("view", sqlQuery, "", "", res);
+    });
+}
+
+function delete_record(table, primaryKey, recordID, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+
+        var sqlQuery = "DELETE FROM " + table + " WHERE " + primaryKey + " = '" + recordID + "';";
+
+        runSQL("delete", sqlQuery, primaryKey, recordID, res);
     });
 }
 
@@ -110,7 +119,6 @@ function FP_create_record(body_data, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
 
-        var request = new sql.Request();
         var sqlQuery =
             "INSERT INTO FloorPlan VALUES ('" +
             body_data.RoomID +
@@ -136,15 +144,13 @@ function FP_create_record(body_data, res) {
             body_data.isAvailable +
             "');";
 
-        runSQL("create", sqlQuery, body_data.RoomID, res);
+        runSQL("create", sqlQuery, "RoomID", body_data.RoomID, res);
     });
 }
 
 function FP_update_record(body_data, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
-
-        var request = new sql.Request();
 
         var sqlQuery =
             "UPDATE FloorPlan SET RoomID = '" +
@@ -173,19 +179,7 @@ function FP_update_record(body_data, res) {
             body_data.RoomID +
             "';";
 
-        runSQL("update", sqlQuery, body_data.RoomID, res);
-    });
-}
-
-function delete_record(table, primaryKey, recordID, res) {
-    sql.connect(config, function (err) {
-        if (err) console.log(err);
-
-        var request = new sql.Request();
-
-        var sqlQuery = "SELECT * FROM " + table + " WHERE " + primaryKey + "= '" + recordID + "';";
-
-        runSQL("delete", sqlQuery, recordID, res);
+        runSQL("update", sqlQuery, "RoomID", body_data.RoomID, res);
     });
 }
 
@@ -197,7 +191,6 @@ function UD_create_record(body_data, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
 
-        var request = new sql.Request();
         var sqlQuery =
             "INSERT INTO EmployeeDetails VALUES ('" +
             body_data.FirstName +
@@ -213,7 +206,7 @@ function UD_create_record(body_data, res) {
             body_data.LocationID +
             "');";
 
-        runSQL("create", sqlQuery, body_data.EmpEmail, res);
+        runSQL("create", sqlQuery, "EmpEmail", body_data.EmpEmail, res);
     });
 }
 
@@ -221,7 +214,6 @@ function UD_update_record(body_data, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
 
-        var request = new sql.Request();
         var sqlQuery =
             "UPDATE EmployeeDetails SET FirstName = '" +
             body_data.FirstName +
@@ -239,7 +231,7 @@ function UD_update_record(body_data, res) {
             body_data.EmpEmail +
             "';";
 
-        runSQL("update", sqlQuery, body_data.EmpEmail, res);
+        runSQL("update", sqlQuery, "EmpEmail", body_data.EmpEmail, res);
     });
 }
 
@@ -251,7 +243,6 @@ function DIST_create_record(body_data, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
 
-        var request = new sql.Request();
         var sqlQuery =
             "INSERT INTO Distance VALUES ('" +
             body_data.Rooms +
@@ -279,15 +270,13 @@ function DIST_create_record(body_data, res) {
             body_data.Washington +
             "');";
 
-        runSQL("create", sqlQuery, body_data.Rooms, res);
+        runSQL("create", sqlQuery, "Rooms", body_data.Rooms, res);
     });
 }
 
 function DIST_update_record(body_data, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
-
-        var request = new sql.Request();
 
         var sqlQuery =
             "UPDATE Distance SET Texas = '" +
@@ -316,7 +305,7 @@ function DIST_update_record(body_data, res) {
             body_data.Rooms +
             "';";
 
-        runSQL("update", sqlQuery, body_data.Rooms, res);
+        runSQL("update", sqlQuery, "Rooms", body_data.Rooms, res);
     });
 }
 
@@ -327,8 +316,6 @@ function MEET_create_record(body_data, res) {
 
     sql.connect(config, function (err) {
         if (err) console.log(err);
-
-        var request = new sql.Request();
 
         var sqlQuery =
             "INSERT INTO Meetings VALUES ('" +
@@ -347,15 +334,13 @@ function MEET_create_record(body_data, res) {
             body_data.RoomID +
             "');";
 
-        runSQL("create", sqlQuery, body_data.MeetingID, res);
+        runSQL("create", sqlQuery, "MeetingID", body_data.MeetingID, res);
     });
 }
 
 function MEET_update_record(body_data, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
-
-        var request = new sql.Request();
 
         var sqlQuery =
             "UPDATE Meetings SET StartTime = '" +
@@ -374,11 +359,27 @@ function MEET_update_record(body_data, res) {
             body_data.MeetingID +
             "';";
 
-        runSQL("update", sqlQuery, body_data.MeetingID, res);
+        runSQL("update", sqlQuery, "MeetingID", body_data.MeetingID, res);
     });
 }
 
-function runSQL(sqlType, sqlQuery, sqlTablePrimaryKey, res) {
+// function checkRecord(table, key, id) {
+//     sql.connect(config, function (err) {
+//         var request = new sql.Request();
+
+//         var sqlQuery = "SELECT COUNT(*) FROM " + table + " WHERE " + key + " = '" + id + "';";
+
+//         request.query(sqlQuery, function (err, recordset) {
+//             return (
+//                 recordset != undefined &&
+//                 JSON.stringify(recordset.recordsets[0]).length <= 20 &&
+//                 JSON.stringify(recordset.recordsets[0]).includes("1")
+//             );
+//         });
+//     });
+// }
+
+function runSQL(sqlType, sqlQuery, sqlTablePrimaryKey, recordID, res) {
     var request = new sql.Request();
 
     request.query(sqlQuery, function (err, recordset) {
@@ -388,48 +389,33 @@ function runSQL(sqlType, sqlQuery, sqlTablePrimaryKey, res) {
             if (err) {
                 console.log(err);
                 QueryRes = "Error";
-                QueryMes = "Failed To View All Records.";
+                QueryMes = "Failed To View All Records. Internal Error or Table May Be Empty.";
+                console.log(QueryRes + ": " + QueryMes);
             } else {
-                if (recordset.recordset.length == 0) {
-                    QueryRes = "Error";
-                    QueryMes = "Table is empty.";
-                    console.log(QueryRes + ": " + QueryMes);
-                } else {
-                    QueryRes = "Success";
-                    QueryMes = "All Records Successfully Viewed!.";
-                    response = recordset.recordset;
-                }
+                QueryRes = "Success";
+                QueryMes = "All Records Successfully Viewed!.";
+                response = recordset.recordset;
             }
         } else if (sqlType == "read") {
             if (err) {
                 console.log(err);
                 QueryRes = "Error";
-                QueryMes = "Failed To Read Record";
+                QueryMes = "Record Does Not Exist. ID = " + recordID;
+                console.log(QueryRes + ": " + QueryMes);
             } else {
-                if (recordset.recordset.length == 0) {
-                    QueryRes = "Error";
-                    QueryMes = "Failed To Find Record With ID = " + sqlTablePrimaryKey;
-                    console.log(QueryRes + ": " + QueryMes);
-                } else {
-                    QueryRes = "Success";
-                    QueryMes = "Record Retrieved! ID = " + sqlTablePrimaryKey;
-                    response = recordset.recordset;
-                }
+                QueryRes = "Success";
+                QueryMes = "Record Retrieved! ID = " + recordID;
+                response = recordset.recordset;
             }
         } else if (sqlType == "delete") {
             if (err) {
                 console.log(err);
                 QueryRes = "Error";
-                QueryMes = "Failed To Delete Record";
+                QueryMes = "Failed To Delete Record With ID = " + recordID;
+                console.log(QueryRes + ": " + QueryMes);
             } else {
-                if (recordset.recordset.length == 0) {
-                    QueryRes = "Error";
-                    QueryMes = "Failed To Find Record With ID = " + sqlTablePrimaryKey;
-                    console.log(QueryRes + ": " + QueryMes);
-                } else {
-                    QueryRes = "Success";
-                    QueryMes = "Record Deleted! ID = " + sqlTablePrimaryKey;
-                }
+                QueryRes = "Success";
+                QueryMes = "Record Deleted! ID = " + recordID;
             }
         } else if (sqlType == "create") {
             if (err) {
@@ -438,7 +424,7 @@ function runSQL(sqlType, sqlQuery, sqlTablePrimaryKey, res) {
                 QueryMes = "Failed to Insert.";
             } else {
                 QueryRes = "Success";
-                QueryMes = "Record Inserted. ID = " + sqlTablePrimaryKey;
+                QueryMes = "Record Inserted. ID = " + recordID;
                 console.log(QueryRes + ": " + QueryMes);
             }
         } else if (sqlType == "update") {
@@ -448,7 +434,7 @@ function runSQL(sqlType, sqlQuery, sqlTablePrimaryKey, res) {
                 QueryMes = "Failed to Update.";
             } else {
                 QueryRes = "Success";
-                QueryMes = "Record Updated. ID = " + sqlTablePrimaryKey;
+                QueryMes = "Record Updated. ID = " + recordID;
                 console.log(QueryRes + ": " + QueryMes);
             }
         }
