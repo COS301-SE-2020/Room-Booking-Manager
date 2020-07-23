@@ -199,7 +199,7 @@ function FP_update_record(body_data, res) {
             "', isExternal = '" +
             body_data.isExternal +
             "', isAvailable = '" +
-            isAvailable +
+            body_data.isAvailable +
             "' WHERE RoomID = '" +
             body_data.RoomID +
             "';";
