@@ -147,7 +147,7 @@ async function FindRoom(Organizer, Attendees, AmenityRequired)
     let Monitor = "Monitor = 1";
     let WhiteboardProjector = "Whiteboard = 1 AND Projector = 1";
     let WhiteboardMonitor = "Whiteboard =1 AND Monitor = 1";
-
+    let Amenity="";
     //
     //Search Body which is a string and find Amenity
     //
@@ -202,7 +202,7 @@ async function FindRoom(Organizer, Attendees, AmenityRequired)
 
         //Connect to Database
         let pool = await sql.connect(config);
-
+       
 
         //Query to the database for AMENITIES
         let sqlQuery = "SELECT * FROM FloorPlan WHERE " + Amenity + "AND isAvailable = 1";
