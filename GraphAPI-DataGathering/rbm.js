@@ -3,6 +3,7 @@ const axios = require('axios').default;
 var qs = require('qs');
 const { json } = require('body-parser');
 const { timeStamp } = require('console');
+const { Connection, Request } = require("tedious");
 //Access the drivers
 let sql = require("mssql");
 
@@ -65,12 +66,12 @@ var i=0; // initial message count
        // console.log("ATTENDEES SPECIFIC VALUE" + ext.attendees);
         // var room = await findRoom(mail.from[0].address, ext);
         var AttendeesEmail = [];
-        for(var i = 0; i < mail.to.length; i++)
-        {
-          AttendeesEmail.push(mail.to[i].address)
-        }
+        // for(var i = 0; i < mail.to.length; i++)
+        // {
+        //   AttendeesEmail.push(mail.to[i].address)
+        // }
         var room = "";
-        FindRoom(mail.from[0].address, AttendeesEmail)
+        FindRoom(mail.from[0].address)
           .then(result=>{
               room = result;
               UpdateDelete()
@@ -87,7 +88,7 @@ var i=0; // initial message count
         {
           console.log("ROOM FOUND : " + room);
           var roo = 'Berlin';
-          var updateRoom = await updateEvent(test.event,accessToken,room);
+          var updateRoom = await getOrgID(accessToken,test.event,room);
           //var ext = JSON.parse(ext);
           // var deleterEvent = await deleteEvent(test.event.id,accessToken);
           //console.log("Event has been deleted:"+deleterEvent);
@@ -102,29 +103,42 @@ var i=0; // initial message count
 //----------------------------------------------------------------------------------------------
 //-----------------------------------START OF FIND ROOM FUNCTION--------------------------------
 //----------------------------------------------------------------------------------------------
-async function FindRoom(Organizer, Attendees)
+const config = {
+  authentication: {
+      options: {
+      userName: "threshold", 
+      password: "thresh#301" 
+      },
+      type: "default"
+  },
+  server: 'rbmserver.database.windows.net', 
+  database: 'RBM Database',
+  encrypt: true
+};
+async function FindRoom(Organizer/*, Attendees*/)
 {
 
     //Configure Database
-    const config = {
-        authentication: {
-            options: {
-            userName: "threshold", 
-            password: "thresh#301" 
-            },
-            type: "default"
-        },
-        server: 'rbmserver.database.windows.net', 
-        database: 'RBM Database',
-        encrypt: true
-    };
+    // const config = {
+    //     authentication: {
+    //         options: {
+    //         userName: "threshold", 
+    //         password: "thresh#301" 
+    //         },
+    //         type: "default"
+    //     },
+    //     server: 'rbmserver.database.windows.net', 
+    //     database: 'RBM Database',
+    //     encrypt: true
+    // };
     
+    let AttendeesEmail = ["COS301@teamthreshold.onmicrosoft.com"];
 
     //Store all Emails in 1 Array
-    Attendees.push(Organizer);
-    for(let i = 0; i < Attendees.length; i++)
+    AttendeesEmail.push(Organizer);
+    for(let i = 0; i < AttendeesEmail.length; i++)
     {
-      Attendees[i] = "'" + Attendees[i] + "'"; 
+        AttendeesEmail[i] = "'" + AttendeesEmail[i] + "'"; 
     }
 
     //Variables
@@ -171,7 +185,7 @@ async function FindRoom(Organizer, Attendees)
 
     //Distance Variable
     let LocationID = [];
-    let sizeEmployee = Attendees.length;
+    let sizeEmployee = AttendeesEmail.length;
     let distance = [];
     let averageDistance = [];
     let total = 0;
@@ -215,14 +229,14 @@ async function FindRoom(Organizer, Attendees)
         
 
         //Get Location ID of the Employees
-        sqlQuery = "SELECT * FROM EmployeeDetails WHERE EmpEmail = " + Attendees[0];
+        sqlQuery = "SELECT * FROM EmployeeDetails WHERE EmpEmail = " + AttendeesEmail[0];
         for(let i = 1; i < sizeEmployee; i++)
         {
             if(i != sizeEmployee)
             {
                 sqlQuery = sqlQuery + " OR EmpEmail = ";
             }
-            sqlQuery = sqlQuery + Attendees[i];
+            sqlQuery = sqlQuery + AttendeesEmail[i];
             
         }
 
@@ -560,7 +574,9 @@ async function FindRoom(Organizer, Attendees)
     return testString;
   }
 
-
+var org;
+var sub;
+var time;
   async function extractEventID(relevantData,organizer,subject)
   {
       console.log("extrace data : "+relevantData);
@@ -591,8 +607,9 @@ async function FindRoom(Organizer, Attendees)
     })
 };
     console.log(JSON.stringify(jsonfied));
-    
-
+      org = results[0].organizer.emailAddress.address;
+      sub = results[0].subject;
+      time = results[0].start.dateTime;
       var object = {
           "event":
           {
@@ -648,12 +665,110 @@ async function FindRoom(Organizer, Attendees)
 
   }
 
+//************************************** */
+  async function getOrgID(access,event,room)
+{
+  console.log("Getting organizer id...");
+accessBearer = 'Bearer '+access;
+var userDetails = "";
 
-  async function updateEvent(event,accessToken,room){
+var users = {
+  method: 'get',
+  //url: 'https://graph.microsoft.com/v1.0/users',
+  // NOTE : TIME ZONE ISSUES, in Query always -by 2, method to adjust date from emails given date
+  url: 'https://graph.microsoft.com/v1.0/users',
+  //url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events?select=subject,organizer,attendees,start,end',
+  headers: { 
+    'Authorization': accessBearer,
+    'Prefer': 'outlook.timezone="South Africa Standard Time"'
+  },
+  data : data
+};
+
+await axios(users)
+.then(function (response) {
+  userDetails += JSON.stringify(response.data);
+  var uData = JSON.parse(userDetails);
+  //console.log("USERS---"+uData.value[0].displayName);
+  for(let i in uData.value) //go through all users
+  {
+    // console.log(uData.value[i].mail+ "---USERS---"+org);
+    if(uData.value[i].mail == event.organizer)
+    {
+      console.log("found match");
+      orgID = uData.value[i].id;
+      console.log(event.organizer + " has id of " + orgID);
+      getMeetingID(access,orgID,room);
+      //return orgID;
+    }
+  }
+})
+.catch(function (error) {
+  console.log(error);
+});
+  
+}
+
+//get meeting id
+async function getMeetingID(access,orgID,room)
+{
+  console.log("Getting meeting id...");
+accessBearer = 'Bearer '+access;
+var meetingID;
+var eventsList = "";
+var eventData;
+console.log(orgID);
+var userEvents = {
+  method: 'get',
+  //url: 'https://graph.microsoft.com/v1.0/users',
+  // NOTE : TIME ZONE ISSUES, in Query always -by 2, method to adjust date from emails given date
+  url: 'https://graph.microsoft.com/v1.0/users/'+orgID+'/calendar/events?$select=id,subject,start',
+  //url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events?select=subject,organizer,attendees,start,end',
+  headers: { 
+    'Authorization': accessBearer,
+    'Prefer': 'outlook.timezone="South Africa Standard Time"'
+  },
+  data : data
+};
+
+await axios(userEvents)
+.then(function (response) {
+  eventsList += JSON.stringify(response.data);
+  eventData = JSON.parse(eventsList);
+  console.log(eventData);
+  console.log(sub + "-----" + time);
+  for(let i in eventData.value) //go through all users
+  {
+
+  //console.log("Event "+ i + " " + eventData.value[i].subject + " " + eventData.value[i].start.dateTime);
+    if(eventData.value[i].subject == sub)// && eventData.value[i].start.dateTime === time)
+    {
+      console.log("meeting found");
+      meetingID = eventData.value[i].id;
+      // updateEvent(access,orgID,meetingID,room);
+      //return meetingID;
+    }
+  }
+  console.log("meeting id " + meetingID);
+  updateEvent(access,orgID,meetingID,room);
+})
+.catch(function (error) {
+  console.log(error);
+});
+ 
+}
+
+  async function updateEvent(accessToken,organiserID,eventID,room){
+    console.log("Update event location");
+    //var organiserID = await getOrgID(accessToken,event.organizer);
+    //console.log(organiserID + " was id returned");
+    //var eventID = getMeetingID(organiserID,accessToken);
+    console.log("Org ID " + organiserID + " event id " + eventID);
     var eData;
     var apiData ='';
     var accessBearer = 'Bearer '+ accessToken;
-    axios.patch('https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events/'+event.id,
+    var url = "https://graph.microsoft.com/v1.0/users/" + organiserID + "/calendar/events/" + eventID;
+    axios.patch(url,
     {
       location: 
       {
@@ -669,21 +784,22 @@ async function FindRoom(Organizer, Attendees)
       apiData += JSON.stringify(response.data);
       console.log("success");
       eData = JSON.parse(apiData);  
-      checkAcceptance(event,accessBearer);//check attendeess that accepted the meeting
+      checkAcceptance(accessBearer,organiserID,eventID);//check attendeess that accepted the meeting
     })
     .catch(function (error) {
       console.log(error);
     });
-    async function checkAcceptance(event1,accessBearer)
+    async function checkAcceptance(accessBearer,orgID,MeetingID)
     {
       console.log("Checking acceptance");
       var _response ="";
       var event;
+      //var _url = "https://graph.microsoft.com/v1.0/users/" + orgID + "/calendar/events/" + MeetingID;
       var configg = {
         method: 'get',
         //url: 'https://graph.microsoft.com/v1.0/users',
         // NOTE : TIME ZONE ISSUES, in Query always -by 2, method to adjust date from emails given date
-        url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events/'+event1.id,
+        url: "https://graph.microsoft.com/v1.0/users/"+ orgID +"/calendar/events/"+ MeetingID,
         //url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events?select=subject,organizer,attendees,start,end',
         headers: { 
           'Authorization': accessBearer,
@@ -732,11 +848,12 @@ async function FindRoom(Organizer, Attendees)
           }
           else
           {
-            //setTimeout(checkAcceptance,10000);
+            console.log(att_email + " hasn't repsonded");
+            setTimeout(checkAcceptance,60000);
           }
         }
       }  
-    accept(meetingID,startTime,endTime,_attendees,room);
+      accept(meetingID, startTime, endTime, org_email, _attendees, room);
     }
     function accept(mID,sTime,eTime,org,att,room)// insert a the meeting in the meetings table
     {
@@ -748,26 +865,43 @@ async function FindRoom(Organizer, Attendees)
           console.error(err.message);
         } else {
           console.log("Create request");
-          const request = new Request(
-            `INSERT INTO Meetings (MeetingID,StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID) VALUES('${mID}','${sTime}','${eTime}','${org}','${att}','${null}','${room}')`,
-            //`SELECT [RoomID] FROM [FloorPlan]`, // SELECT ALL FROM WHERE ROOMSTATUS == EMPTY etc. 
-            (err, response) => {
-              if (err) {
-                console.error(err.message);
-              } else {
-                console.log(`${response}`);
-                conn.close();
-              }
-            }
+          var x = new Date(sTime).toISOString();
+          var y = new Date(eTime).toISOString();
+
+          var amenity = "Blackboard";
+
+          console.log(
+              "StartTime = " +
+                  x +
+                  "\n EndTime =  " +
+                  y +
+                  "\n Organizer =  " +
+                  org +
+                  " \n Participants =  " +
+                  att +
+                  "\n Amenity =  " +
+                  amenity +
+                  " \n Room =  " +
+                  room
           );
+
+          const request = new Request(
+              `INSERT INTO Meetings VALUES('${mID}','${x}', '${y}', '${org}', '${att}', '${amenity}', '${room}')`,
+              //`SELECT [RoomID] FROM [FloorPlan]`, // SELECT ALL FROM WHERE ROOMSTATUS == EMPTY etc.
+              (err, response) => {
+                  if (err) {
+                      console.error(err.message);
+                  } else {
+                      console.log(`${response}`);
+                      conn.close();
+                  }
+              }
+          );
+
           conn.execSql(request);
         }
       });
     }
 
-    function decline()//
-    {
-      console.log("Declined:Insert");
-    }
 }
   
