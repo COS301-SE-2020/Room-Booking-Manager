@@ -14,6 +14,9 @@ This software is being developed to optimize organizational facilities and reinv
 ## Coding standards
 <a href="https://www.overleaf.com/read/jtvmjkckkqcq"> Coding standards </a><br>
 
+## User Manual
+<a href=""> User Manual </a><br>
+
 ## Team Members
 > <b>Abubakar Darki (Leader): </b> <br>
  * <a href="https://abu-22.github.io/"> GitHub  Profile  Page</a><br>
