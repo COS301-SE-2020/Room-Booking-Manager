@@ -3,6 +3,9 @@ const axios = require('axios').default;
 var qs = require('qs');
 const { json } = require('body-parser');
 const { timeStamp } = require('console');
+//Access the drivers
+let sql = require("mssql");
+
 
  // data is a JSON object which is the config sent with every API request 
 var data = qs.stringify({
@@ -61,8 +64,13 @@ var i=0; // initial message count
        // console.log("EXT VALUE" + JSON.stringify(ext.attendees));
        // console.log("ATTENDEES SPECIFIC VALUE" + ext.attendees);
         // var room = await findRoom(mail.from[0].address, ext);
+        var AttendeesEmail = [];
+        // for(var i = 0; i < mail.to.length; i++)
+        // {
+        //   AttendeesEmail.push(mail.to[i].address)
+        // }
         var room = "";
-        FindRoom()
+        FindRoom(mail.from[0].address)
           .then(result=>{
               room = result;
               UpdateDelete()
@@ -94,10 +102,8 @@ var i=0; // initial message count
 //----------------------------------------------------------------------------------------------
 //-----------------------------------START OF FIND ROOM FUNCTION--------------------------------
 //----------------------------------------------------------------------------------------------
-async function FindRoom()
+async function FindRoom(Organizer/*, Attendees*/)
 {
-    //Access the drivers
-    let sql = require("mssql");
 
     //Configure Database
     const config = {
@@ -113,11 +119,10 @@ async function FindRoom()
         encrypt: true
     };
     
-    let OrganizerEmail = "AdeleV@teamthreshold.onmicrosoft.com";
     let AttendeesEmail = ["COS301@teamthreshold.onmicrosoft.com"];
 
     //Store all Emails in 1 Array
-    AttendeesEmail.push(OrganizerEmail);
+    AttendeesEmail.push(Organizer);
     for(let i = 0; i < AttendeesEmail.length; i++)
     {
         AttendeesEmail[i] = "'" + AttendeesEmail[i] + "'"; 
