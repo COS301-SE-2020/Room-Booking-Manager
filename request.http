@@ -3,13 +3,15 @@ Content-Type: application/json
 
 {
     "table" : "EmployeeDetails",
-	"request" : "view",
+	"request" : "delete",
     "data" : {
-                    "FirstName": "Testing",
-                    "LastName": "Vance",
-                    "EmpEmail": "Testing@teamthreshold.onmicrosoft.com",
-                    "EmpPassword": "password",
-                    "isAdmin": false,
-                    "LocationID": "1C2"
-                }
+    "FirstName": "Test",
+    "LastName": "Fernandez",
+    "EmpEmail": "Testing@teamthreshold.onmicrosoft.com",
+    "EmpPassword": "password",
+    "isAdmin": false,
+    "LocationID": "1O2",
+    "QueryResponse": "Success",
+    "QueryMessage": "All Records Successfully Viewed!."
+  }
 }
