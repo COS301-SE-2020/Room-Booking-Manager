@@ -15,6 +15,10 @@ const config = {
     database: "RBM Database",
 };
 
+var response = [{}];
+let QueryRes = "";
+let QueryMes = "";
+
 var table = "";
 var operation = "";
 var bodyData = "";
@@ -84,20 +88,7 @@ function read_record(table, primaryKey, recordID, res) {
         var request = new sql.Request();
         var sqlQuery = "SELECT * FROM " + table + " WHERE " + primaryKey + "= '" + recordID + "';";
 
-        request.query(sqlQuery, function (err, recordset) {
-            if (err) {
-                console.log(err);
-                res.send("Error: Failed To Read Record.");
-            } else {
-                if (recordset.recordset.length == 0) {
-                    console.log("Error: Failed To Find Record With ID = " + recordID);
-                    res.send("Error: Failed To Find Record With ID = " + recordID);
-                } else {
-                    console.log("Success: Record Retrieved! ID = " + recordID);
-                    res.send(recordset.recordset);
-                }
-            }
-        });
+        runSQL("read", sqlQuery, recordID, res);
     });
 }
 
@@ -109,21 +100,7 @@ function view_records(table, res) {
         var request = new sql.Request();
         var sqlQuery = "SELECT * FROM " + table + ";";
 
-        // query to the database and get the records
-        request.query(sqlQuery, function (err, recordset) {
-            if (err) {
-                console.log(err);
-                res.send("Error: Failed To View All Records.");
-            } else {
-                if (recordset.recordset.length == 0) {
-                    console.log("Error: Table is empty.");
-                    res.send("Error: Table is empty.");
-                } else {
-                    console.log("All Records Successfully Viewed!");
-                    res.send(recordset.recordset);
-                }
-            }
-        });
+        runSQL("view", sqlQuery, "", res);
     });
 }
 
@@ -159,15 +136,7 @@ function FP_create_record(body_data, res) {
             body_data.isAvailable +
             "');";
 
-        request.query(sqlQuery, function (err, recordset) {
-            if (err) {
-                console.log(err);
-                res.send("Error: Failed to insert.");
-            } else {
-                console.log("Success: Record Created! ID = " + body_data.RoomID);
-                res.send("Success: Record Created. ID = " + body_data.RoomID);
-            }
-        });
+        runSQL("create", sqlQuery, body_data.RoomID, res);
     });
 }
 
@@ -204,15 +173,7 @@ function FP_update_record(body_data, res) {
             body_data.RoomID +
             "';";
 
-        request.query(sqlQuery, function (err, recordset) {
-            if (err) {
-                console.log(err);
-                res.send("Error: Failed to update.");
-            } else {
-                console.log("Success: Record Updated! (ID = " + body_data.RoomID + ")");
-                res.send("Success: Record Updated.ID = " + body_data.RoomID);
-            }
-        });
+        runSQL("update", sqlQuery, body_data.RoomID, res);
     });
 }
 
@@ -224,30 +185,7 @@ function delete_record(table, primaryKey, recordID, res) {
 
         var sqlQuery = "SELECT * FROM " + table + " WHERE " + primaryKey + "= '" + recordID + "';";
 
-        request.query(sqlQuery, function (err, recordset) {
-            if (err) {
-                console.log(err);
-                res.send("Error: Failed To Read Record.");
-            } else {
-                if (recordset.recordset.length == 0) {
-                    console.log("Error: Failed To Find Record With ID = " + recordID);
-                    res.send("Error: Failed To Find Record With ID = " + recordID);
-                } else {
-                    sqlQuery =
-                        "DELETE FROM " + table + " WHERE " + primaryKey + "= '" + recordID + "';";
-
-                    request.query(sqlQuery, function (err, recordset) {
-                        if (err) {
-                            console.log(err);
-                            res.send("Error: Failed To Delete Record.");
-                        } else {
-                            console.log("Success: Record Deleted! ID = " + recordID);
-                            res.send("Success: Record Deleted. ID = " + recordID);
-                        }
-                    });
-                }
-            }
-        });
+        runSQL("delete", sqlQuery, recordID, res);
     });
 }
 
@@ -275,15 +213,7 @@ function UD_create_record(body_data, res) {
             body_data.LocationID +
             "');";
 
-        request.query(sqlQuery, function (err, recordset) {
-            if (err) {
-                console.log(err);
-                res.send("Error: Failed To Insert.");
-            } else {
-                console.log("Success: Record Created! ID = " + body_data.EmpEmail);
-                res.send("Success: Record Created. ID = " + body_data.EmpEmail);
-            }
-        });
+        runSQL("create", sqlQuery, body_data.EmpEmail, res);
     });
 }
 
@@ -309,15 +239,7 @@ function UD_update_record(body_data, res) {
             body_data.EmpEmail +
             "';";
 
-        request.query(sqlQuery, function (err, recordset) {
-            if (err) {
-                console.log(err);
-                res.send("Error: Failed to update.");
-            } else {
-                console.log("Success: Record Updated! ID = " + body_data.EmpEmail);
-                res.send("Success: Record Updated. ID = " + body_data.EmpEmail);
-            }
-        });
+        runSQL("update", sqlQuery, body_data.EmpEmail, res);
     });
 }
 
@@ -357,15 +279,7 @@ function DIST_create_record(body_data, res) {
             body_data.Washington +
             "');";
 
-        request.query(sqlQuery, function (err, recordset) {
-            if (err) {
-                console.log(err);
-                res.send("Error: Failed To Insert.");
-            } else {
-                console.log("Success: Record Created! ID = " + body_data.Rooms);
-                res.send("Success: Record Created. ID = " + body_data.Rooms);
-            }
-        });
+        runSQL("create", sqlQuery, body_data.Rooms, res);
     });
 }
 
@@ -402,15 +316,7 @@ function DIST_update_record(body_data, res) {
             body_data.Rooms +
             "';";
 
-        request.query(sqlQuery, function (err, recordset) {
-            if (err) {
-                console.log(err);
-                res.send("Error: Failed to update.");
-            } else {
-                console.log("Success: Record Updated! ID = " + body_data.Rooms);
-                res.send("Success: Record Updated. ID = " + body_data.Rooms);
-            }
-        });
+        runSQL("update", sqlQuery, body_data.Rooms, res);
     });
 }
 
@@ -425,9 +331,9 @@ function MEET_create_record(body_data, res) {
         var request = new sql.Request();
 
         var sqlQuery =
-            "INSERT INTO Meetings VALUES (" +
+            "INSERT INTO Meetings VALUES ('" +
             body_data.MeetingID +
-            "," +
+            "','" +
             new Date(body_data.StartTime).toISOString() +
             "','" +
             new Date(body_data.EndTime).toISOString() +
@@ -441,15 +347,7 @@ function MEET_create_record(body_data, res) {
             body_data.RoomID +
             "');";
 
-        request.query(sqlQuery, function (err, recordset) {
-            if (err) {
-                console.log(err);
-                res.send("Error: Failed To Insert.");
-            } else {
-                console.log("Success: Record Created! ID = " + body_data.MeetingID);
-                res.send("Success: Record Created. ID = " + body_data.MeetingID);
-            }
-        });
+        runSQL("create", sqlQuery, body_data.MeetingID, res);
     });
 }
 
@@ -476,15 +374,89 @@ function MEET_update_record(body_data, res) {
             body_data.MeetingID +
             "';";
 
-        request.query(sqlQuery, function (err, recordset) {
+        runSQL("update", sqlQuery, body_data.MeetingID, res);
+    });
+}
+
+function runSQL(sqlType, sqlQuery, sqlTablePrimaryKey, res) {
+    var request = new sql.Request();
+
+    request.query(sqlQuery, function (err, recordset) {
+        response = [{}];
+
+        if (sqlType == "view") {
             if (err) {
                 console.log(err);
-                res.send("Error: Failed To Insert.");
+                QueryRes = "Error";
+                QueryMes = "Failed To View All Records.";
             } else {
-                console.log("Success: Record Update! ID = " + body_data.MeetingID);
-                res.send("Success: Record Update. ID = " + body_data.MeetingID);
+                if (recordset.recordset.length == 0) {
+                    QueryRes = "Error";
+                    QueryMes = "Table is empty.";
+                    console.log(QueryRes + ": " + QueryMes);
+                } else {
+                    QueryRes = "Success";
+                    QueryMes = "All Records Successfully Viewed!.";
+                    response = recordset.recordset;
+                }
             }
-        });
+        } else if (sqlType == "read") {
+            if (err) {
+                console.log(err);
+                QueryRes = "Error";
+                QueryMes = "Failed To Read Record";
+            } else {
+                if (recordset.recordset.length == 0) {
+                    QueryRes = "Error";
+                    QueryMes = "Failed To Find Record With ID = " + sqlTablePrimaryKey;
+                    console.log(QueryRes + ": " + QueryMes);
+                } else {
+                    QueryRes = "Success";
+                    QueryMes = "Record Retrieved! ID = " + sqlTablePrimaryKey;
+                    response = recordset.recordset;
+                }
+            }
+        } else if (sqlType == "delete") {
+            if (err) {
+                console.log(err);
+                QueryRes = "Error";
+                QueryMes = "Failed To Delete Record";
+            } else {
+                if (recordset.recordset.length == 0) {
+                    QueryRes = "Error";
+                    QueryMes = "Failed To Find Record With ID = " + sqlTablePrimaryKey;
+                    console.log(QueryRes + ": " + QueryMes);
+                } else {
+                    QueryRes = "Success";
+                    QueryMes = "Record Deleted! ID = " + sqlTablePrimaryKey;
+                }
+            }
+        } else if (sqlType == "create") {
+            if (err) {
+                console.log(err);
+                QueryRes = "Error";
+                QueryMes = "Failed to Insert.";
+            } else {
+                QueryRes = "Success";
+                QueryMes = "Record Inserted. ID = " + sqlTablePrimaryKey;
+                console.log(QueryRes + ": " + QueryMes);
+            }
+        } else if (sqlType == "update") {
+            if (err) {
+                console.log(err);
+                QueryRes = "Error";
+                QueryMes = "Failed to Update.";
+            } else {
+                QueryRes = "Success";
+                QueryMes = "Record Updated. ID = " + sqlTablePrimaryKey;
+                console.log(QueryRes + ": " + QueryMes);
+            }
+        }
+
+        response.map((i) => (i.QueryResponse = QueryRes));
+        response.map((i) => (i.QueryMessage = QueryMes));
+
+        res.send(response);
     });
 }
 
