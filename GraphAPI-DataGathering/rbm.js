@@ -65,12 +65,12 @@ var i=0; // initial message count
        // console.log("ATTENDEES SPECIFIC VALUE" + ext.attendees);
         // var room = await findRoom(mail.from[0].address, ext);
         var AttendeesEmail = [];
-        // for(var i = 0; i < mail.to.length; i++)
-        // {
-        //   AttendeesEmail.push(mail.to[i].address)
-        // }
+        for(var i = 0; i < mail.to.length; i++)
+        {
+          AttendeesEmail.push(mail.to[i].address)
+        }
         var room = "";
-        FindRoom(mail.from[0].address)
+        FindRoom(mail.from[0].address, AttendeesEmail)
           .then(result=>{
               room = result;
               UpdateDelete()
@@ -102,7 +102,7 @@ var i=0; // initial message count
 //----------------------------------------------------------------------------------------------
 //-----------------------------------START OF FIND ROOM FUNCTION--------------------------------
 //----------------------------------------------------------------------------------------------
-async function FindRoom(Organizer/*, Attendees*/)
+async function FindRoom(Organizer, Attendees)
 {
 
     //Configure Database
@@ -119,13 +119,12 @@ async function FindRoom(Organizer/*, Attendees*/)
         encrypt: true
     };
     
-    let AttendeesEmail = ["COS301@teamthreshold.onmicrosoft.com"];
 
     //Store all Emails in 1 Array
-    AttendeesEmail.push(Organizer);
-    for(let i = 0; i < AttendeesEmail.length; i++)
+    Attendees.push(Organizer);
+    for(let i = 0; i < Attendees.length; i++)
     {
-        AttendeesEmail[i] = "'" + AttendeesEmail[i] + "'"; 
+      Attendees[i] = "'" + Attendees[i] + "'"; 
     }
 
     //Variables
@@ -172,7 +171,7 @@ async function FindRoom(Organizer/*, Attendees*/)
 
     //Distance Variable
     let LocationID = [];
-    let sizeEmployee = AttendeesEmail.length;
+    let sizeEmployee = Attendees.length;
     let distance = [];
     let averageDistance = [];
     let total = 0;
@@ -216,14 +215,14 @@ async function FindRoom(Organizer/*, Attendees*/)
         
 
         //Get Location ID of the Employees
-        sqlQuery = "SELECT * FROM EmployeeDetails WHERE EmpEmail = " + AttendeesEmail[0];
+        sqlQuery = "SELECT * FROM EmployeeDetails WHERE EmpEmail = " + Attendees[0];
         for(let i = 1; i < sizeEmployee; i++)
         {
             if(i != sizeEmployee)
             {
                 sqlQuery = sqlQuery + " OR EmpEmail = ";
             }
-            sqlQuery = sqlQuery + AttendeesEmail[i];
+            sqlQuery = sqlQuery + Attendees[i];
             
         }
 
