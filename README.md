@@ -11,6 +11,9 @@ This software is being developed to optimize organizational facilities and reinv
 ## Project Management Tool
 * <a href="https://app.clickup.com/2545184/home/landing">Clickup</a>
 
+## Coding standards
+<a href="https://www.overleaf.com/read/jtvmjkckkqcq"> Coding standards </a><br>
+
 ## Team Members
 > <b>Abubakar Darki (Leader): </b> <br>
  * <a href="https://abu-22.github.io/"> GitHub  Profile  Page</a><br>
