@@ -66,12 +66,12 @@ var i=0; // initial message count
        // console.log("ATTENDEES SPECIFIC VALUE" + ext.attendees);
         // var room = await findRoom(mail.from[0].address, ext);
         var AttendeesEmail = [];
-        // for(var i = 0; i < mail.to.length; i++)
-        // {
-        //   AttendeesEmail.push(mail.to[i].address)
-        // }
+        for(var i = 0; i < mail.to.length; i++)
+        {
+          AttendeesEmail.push(mail.to[i].address)
+        }
         var room = "";
-        FindRoom(mail.from[0].address)
+        FindRoom(mail.from[0].address, AttendeesEmail, mail.subject)
           .then(result=>{
               room = result;
               UpdateDelete()
@@ -115,7 +115,8 @@ const config = {
   database: 'RBM Database',
   encrypt: true
 };
-async function FindRoom(Organizer/*, Attendees*/)
+
+async function FindRoom(Organizer, Attendees, AmenityRequired)
 {
 
     //Configure Database
@@ -132,13 +133,12 @@ async function FindRoom(Organizer/*, Attendees*/)
     //     encrypt: true
     // };
     
-    let AttendeesEmail = ["COS301@teamthreshold.onmicrosoft.com"];
 
     //Store all Emails in 1 Array
-    AttendeesEmail.push(Organizer);
-    for(let i = 0; i < AttendeesEmail.length; i++)
+    Attendees.push(Organizer);
+    for(let i = 0; i < Attendees.length; i++)
     {
-        AttendeesEmail[i] = "'" + AttendeesEmail[i] + "'"; 
+      Attendees[i] = "'" + Attendees[i] + "'"; 
     }
 
     //Variables
@@ -148,36 +148,35 @@ async function FindRoom(Organizer/*, Attendees*/)
     let WhiteboardProjector = "Whiteboard = 1 AND Projector = 1";
     let WhiteboardMonitor = "Whiteboard =1 AND Monitor = 1";
 
-    let Amenity = "";
-
     //
     //Search Body which is a string and find Amenity
     //
 
     // let AmenityRequired = ("Amenity Required:  projector, board"); //String to search
-    // AmenityRequired = AmenityRequired.toLowerCase();
+    AmenityRequired = AmenityRequired.toLowerCase();
 
 
-    // let searchBoard = AmenityRequired.search("board");
-    // let searchProjector = AmenityRequired.search("projector");
-    // let searchMonitor = AmenityRequired.search("monitor");
+    let searchBoard = AmenityRequired.search("board");
+    let searchProjector = AmenityRequired.search("projector");
+    let searchMonitor = AmenityRequired.search("monitor");
 
-    // if(searchBoard != -1)
-    //   Amenity = Whiteboard;
+    if(searchBoard != -1)
+      Amenity = Whiteboard;
 
-    // if(searchMonitor != -1)
-    //   Amenity = Monitor;
+    if(searchMonitor != -1)
+      Amenity = Monitor;
 
-    // if(searchProjector != -1)
-    //   Amenity = Projector;
+    if(searchProjector != -1)
+      Amenity = Projector;
 
-    // if( searchBoard != -1 && searchProjector != -1)
-    //   Amenity = WhiteboardProjector;
+    if( searchBoard != -1 && searchProjector != -1)
+      Amenity = WhiteboardProjector;
 
-    // if(searchBoard != -1 && searchMonitor != -1)
-    //   Amenity = WhiteboardMonitor;
+    if(searchBoard != -1 && searchMonitor != -1)
+      Amenity = WhiteboardMonitor;
 
-    Amenity = Whiteboard;
+    if(searchBoard == -1 && searchMonitor != -1 && searchProjector != -1)
+      Amenity = "";
 
     //Amenity Variable
     let roomName = [];
@@ -185,7 +184,7 @@ async function FindRoom(Organizer/*, Attendees*/)
 
     //Distance Variable
     let LocationID = [];
-    let sizeEmployee = AttendeesEmail.length;
+    let sizeEmployee = Attendees.length;
     let distance = [];
     let averageDistance = [];
     let total = 0;
@@ -229,14 +228,14 @@ async function FindRoom(Organizer/*, Attendees*/)
         
 
         //Get Location ID of the Employees
-        sqlQuery = "SELECT * FROM EmployeeDetails WHERE EmpEmail = " + AttendeesEmail[0];
+        sqlQuery = "SELECT * FROM EmployeeDetails WHERE EmpEmail = " + Attendees[0];
         for(let i = 1; i < sizeEmployee; i++)
         {
             if(i != sizeEmployee)
             {
                 sqlQuery = sqlQuery + " OR EmpEmail = ";
             }
-            sqlQuery = sqlQuery + AttendeesEmail[i];
+            sqlQuery = sqlQuery + Attendees[i];
             
         }
 
