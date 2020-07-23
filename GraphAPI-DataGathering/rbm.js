@@ -42,10 +42,10 @@ n.on('end', () => n.start()) // session closed
   .on('mail', mail => beginProcess(mail))
   .start();
 
-var i=0; // initial message count
+var i=0; // initial message count of how many messages serviced yet
   async function beginProcess(mail)
   {
-      console.log("Messages processed = " + i);
+      //console.log("Messages processed = " + i);
       i++;
       console.log(mail.subject, mail.from[0].address, "message ID = "+ mail.messageId);
       // Skip emails that start with Cancelled in subject 
@@ -56,8 +56,8 @@ var i=0; // initial message count
      // console.log("Data from API is :" + relevantData);
      // Search relevant data to find correct event we need matching subject and 
       var extractEventIDval = await (extractEventID(relevantData,mail.from[0].address,mail.subject)); 
-      console.log(extractEventIDval);
-      console.log( " PARSING BACK TO JSON ");
+     // console.debug(extractEventIDval);
+      //console.debug( " PARSING BACK TO JSON ");
       var test = JSON.parse(extractEventIDval);
      // console.log("extract VALUE" + test.event.attendees.temp[0].name);
      // console.log("ATTENDEES extract SPECIFIC VALUE" + extractEventIDval.attendees.temp);
@@ -86,10 +86,10 @@ var i=0; // initial message count
         // setTimeout(afterTimeout, 15000); //Timeout event
         async function UpdateDelete()
         {
-          console.log("ROOM FOUND : " + room);
+          console.log("Room found: " + room);
           var roo = 'Berlin';
           var updateRoom = await getOrgID(accessToken,test.event,room);
-          //var ext = JSON.parse(ext);
+          
           // var deleterEvent = await deleteEvent(test.event.id,accessToken);
           //console.log("Event has been deleted:"+deleterEvent);
         }
@@ -192,7 +192,7 @@ async function FindRoom(Organizer, Attendees, AmenityRequired)
     let index;
 
 
-    // Function to Query the Database
+    // Function to Query the Database regarding finding a suitable room
     async function QueryDatabase () {
 
 
@@ -508,7 +508,7 @@ async function FindRoom(Organizer, Attendees, AmenityRequired)
 
 
 
-  // This function gets and returns the API token 
+  // This function gets and returns the API token used for authentication with MS Graph API
   async function getAPIToken(){
 
        // config is the urls we will be calling and which headers etc and including the above data 
@@ -578,9 +578,9 @@ var sub;
 var time;
   async function extractEventID(relevantData,organizer,subject)
   {
-      console.log("extrace data : "+relevantData);
-      console.log("extracted data organizer : "+ organizer);
-      console.log("extracted data subject : "+ subject);
+     // console.debug("extracted data : "+relevantData);
+//console.debug("extracted data organizer : "+ organizer);
+      //console.debug("extracted data subject : "+ subject);
       var events = JSON.parse(relevantData);
       var results = [];
     var searchVal = organizer;
@@ -590,14 +590,14 @@ var time;
         results.push(events.value[i]);
         }
     }
-      console.log(results);
+     // console.log(results);
       var temp = [] ;
     for (var i=0;i<results[0].attendees.length;i++)
     {
         temp.push(results[0].attendees[i].emailAddress.address);
     }
    temp = temp + '';
-    console.log("TEMP ARRAY HAS THIS: "+temp);
+   // console.debug("TEMP ARRAY HAS THIS: "+temp);
 
    var test = temp.split(",");
    var jsonfied = {
@@ -605,7 +605,7 @@ var time;
         return {name: name};
     })
 };
-    console.log(JSON.stringify(jsonfied));
+    //console.log(JSON.stringify(jsonfied));
       org = results[0].organizer.emailAddress.address;
       sub = results[0].subject;
       time = results[0].start.dateTime;
@@ -623,7 +623,7 @@ var time;
 
           }
       }
-      console.log("IN EXTRACT EVENT THIS IS OBJECT : "+object);
+     // console.debug("IN EXTRACT EVENT THIS IS OBJECT : "+object);
       var obj=JSON.stringify(object);
      
       return obj;
@@ -634,7 +634,7 @@ var time;
   // access Token = use for Oauth
   async function deleteEvent(id,accessToken){
 
-    console.log("EVENT TO DELETE IS : "+ id);
+  //  console.debug("EVENT TO DELETE IS : "+ id);
     var accessBearer = 'Bearer '+ accessToken;
     //console.log("Access bearer val = : " + accessBearer);
     var APIcall = {
@@ -654,7 +654,7 @@ var time;
    await axios(APIcall)
     .then( function (response) {
       responseheader += JSON.stringify(response.data);
-      console.log(JSON.stringify(response.data));
+      //console.log(JSON.stringify(response.data));
     
     
     })
@@ -667,14 +667,14 @@ var time;
 //************************************** */
   async function getOrgID(access,event,room)
 {
-  console.log("Getting organizer id...");
+ // console.debug("Getting organizer id...");
 accessBearer = 'Bearer '+access;
 var userDetails = "";
 
 var users = {
   method: 'get',
   //url: 'https://graph.microsoft.com/v1.0/users',
-  // NOTE : TIME ZONE ISSUES, in Query always -by 2, method to adjust date from emails given date
+  // NOTE : TIME ZONE ISSUES, in Query always -by 2, 
   url: 'https://graph.microsoft.com/v1.0/users',
   //url: 'https://graph.microsoft.com/v1.0/users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/calendar/events?select=subject,organizer,attendees,start,end',
   headers: { 
@@ -694,9 +694,9 @@ await axios(users)
     // console.log(uData.value[i].mail+ "---USERS---"+org);
     if(uData.value[i].mail == event.organizer)
     {
-      console.log("found match");
+     // console.debug("found match");
       orgID = uData.value[i].id;
-      console.log(event.organizer + " has id of " + orgID);
+     // console.debug(event.organizer + " has id of " + orgID);
       getMeetingID(access,orgID,room);
       //return orgID;
     }
@@ -711,12 +711,12 @@ await axios(users)
 //get meeting id
 async function getMeetingID(access,orgID,room)
 {
-  console.log("Getting meeting id...");
+ // console.debug("Getting meeting id...");
 accessBearer = 'Bearer '+access;
 var meetingID;
 var eventsList = "";
 var eventData;
-console.log(orgID);
+//console.debug(orgID);
 var userEvents = {
   method: 'get',
   //url: 'https://graph.microsoft.com/v1.0/users',
@@ -734,21 +734,21 @@ await axios(userEvents)
 .then(function (response) {
   eventsList += JSON.stringify(response.data);
   eventData = JSON.parse(eventsList);
-  console.log(eventData);
-  console.log(sub + "-----" + time);
+  //console.debug(eventData);
+ // console.debug(sub + "-----" + time);
   for(let i in eventData.value) //go through all users
   {
 
   //console.log("Event "+ i + " " + eventData.value[i].subject + " " + eventData.value[i].start.dateTime);
     if(eventData.value[i].subject == sub)// && eventData.value[i].start.dateTime === time)
     {
-      console.log("meeting found");
+     // console.debug("meeting found");
       meetingID = eventData.value[i].id;
       // updateEvent(access,orgID,meetingID,room);
       //return meetingID;
     }
   }
-  console.log("meeting id " + meetingID);
+ // console.debug("meeting id " + meetingID);
   updateEvent(access,orgID,meetingID,room);
 })
 .catch(function (error) {
@@ -758,11 +758,11 @@ await axios(userEvents)
 }
 
   async function updateEvent(accessToken,organiserID,eventID,room){
-    console.log("Update event location");
+    console.log("Updating event location");
     //var organiserID = await getOrgID(accessToken,event.organizer);
     //console.log(organiserID + " was id returned");
     //var eventID = getMeetingID(organiserID,accessToken);
-    console.log("Org ID " + organiserID + " event id " + eventID);
+    //console.debug("Org ID " + organiserID + " event id " + eventID);
     var eData;
     var apiData ='';
     var accessBearer = 'Bearer '+ accessToken;
@@ -781,7 +781,7 @@ await axios(userEvents)
     }).then(function (response) {
 
       apiData += JSON.stringify(response.data);
-      console.log("success");
+     // console.debug("success");
       eData = JSON.parse(apiData);  
       checkAcceptance(accessBearer,organiserID,eventID);//check attendeess that accepted the meeting
     })
@@ -790,7 +790,7 @@ await axios(userEvents)
     });
     async function checkAcceptance(accessBearer,orgID,MeetingID)
     {
-      console.log("Checking acceptance");
+     // console.debug("Checking acceptance");
       var _response ="";
       var event;
       //var _url = "https://graph.microsoft.com/v1.0/users/" + orgID + "/calendar/events/" + MeetingID;
@@ -810,7 +810,7 @@ await axios(userEvents)
       await axios(configg)
       .then(function (response) {
         _response += JSON.stringify(response.data);
-        console.log(JSON.stringify(response.data));
+        //console.log(JSON.stringify(response.data));
         event = JSON.parse(_response);  
       })
       .catch(function (error) {
@@ -836,18 +836,18 @@ await axios(userEvents)
         {
           if(att_response == "accepted")
           {
-            console.log(att_email + " " + att_response);
+            //console.debug(att_email + " " + att_response);
             _attendees += att_email + ",";
             //accept();
           }
           else if(att_response == "declined")
           {
-            console.log(att_email + " " + att_response);
+           // console.debug(att_email + " " + att_response);
             //decline();
           }
           else
           {
-            console.log(att_email + " hasn't repsonded");
+            //console.debug(att_email + " hasn't repsonded");
             setTimeout(checkAcceptance,60000);
           }
         }
@@ -856,14 +856,14 @@ await axios(userEvents)
     }
     function accept(mID,sTime,eTime,org,att,room)// insert a the meeting in the meetings table
     {
-      console.log("Accepted:Insert");
+     // console.debug("Accepted:Insert");
       const conn = new Connection(config);
      conn.on("connect", err => {
         if (err) {
          
           console.error(err.message);
         } else {
-          console.log("Create request");
+         // console.log("Create request");
           var x = new Date(sTime).toISOString();
           var y = new Date(eTime).toISOString();
 
