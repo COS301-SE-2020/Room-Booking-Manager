@@ -3,10 +3,9 @@
     "version": "1.0.0",
     "description": "",
     "main": "api.js",
-    "directories":{"test":"test"},
     "scripts": {
         "watch": "nodemon",
-        "test": "mocha --timeout 10000"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",
     "license": "ISC",
@@ -16,8 +15,6 @@
         "mssql": "^6.2.0"
     },
     "devDependencies": {
-        "chai": "^4.2.0",
-        "mocha": "^8.0.1",
         "nodemon": "^2.0.4"
     }
 }
