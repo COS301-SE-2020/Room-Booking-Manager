@@ -106,10 +106,12 @@ function view_records(table, res) {
 function delete_record(table, primaryKey, recordID, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
+        else {
+            var sqlQuery =
+                "DELETE FROM " + table + " WHERE " + primaryKey + " = '" + recordID + "';";
 
-        var sqlQuery = "DELETE FROM " + table + " WHERE " + primaryKey + " = '" + recordID + "';";
-
-        runSQL("delete", sqlQuery, primaryKey, recordID, res);
+            runSQL("delete", sqlQuery, primaryKey, recordID, res);
+        }
     });
 }
 
@@ -363,59 +365,57 @@ function MEET_update_record(body_data, res) {
     });
 }
 
-// function checkRecord(table, key, id) {
-//     sql.connect(config, function (err) {
-//         var request = new sql.Request();
-
-//         var sqlQuery = "SELECT COUNT(*) FROM " + table + " WHERE " + key + " = '" + id + "';";
-
-//         request.query(sqlQuery, function (err, recordset) {
-//             return (
-//                 recordset != undefined &&
-//                 JSON.stringify(recordset.recordsets[0]).length <= 20 &&
-//                 JSON.stringify(recordset.recordsets[0]).includes("1")
-//             );
-//         });
-//     });
-// }
-
-function runSQL(sqlType, sqlQuery, sqlTablePrimaryKey, recordID, res) {
+function runSQL(sqlType, sqlQuery, sqlPrimaryKey, recordID, res) {
     var request = new sql.Request();
 
     request.query(sqlQuery, function (err, recordset) {
         response = [{}];
 
         if (sqlType == "view") {
+            var entries = JSON.stringify(recordset.recordset[0]);
+            var value = entries != undefined && entries.includes(sqlPrimaryKey);
+
             if (err) {
-                console.log(err);
                 QueryRes = "Error";
-                QueryMes = "Failed To View All Records. Internal Error or Table May Be Empty.";
-                console.log(QueryRes + ": " + QueryMes);
+                QueryMes = "Internal Error";
+                console.log(err);
             } else {
-                QueryRes = "Success";
-                QueryMes = "All Records Successfully Viewed!.";
-                response = recordset.recordset;
+                if (value == true) {
+                    QueryRes = "Success";
+                    QueryMes = "All Records Successfully Viewed!.";
+                    response = recordset.recordset;
+                } else {
+                    QueryRes = "Error";
+                    QueryMes = "Table Is Empty.";
+                }
             }
         } else if (sqlType == "read") {
+            var entries = JSON.stringify(recordset.recordset[0]);
+            var value = entries != undefined && entries.includes(sqlPrimaryKey);
+
             if (err) {
-                console.log(err);
                 QueryRes = "Error";
-                QueryMes = "Record Does Not Exist. ID = " + recordID;
-                console.log(QueryRes + ": " + QueryMes);
+                QueryMes = "Internal Error";
+                console.log(err);
             } else {
-                QueryRes = "Success";
-                QueryMes = "Record Retrieved! ID = " + recordID;
-                response = recordset.recordset;
+                if (value == true) {
+                    QueryRes = "Success";
+                    QueryMes = "Record Read! ID = " + recordID;
+                    response = recordset.recordset;
+                } else {
+                    QueryRes = "Error";
+                    QueryMes = "Record Does Not Exist. ID = " + recordID;
+                    console.log(QueryRes + ": " + QueryMes);
+                }
             }
         } else if (sqlType == "delete") {
             if (err) {
-                console.log(err);
                 QueryRes = "Error";
-                QueryMes = "Failed To Delete Record With ID = " + recordID;
-                console.log(QueryRes + ": " + QueryMes);
+                QueryMes = "Failed To Delete.";
+                console.log(err);
             } else {
                 QueryRes = "Success";
-                QueryMes = "Record Deleted! ID = " + recordID;
+                QueryMes = "Record Deleted. ID = " + recordID;
             }
         } else if (sqlType == "create") {
             if (err) {
@@ -425,19 +425,19 @@ function runSQL(sqlType, sqlQuery, sqlTablePrimaryKey, recordID, res) {
             } else {
                 QueryRes = "Success";
                 QueryMes = "Record Inserted. ID = " + recordID;
-                console.log(QueryRes + ": " + QueryMes);
             }
         } else if (sqlType == "update") {
             if (err) {
-                console.log(err);
                 QueryRes = "Error";
                 QueryMes = "Failed to Update.";
+                console.log(err);
             } else {
                 QueryRes = "Success";
                 QueryMes = "Record Updated. ID = " + recordID;
-                console.log(QueryRes + ": " + QueryMes);
             }
         }
+
+        console.log("\n" + QueryRes + ": " + QueryMes);
 
         response.map((i) => (i.QueryResponse = QueryRes));
         response.map((i) => (i.QueryMessage = QueryMes));
