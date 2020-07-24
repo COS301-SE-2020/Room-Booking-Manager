@@ -1,0 +1,23 @@
+{
+    "name": "new-work",
+    "version": "1.0.0",
+    "description": "",
+    "main": "api.js",
+    "directories":{"test":"test"},
+    "scripts": {
+        "watch": "nodemon",
+        "test": "mocha --timeout 10000"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.19.0",
+        "express": "^4.17.1",
+        "mssql": "^6.2.0"
+    },
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "mocha": "^8.0.1",
+        "nodemon": "^2.0.4"
+    }
+}
