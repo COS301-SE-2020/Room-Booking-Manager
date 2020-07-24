@@ -1,0 +1,31 @@
+<h2>Employee Information</h2>
+<div >
+    <div id="create">
+        <button class="btn btn-primary"  id="button-create">Add new Employee</button>
+    </div>
+    <div class="table-wrapper-scroll-y my-custom-scrollbar">
+        <table class="table  tableRoom">
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Location</th>
+                <th>Admin</th>
+                <th>#</th>
+            </tr>
+            <tr *ngFor="let user of listEmployees">
+                <td attr.class="{{user.FistName}}">{{user.FistName}}</td>
+                <td attr.class="{{user.LastName}}">{{user.LastName}}</td>
+                <td attr.class="{{user.Email}}">{{user.Email}}</td>
+                <td attr.class="{{user.LocationID}}">{{user.LocationID}}</td>
+                <!-- <td attr.class="{{user.Admin}}">{{user.Distance}}</td> -->
+                <!-- <td></td> -->
+                <td>
+                    <!-- <button class="btn btn-danger" (click)="delete(com.roomID)">Delete</button>&nbsp; -->
+                    <!-- <button class="btn btn-success" (click)="edit(com.roomID,com.FloorNumber,com.Amenities,com.numParticipants,com.Distance)">Edit</button> -->
+                </td>
+            </tr>
+        
+        </table>
+    </div>
+</div>

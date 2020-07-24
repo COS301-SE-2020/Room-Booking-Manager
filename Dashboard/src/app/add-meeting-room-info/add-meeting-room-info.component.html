@@ -1,0 +1,74 @@
+<div class="wrapper">
+    <!-- <div class="_head"> -->
+    <h1>Enter the Meeting Room details below</h1>
+    <!-- </div> -->
+      <form [formGroup]="RoomInfo" (ngSubmit)="onSubmit()">
+          <mat-form-field color="accent">
+            <mat-label>Room name*</mat-label>
+            <input formControlName="RoomNumber" matInput>
+            <!-- mat-error is for validation -->
+            <mat-error *ngIf="RoomInfo.controls['RoomNumber'].hasError('required')">
+              Room name is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <br/>
+
+          <mat-form-field color="accent">
+            <mat-label>Floor Number</mat-label>
+            <input formControlName="FloorNumber" matInput>
+            <mat-error *ngIf="RoomInfo.controls['FloorNumber'].hasError('required')">
+              Floor number is <strong>required</strong>
+            </mat-error>
+          <mat-error *ngIf="RoomInfo.controls['FloorNumber'].hasError('pattern')">
+            please enter a valid integer
+          </mat-error>
+          </mat-form-field>
+          <br/>
+
+          <mat-form-field color="accent">
+            <mat-label>Amenities</mat-label>
+            <mat-select formControlName="Amenity" multiple>
+              <mat-option style="color:black" *ngFor="let amenity of amenityList" [value]="amenity" >{{amenity}}</mat-option>
+            </mat-select>
+          </mat-form-field><br/>
+            
+          <mat-form-field color="accent">
+            <mat-label>Number of seats</mat-label>
+            <input formControlName="NrSeats" matInput>
+            <mat-error *ngIf="RoomInfo.controls['NrSeats'].hasError('required')">
+              Number of seats is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="RoomInfo.controls['NrSeats'].hasError('pattern')">
+              please enter a valid integer
+            </mat-error>
+          </mat-form-field>
+          <br/>
+
+          <mat-form-field color="accent">
+            <mat-label>Distance</mat-label>
+            <input formControlName="Distance" matInput>
+            <mat-error *ngIf="RoomInfo.controls['Distance'].hasError('required')">
+              Distance is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="RoomInfo.controls['Distance'].hasError('pattern')">
+              please enter a valid integer
+            </mat-error>
+          </mat-form-field>
+          <br/>
+          <!-- <mat-form-field color="accent"> -->
+            <button id="submit" class ="btn btn-primary" type="submit" [disabled]="RoomInfo.invalid" value="submit">submit</button>&nbsp;
+            <button id="cancel" class ="btn btn-danger" (click)="cancel()">cancel</button>
+          <!-- </mat-form-field> -->
+      </form> 
+    
+    
+    <!-- <div  ngbDropdown #myDrop="ngbDropdown">
+        <button class="btn btn-outline-primary mr-2" id="dropdownManual" ngbDropdownAnchor (focus)="myDrop.open()">Toggle dropdown</button>
+        <div ngbDropdownMenu aria-labelledby="dropdownManual">
+          <button ngbDropdownItem>Action - 1</button>
+          <button ngbDropdownItem>Another Action</button>
+          <button ngbDropdownItem>Something else is here</button>
+        </div>
+      </div> -->
+    
+</div>

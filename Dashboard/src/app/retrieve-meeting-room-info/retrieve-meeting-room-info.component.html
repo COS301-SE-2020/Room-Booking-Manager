@@ -1,0 +1,32 @@
+
+<h2>Meeting Room Information</h2>
+<div #data>
+    <div id="create">
+        <button class="btn btn-primary" (click)="onCreate()" id="button-create">Add new Room</button>
+    </div>
+    <div class="table-wrapper-scroll-y my-custom-scrollbar">
+        <table class="table  tableRoom">
+            <tr>
+                <th>Meeting Room number</th>
+                <th>Floor Number</th>
+                <th>Amenity</th>
+                <th>Number of seats</th>
+                <th>Distance</th>
+                <th>#</th>
+            </tr>
+            <tr *ngFor="let com of listComments">
+                <td attr.class="{{com.roomID}}">{{com.roomID}}</td>
+                <td attr.class="{{com.FloorNumber}}">{{com.FloorNumber}}</td>
+                <td attr.class="{{com.Amenities}}">{{com.Amenities}}</td>
+                <td attr.class="{{com.numParticipants}}">{{com.numParticipants}}</td>
+                <td attr.class="{{com.Distance}}">{{com.Distance}}</td>
+                <!-- <td></td> -->
+                <td>
+                    <button class="btn btn-danger" (click)="delete(com.roomID)">Delete</button>&nbsp;
+                    <button class="btn btn-success" (click)="edit(com.roomID,com.FloorNumber,com.Amenities,com.numParticipants,com.Distance)">Edit</button>
+                </td>
+            </tr>
+        
+        </table>
+    </div>
+</div>

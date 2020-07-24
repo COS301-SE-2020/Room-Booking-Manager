@@ -1,0 +1,19 @@
+<nav>
+    <ul class="horizontal">
+        <li><a class="active" href="#home">Room Booking Manager Dashboard</a></li>
+        <li id="logout"><a (click)="logout()" routerLink="">Logout</a></li>
+    </ul>
+  </nav>
+  <div class="sidenav">
+    <div id=sideLinks>
+      <a class="active" *ngIf="_isAdmin" (click)="retrieveRooms()" >View Meeting Rooms</a>
+      <a class="active" (click)="retrieveEmps()">View Employees</a>
+      <a href="#">View Scheduled Meetings</a>
+      <a href="#">Set Rules</a>
+    </div>
+  </div>
+  <div id="routerPosition">
+    <div id="toCenter">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
