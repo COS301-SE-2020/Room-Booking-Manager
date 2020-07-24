@@ -1,0 +1,18 @@
+POST http://localhost:65000/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "table" : "Meetings",
+	"request" : "view",
+    "data" :{
+    "MeetingID": "MkAGNmMmE1MzY1LWU5MjAtNDgwZS1hODA1LTAxZmE3MDZjN2Y4MABGAAAAAADtYPw4__duQpoAUtqbk_dvBwATlvcwiTJsQINLpRQn-5KEAAAAAAENAAATlvcwiTJsQINLpRQn-5KEAAAV8-UWAAA=",
+    "StartTime": "2020-07-20T03:00:00.000Z",
+    "EndTime": "2020-07-20T03:30:00.000Z",
+    "Organizer": "AdeleV@teamthreshold.onmicrosoft.com",
+    "Participants": "null",
+    "OriginalAmenity": "Blackboard",
+    "RoomID": "1P2",
+    "QueryResponse": "Success",
+    "QueryMessage": "All Records Successfully Viewed!."
+  }
+}
