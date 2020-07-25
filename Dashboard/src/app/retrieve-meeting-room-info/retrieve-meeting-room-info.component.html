@@ -7,23 +7,23 @@
     <div class="table-wrapper-scroll-y my-custom-scrollbar">
         <table class="table  tableRoom">
             <tr>
-                <th>Meeting Room number</th>
+                <th>Room number</th>
+                <th>Room Name</th>
                 <th>Floor Number</th>
                 <th>Amenity</th>
                 <th>Number of seats</th>
-                <th>Distance</th>
                 <th>#</th>
             </tr>
             <tr *ngFor="let com of listComments">
-                <td attr.class="{{com.roomID}}">{{com.roomID}}</td>
+                <td attr.class="{{com.RoomID}}">{{com.RoomID}}</td>
+                <td attr.class="{{com.RoomName}}">{{com.RoomName}}</td>
                 <td attr.class="{{com.FloorNumber}}">{{com.FloorNumber}}</td>
-                <td attr.class="{{com.Amenities}}">{{com.Amenities}}</td>
-                <td attr.class="{{com.numParticipants}}">{{com.numParticipants}}</td>
-                <td attr.class="{{com.Distance}}">{{com.Distance}}</td>
+                <td attr.class="{{com.Amenity}}">{{com.Amenity}}</td>
+                <td attr.class="{{com.maxSeats}}">{{com.maxSeats}}</td>
                 <!-- <td></td> -->
                 <td>
-                    <button class="btn btn-danger" (click)="delete(com.roomID)">Delete</button>&nbsp;
-                    <button class="btn btn-success" (click)="edit(com.roomID,com.FloorNumber,com.Amenities,com.numParticipants,com.Distance)">Edit</button>
+                    <button class="btn btn-danger" (click)="delete(com.RoomID)">Delete</button>&nbsp;
+                    <button class="btn btn-success" (click)="edit(com.RoomID,com.FloorNumber,com.Amenity,com.maxSeats,com.RoomName,com.isExternal,com.Building,com.Whiteboard,com.Projector,com.Monitor,com.isAvailable)">Edit</button>
                 </td>
             </tr>
         

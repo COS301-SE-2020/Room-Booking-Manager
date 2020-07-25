@@ -4,12 +4,24 @@
   <!-- </div> -->
     <form [formGroup]="RoomInfo" (ngSubmit)="updateR()">
         <mat-form-field color="accent">
-          <mat-label>Room name*</mat-label>
+          <mat-label>Room Number*</mat-label>
           <input formControlName="RoomNumber" matInput>
           <!-- mat-error is for validation -->
           <mat-error *ngIf="RoomInfo.controls['RoomNumber'].hasError('required')">
-            Room name is <strong>required</strong>
+            Room Number is <strong>required</strong>
           </mat-error>
+        </mat-form-field>
+        <br/>
+
+        <mat-form-field color="accent">
+          <mat-label>Room Name</mat-label>
+          <input formControlName="RoomName" matInput>
+          <mat-error *ngIf="RoomInfo.controls['RoomName'].hasError('required')">
+            Room Name is <strong>required</strong>
+          </mat-error>
+          <!-- <mat-error *ngIf="RoomInfo.controls['Distance'].hasError('pattern')">
+            please enter a valid integer
+          </mat-error> -->
         </mat-form-field>
         <br/>
 
@@ -27,7 +39,7 @@
 
         <mat-form-field color="accent">
           <mat-label>Amenities</mat-label>
-          <mat-select formControlName="Amenity" multiple>
+          <mat-select formControlName="Amenity" multiple [(ngModel)]="amenities"> 
             <mat-option style="color:black" *ngFor="let amenity of amenityList" [value]="amenity" >{{amenity}}</mat-option>
           </mat-select>
         </mat-form-field><br/>
@@ -44,17 +56,6 @@
         </mat-form-field>
         <br/>
 
-        <mat-form-field color="accent">
-          <mat-label>Distance</mat-label>
-          <input formControlName="Distance" matInput>
-          <mat-error *ngIf="RoomInfo.controls['Distance'].hasError('required')">
-            Distance is <strong>required</strong>
-          </mat-error>
-          <mat-error *ngIf="RoomInfo.controls['Distance'].hasError('pattern')">
-            please enter a valid integer
-          </mat-error>
-        </mat-form-field>
-        <br/>
         <!-- <mat-form-field color="accent"> -->
           <button id="submit" class ="btn btn-primary" type="submit" [disabled]="RoomInfo.invalid" value="submit">submit</button>&nbsp;
           <button id="cancel" class ="btn btn-danger" (click)="cancel()">cancel</button>

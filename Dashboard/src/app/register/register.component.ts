@@ -16,15 +16,15 @@ export class RegisterComponent implements OnInit {
   constructor(private _apiService: apiService, private _router: Router,public dialogRef:MatDialogRef<RegisterComponent>) { }
 
   registerForm = new FormGroup({  
-    userID: new FormControl('', Validators.required),
+    roomID: new FormControl('', Validators.required),
     firstname: new FormControl('', Validators.required),  
     lastname: new FormControl('', Validators.required),
     email: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
     // submit: new FormControl()
   });
-  get userID() {  
-    return this.registerForm.get('userID');  
+  get roomID() {  
+    return this.registerForm.get('roomID');  
   } 
   get firstname() {  
     return this.registerForm.get('firstname');  
@@ -64,7 +64,7 @@ export class RegisterComponent implements OnInit {
     for(let i = 0; i < this.users.length; i++) 
     {
       
-      if(this.users[i].Email == this.registerForm.get('email').value)
+      if(this.users[i].EmpEmail == this.registerForm.get('email').value)
       {
         this._exist = true;
       }
@@ -73,29 +73,31 @@ export class RegisterComponent implements OnInit {
     if(!this._exist)
     {
       var formData=new User();
-        // formData.EmployeeID=this.registerForm.get('userID').value;
+        // 
         formData.FirstName=this.registerForm.get('firstname').value;
         formData.LastName=this.registerForm.get('lastname').value;
-        formData.Email=this.registerForm.get('email').value;
+        formData.EmpEmail=this.registerForm.get('email').value;
         formData.EmpPassword=this.registerForm.get('password').value;
-        
+        formData.LocationID=this.registerForm.get('roomID').value;
+        formData.isAdmin = false;
 
         // console.log(formData.userID + " - " + formData.firstName + " - " + formData.lastName + " - " + formData.email);
         this._apiService.registerUser(formData)
         .subscribe(
           data=>{
             console.log('Response post', data);
+            localStorage.setItem('loggedIn', "true");
           }
         );
         // console.warn(this.RoomInfo.value)
         // console.log(this.RoomInfo.controls['RoomNumber'].value);//individual values
         //from here send json format to the DB 
-        this._router.navigate(['dashboard']);
         this.cancel();
     }
     this.buttonReg ="clicked";
   }
   cancel(){
     this.dialogRef.close();
+    this._router.navigate(['dashboard']);
   }
 }

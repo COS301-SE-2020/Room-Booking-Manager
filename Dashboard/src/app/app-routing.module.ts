@@ -4,6 +4,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
 import { RetrieveMeetingRoomInfoComponent } from './retrieve-meeting-room-info/retrieve-meeting-room-info.component'
 import { EmployeeInfoComponent } from './employee-info/employee-info.component';
+import { MeetingInfoComponent } from './meeting-info/meeting-info.component';
 
 
 const routes: Routes = 
@@ -21,7 +22,8 @@ const routes: Routes =
     component:DashboardComponent,
     children: [
       {path: 'employee-info', component: EmployeeInfoComponent},
-      {path: 'retrieve-meeting-room-info', component: RetrieveMeetingRoomInfoComponent}
+      {path: 'retrieve-meeting-room-info', component: RetrieveMeetingRoomInfoComponent},
+      {path: 'meeting-info', component: MeetingInfoComponent}
       
     ]
   }

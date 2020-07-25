@@ -39,11 +39,11 @@
             </mat-form-field>
             <br/>
             <mat-form-field color="accent" class="field">
-                <mat-label>User ID</mat-label>
-                <input formControlName="userID" matInput required>
+                <mat-label>Room ID</mat-label>
+                <input formControlName="roomID" matInput required>
                 <!-- mat-error is for validation -->
-                <mat-error *ngIf="registerForm.get('userID').touched && registerForm.get('userID').invalid">
-                    User ID is <strong>required</strong>
+                <mat-error *ngIf="registerForm.get('roomID').touched && registerForm.get('roomID').invalid">
+                    Room ID is <strong>required</strong>
                 </mat-error>
             </mat-form-field>
             &nbsp;&nbsp;

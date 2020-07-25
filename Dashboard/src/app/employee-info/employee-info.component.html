@@ -3,8 +3,8 @@
     <div id="create">
         <button class="btn btn-primary"  id="button-create">Add new Employee</button>
     </div>
-    <div class="table-wrapper-scroll-y my-custom-scrollbar">
-        <table class="table  tableRoom">
+    <div class="table-wrapper-scroll-y table-wrapper-scroll-x my-custom-scrollbar">
+        <table class="table center tableRoom">
             <tr>
                 <th>First Name</th>
                 <th>Last Name</th>
@@ -14,15 +14,18 @@
                 <th>#</th>
             </tr>
             <tr *ngFor="let user of listEmployees">
-                <td attr.class="{{user.FistName}}">{{user.FistName}}</td>
+                <td attr.class="{{user.FirstName}}">{{user.FirstName}}</td>
                 <td attr.class="{{user.LastName}}">{{user.LastName}}</td>
-                <td attr.class="{{user.Email}}">{{user.Email}}</td>
+                <td attr.class="{{user.EmpEmail}}">{{user.EmpEmail}}</td>
                 <td attr.class="{{user.LocationID}}">{{user.LocationID}}</td>
-                <!-- <td attr.class="{{user.Admin}}">{{user.Distance}}</td> -->
+                <td attr.class="{{user.isAdmin}}">{{user.isAdmin}}</td>
                 <!-- <td></td> -->
                 <td>
-                    <!-- <button class="btn btn-danger" (click)="delete(com.roomID)">Delete</button>&nbsp; -->
-                    <!-- <button class="btn btn-success" (click)="edit(com.roomID,com.FloorNumber,com.Amenities,com.numParticipants,com.Distance)">Edit</button> -->
+                    <span>
+                        <button class="btn btn-danger"  (click)="delete(user.EmpEmail)">Delete</button>&nbsp;
+                        <button class="btn btn-success" (click)="edit(user.FirstName,user.LastName,user.EmpEmail,user.LocationID,user.EmpPassword,user.isAdmin)">Edit</button>
+                        <!-- <button class="btn btn-primary" >Assign Admin</button>&nbsp; -->
+                    </span>
                 </td>
             </tr>
         

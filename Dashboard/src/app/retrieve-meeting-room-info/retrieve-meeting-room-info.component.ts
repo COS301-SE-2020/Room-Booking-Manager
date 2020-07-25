@@ -27,9 +27,9 @@ export class RetrieveMeetingRoomInfoComponent implements OnInit,AfterViewInit {
   }
   listComments:Room[];
   ngOnInit(): void {
-    if(localStorage.getItem('loggedIn') == "true")//change to false
+    if(localStorage.getItem('loggedIn') == "false")
     {
-      this._router.navigate(['login']);
+      //this._router.navigate(['login']);
     }
     this.apiDB.getRooms()
     .subscribe (
@@ -44,14 +44,21 @@ export class RetrieveMeetingRoomInfoComponent implements OnInit,AfterViewInit {
     console.log(this.data.nativeElement);
     //this.renderer2.appendChild(this.data.nativeElement,this.renderer2.createText("testing"));
   }
-  edit(id:number,floorNum:number,amenities:string,numParticipants:number,distance:number)
+  edit(id:string,floorNum:number,amenities:string,numParticipants:number,roomName:string,is_External:boolean,Building:number,Whiteboard:boolean,Projector:boolean,Monitor:boolean,is_Available:boolean)
   {
     var formData=new Room();
-    formData.roomID = id;
+    formData.RoomID = id;
     formData.FloorNumber = floorNum;
-    formData.Amenities = amenities;
-    formData.numParticipants = numParticipants;
-    formData.Distance = distance;
+    formData.Amenity = amenities;
+    formData.maxSeats = numParticipants;
+    formData.RoomName = roomName;
+    formData.isExternal = is_External;
+    formData.Building = Building;
+    formData.Whiteboard = Whiteboard;
+    formData.Projector = Projector;
+    formData.Monitor = Monitor;
+    formData.isAvailable = is_Available;
+    console.log(formData);
     this.setRoom = formData;
     // this.apiDB.getRecord(formData)
     // .subscribe(
@@ -66,11 +73,11 @@ export class RetrieveMeetingRoomInfoComponent implements OnInit,AfterViewInit {
     // configDialog.height='400px';
     this.dialog.open(EditMeetingRoomInfoComponent,editDialog);
   }
-  delete(id:number){
+  delete(id:string){
     if(confirm(`Are you sure to delete Room number ${id}`)) {
       console.log("Implement delete functionality here");
       var formData=new Room();
-      formData.roomID=id;
+      formData.RoomID=id;
       this.apiDB.delete(formData)
       .subscribe(
         data=>{

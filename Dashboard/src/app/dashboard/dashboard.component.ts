@@ -14,17 +14,19 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     // this._router.navigate(['retrieve-meeting-room-info']);
-    if(localStorage.getItem('loggedIn') == "true")
+    if(localStorage.getItem('loggedIn') == "false")//
     {
-      this._router.navigate(['login']);
+      //this._router.navigate(['login']);
     }
     if(localStorage.getItem('admin') == "true")
     {
       this._isAdmin = true;
+      console.log("Admin");
     }
     else
     {
       this._isAdmin = false;
+      console.log("Not admin");
     }
   }
 
@@ -37,9 +39,14 @@ export class DashboardComponent implements OnInit {
   {
     this._router.navigate(['dashboard/employee-info']);
   }
+  retrieveMeetings():void
+  {
+    this._router.navigate(['dashboard/meeting-info']);
+  }
   logout():void
   {
     localStorage.setItem('loggedIn', "false");
+    localStorage.setItem('admin',"false");
     console.log(localStorage.getItem('loggedIn'));
   }
 }

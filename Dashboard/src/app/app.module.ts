@@ -12,6 +12,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
 import { apiService } from './services/api.service';
 import { roomsService } from './services/rooms.service';
+import { empService } from './services/employee.service';
 
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { Route } from '@angular/compiler/src/core';
@@ -22,6 +23,8 @@ import { EditMeetingRoomInfoComponent } from './edit-meeting-room-info/edit-meet
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { RegisterComponent } from './register/register.component';
 import { EmployeeInfoComponent } from './employee-info/employee-info.component';
+import { EditEmployeeComponent } from './edit-employee/edit-employee.component';
+import { MeetingInfoComponent } from './meeting-info/meeting-info.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +35,9 @@ import { EmployeeInfoComponent } from './employee-info/employee-info.component';
     AddMeetingRoomInfoComponent,
     EditMeetingRoomInfoComponent,
     RegisterComponent,
-    EmployeeInfoComponent
+    EmployeeInfoComponent,
+    EditEmployeeComponent,
+    MeetingInfoComponent
   ],
   imports: [
     BrowserModule,
@@ -45,8 +50,8 @@ import { EmployeeInfoComponent } from './employee-info/employee-info.component';
     MaterialModule,
     NgMultiSelectDropDownModule.forRoot()
   ],
-  providers: [apiService,roomsService],
+  providers: [apiService,roomsService,empService],
   bootstrap: [AppComponent],
-  entryComponents:[AddMeetingRoomInfoComponent,EditMeetingRoomInfoComponent,RegisterComponent,EmployeeInfoComponent]
+  entryComponents:[AddMeetingRoomInfoComponent,EditMeetingRoomInfoComponent,RegisterComponent,EmployeeInfoComponent,EditEmployeeComponent]
 })
 export class AppModule { }

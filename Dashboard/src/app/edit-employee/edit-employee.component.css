@@ -1,0 +1,130 @@
+@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+#Center{
+    
+    text-align: center;
+    display: block;
+    align-items: center;
+    position: absolute;
+    background-color: #111;
+    color: white;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: auto;
+    left: 0;
+    right: 0;
+    top: 10%;
+    width:50%;
+     height: 70%; 
+    
+}
+h1
+{
+  font-weight: 500;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+._head
+{
+  /* position: relative; */
+  width: 100%;
+}
+/* form{
+
+    width:80%;
+    margin:auto;
+  } */
+  input
+  {
+    color: black;
+  }
+  input[type="text"]{
+    padding: 6px;
+    font-size: 20px;
+    margin-bottom: 2%;
+    width:30%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #000000;
+    color: black;
+  }
+
+  input[type="text"]:focus {
+    outline: none;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #0d3acc;
+  }
+  
+  input[type="submit"]{
+    width:12%;
+    /* height: auto; */
+    padding: 6px;
+    font-size: 18px;
+    background-color: #0d3acc;
+    border: none;
+    border-radius: 4%;
+    color:white;
+  }
+  input[type="submit"]:focus{
+    outline-color:rgb(0, 132, 255);
+    outline-width: thin;
+  }
+  input[type="submit"]:hover{
+    cursor: pointer;
+  }
+  
+  .Center h1{
+      margin-bottom: 2%;
+  }
+  
+  #check {
+    text-align: left;
+    position: relative;
+    left: 40%;
+}
+/* #submit{
+  margin-right: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5%;
+  padding: 6px;
+  font-size: 12px;
+} */
+/* #cancel{
+  margin-left: 10px;
+  margin-top: 10px;
+  background-color: red;
+  border: none;
+  border-radius: 5%;
+  color:white;
+  padding: 6px;
+  font-size: 12px;
+} */
+.wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: column; 
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+  padding: 20px;
+  /* background:#302e2e; */
+}
+.wrapper form
+{
+  width: 100%;
+  text-align: center;
+}
+#formContent {
+  -webkit-border-radius: 10px 10px 10px 10px;
+  border-radius: 10px 10px 10px 10px;
+  background: #fff;
+  padding: 30px;
+  width: 90%;
+  position: relative;
+  padding: 0px;
+  -webkit-box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
+  box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
+  text-align: center;
+}

@@ -14,6 +14,7 @@ import { apiService } from '../services/api.service';
 import { LoginComponent } from '../login/login.component';
 import { RetrieveMeetingRoomInfoComponent } from '../retrieve-meeting-room-info/retrieve-meeting-room-info.component';
 import { EmployeeInfoComponent } from '../employee-info/employee-info.component';
+import { MeetingInfoComponent } from '../meeting-info/meeting-info.component';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 @NgModule({
@@ -21,7 +22,8 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
     DashboardComponent,
     LoginComponent,
     RetrieveMeetingRoomInfoComponent,
-    EmployeeInfoComponent
+    EmployeeInfoComponent,
+    MeetingInfoComponent
   ],
   imports: [
     BrowserModule,

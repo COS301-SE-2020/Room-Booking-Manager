@@ -22,6 +22,7 @@
     "@angular/platform-browser": "~9.1.11",
     "@angular/platform-browser-dynamic": "~9.1.11",
     "@angular/router": "~9.1.11",
+    "@material/radio": "^7.0.0",
     "@ng-bootstrap/ng-bootstrap": "^6.1.0",
     "bootstrap": "^4.4.0",
     "ng-multiselect-dropdown": "^0.2.10",

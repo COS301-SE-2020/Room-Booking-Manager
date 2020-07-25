@@ -1,0 +1,66 @@
+<div class="wrapper">
+  <!-- <div class="_head"> -->
+  <h1>Enter the Employee details below</h1>
+  <!-- </div> -->
+    <form [formGroup]="EmpInfo" (ngSubmit)="updateE()">
+        <mat-form-field color="accent" class="field">
+            <mat-label>First Name</mat-label>
+            <input formControlName="firstname" matInput required>
+            <!-- mat-error is for validation -->
+            <mat-error *ngIf="EmpInfo.get('firstname').touched && EmpInfo.get('firstname').invalid">
+                First Name is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+        &nbsp;&nbsp;
+        <mat-form-field color="accent" class="field">
+            <mat-label>Last Name</mat-label>
+            <input formControlName="lastname" matInput required>
+            <!-- mat-error is for validation -->
+            <mat-error *ngIf="EmpInfo.get('lastname').touched && EmpInfo.get('lastname').invalid">
+                Last Name is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>   
+        <br/>
+        <mat-form-field color="accent" class="field">
+            <mat-label>Email</mat-label>
+            <input formControlName="email" matInput required>
+            <!-- mat-error is for validation -->
+            <mat-error *ngIf="EmpInfo.get('email').touched && EmpInfo.get('email').invalid">
+                Email is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+        &nbsp;&nbsp;
+        <mat-form-field color="accent" class="field">
+            <mat-label>Password</mat-label>
+            <input formControlName="password" matInput required>
+            <!-- mat-error is for validation -->
+            <mat-error *ngIf="EmpInfo.get('password').touched && EmpInfo.get('password').invalid">
+                Password is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+        <br/>
+        <mat-form-field color="accent" class="field">
+            <mat-label>Room ID</mat-label>
+            <input formControlName="roomID" matInput required>
+            <!-- mat-error is for validation -->
+            <mat-error *ngIf="EmpInfo.get('roomID').touched && EmpInfo.get('roomID').invalid">
+                Room ID is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+        &nbsp;&nbsp;
+        <mat-form-field color="accent" class="field">
+            <mat-label>Admin</mat-label>
+            <mat-select formControlName="admin" [(ngModel)]="adminChosen" >
+                <mat-option style="color:black" *ngFor="let admin of rad_admin" [value]="admin" >{{admin}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div class="form-group col-md-12">
+            <button class="btn btn-primary" [disabled]="EmpInfo.get('firstname').invalid || EmpInfo.get('lastname').invalid || EmpInfo.get('email').invalid || EmpInfo.get('password').invalid || EmpInfo.get('roomID').invalid || EmpInfo.get('admin').invalid" type="submit" >Submit</button>
+            &nbsp;&nbsp;
+            <button id="cancel" class ="btn btn-danger" (click)="cancel()">cancel</button>
+            <br/><br/>
+            <!-- <p *ngIf="buttonReg != '' && _exist" class="alert alert-danger"> 
+                User with username already exists!           
+            </p>  -->
+        
+</div>

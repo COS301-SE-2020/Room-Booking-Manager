@@ -1,8 +1,14 @@
 export class Room
 {
-    roomID:number
+    RoomID:string
+    RoomName:string
     FloorNumber:number
-    Amenities:string
-    numParticipants:number
-    Distance:number
+    Amenity:string
+    maxSeats:number
+    isExternal:boolean
+    Building:number
+    Whiteboard:boolean
+    Projector:boolean
+    Monitor:boolean
+    isAvailable:boolean
 }

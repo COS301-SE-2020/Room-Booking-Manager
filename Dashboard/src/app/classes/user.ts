@@ -3,8 +3,8 @@ export class User
     // EmployeeID:number
     FirstName: string
     LastName: string
-    Email: string
-    is_Admin = true
+    EmpEmail: string
+    isAdmin: boolean
     EmpPassword:string
     LocationID = ""
 }

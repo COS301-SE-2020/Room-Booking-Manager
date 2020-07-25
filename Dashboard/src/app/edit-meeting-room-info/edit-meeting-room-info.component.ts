@@ -26,43 +26,50 @@ export class EditMeetingRoomInfoComponent implements OnInit {
     FloorNumber:new FormControl('',[Validators.required,Validators.pattern("^[0-9]*$")]),
     Amenity:new FormControl(''),
     NrSeats:new FormControl('',[Validators.required,Validators.pattern("^[0-9]*$")]),
-    Distance:new FormControl('',[Validators.required,Validators.pattern("^[0-9]*$")])
+    RoomName:new FormControl('',[Validators.required])
   });
   get RoomNumber() {  
     return this.RoomInfo.get('RoomInfo');  
   } 
   amenities:string[];
-  am:any =[];
+  //am:any =[];
   ngOnInit(): void {
-    if(localStorage.getItem('loggedIn') == "true")//change this to false
+    if(localStorage.getItem('loggedIn') == "false")
     {
-      this._router.navigate(['login']);
+      //this._router.navigate(['login']);
     }
-    
-    this.amenities = this.getRoom.Amenities.split(',');
+    console.log("here");
+    console.log(this.getRoom.RoomName);
+    this.amenities = this.getRoom.Amenity.split(',');
     // console.log(this.amenities);
-    for(let i = 0; i < this.amenities.length; i++) 
-    {
-      this.am.push({name:this.amenities[i]});
-    }
-    // console.log('final-> '+ this.am[0].name);
-    this.RoomInfo.controls['RoomNumber'].setValue(this.getRoom.roomID);
+    // for(let i = 0; i < this.amenities.length; i++) 
+    // {
+      
+    //   this.am.push({name:this.amenities[i]});
+    // }
+   // console.log('final-> '+ this.am[name]);
+    this.RoomInfo.controls['RoomNumber'].setValue(this.getRoom.RoomID);
     this.RoomInfo.controls['FloorNumber'].setValue(this.getRoom.FloorNumber);
-    this.RoomInfo.controls['Amenity'].setValue(this.getRoom.Amenities);
-    this.RoomInfo.controls['NrSeats'].setValue(this.getRoom.numParticipants);
-    this.RoomInfo.controls['Distance'].setValue(this.getRoom.Distance);
+    this.RoomInfo.controls['Amenity'].setValue(this.getRoom.Amenity);
+    this.RoomInfo.controls['NrSeats'].setValue(this.getRoom.maxSeats);
+    this.RoomInfo.controls['RoomName'].setValue(this.getRoom.RoomName);
     //console.log(this.getRoom.Amenities + " - " + this.RoomInfo.controls['RoomNumber'].value);
   }
   
   updateR(){
     var formData=new Room();
-    formData.roomID=<number><any>this.RoomInfo.controls['RoomNumber'].value;
-    formData.Amenities=<string><any>this.RoomInfo.controls['Amenity'].value;
+    formData.RoomID=<string><any>this.RoomInfo.controls['RoomNumber'].value;
+    formData.Amenity=<string><any>this.RoomInfo.controls['Amenity'].value;
     formData.FloorNumber=<number><any>this.RoomInfo.controls['FloorNumber'].value;
-    formData.Distance=<number><any>this.RoomInfo.controls['Distance'].value;
-    formData.numParticipants=<number><any>this.RoomInfo.controls['NrSeats'].value;
-
-    //console.log("no seats",<number><any>this.RoomInfo.controls['NrSeats'].value);
+    formData.RoomName=<string><any>this.RoomInfo.controls['RoomName'].value;
+    formData.maxSeats=<number><any>this.RoomInfo.controls['NrSeats'].value;
+    formData.isExternal = this.getRoom.isExternal;
+    formData.Building = this.getRoom.Building;
+    formData.Whiteboard = this.getRoom.Whiteboard;
+    formData.Projector = this.getRoom.Projector;
+    formData.Monitor = this.getRoom.Monitor;
+    formData.isAvailable = this.getRoom.isAvailable;
+    console.log(formData);
     this.apiDB.updateRoom(formData)
     .subscribe(
       data=>{
@@ -74,12 +81,15 @@ export class EditMeetingRoomInfoComponent implements OnInit {
     // console.log(this.RoomInfo.controls['RoomNumber'].value);//individual values
     //from here send json format to the DB 
     this.onClose();
+    this.done();
   }
   onClose(){
     this.dialogRef.close();
-    //window.location.reload();
   }
   cancel(){
     this.onClose();
+  }
+  done(){
+    window.location.reload();
   }
 }

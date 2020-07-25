@@ -67,6 +67,7 @@ export class LoginComponent implements OnInit {
   tab:string;
   ngOnInit()
   {
+    //this._router.navigate(['dashboard']);
     this.tab = "Register";
     this.myForm = "login";
     // this._apiService.getcomments()
@@ -123,7 +124,7 @@ export class LoginComponent implements OnInit {
     for(let i = 0; i < this.users.length; i++) 
     {
       
-      if(this.users[i].Email == this._username)
+      if(this.users[i].EmpEmail == this._username)
       {
         console.log("Found");
         if(this.users[i].EmpPassword == this._password)
@@ -131,9 +132,17 @@ export class LoginComponent implements OnInit {
           console.log("Passwords match");
           this._match = true;
           localStorage.setItem('loggedIn', "true");
-          this._admin = <string><any>this.users[i].is_Admin;
+          if(this.users[i].isAdmin)
+          {
+            this._admin = "true";
+          }
+          else
+          {
+            this._admin = "false";
+          }
+          //this._admin = <string><any>this.users[i].isAdmin;
           localStorage.setItem('admin',this._admin)
-          console.log(localStorage.getItem('loggedIn'));
+          console.log(localStorage.getItem('admin'));
           this._router.navigate(['dashboard']);
         }
         else

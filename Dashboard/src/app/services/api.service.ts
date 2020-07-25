@@ -35,6 +35,15 @@ export class apiService
         };
         return this.httpclient.post("http://localhost:65000/",body); 
     }
+    getMeetings(): Observable<any>
+    {
+        let body={
+            table:"Meetings",
+            request:"view",
+            data:""
+        };
+        return this.httpclient.post("http://localhost:65000/",body); 
+    }
 
     post(postedData:Room):Observable<any>
     {
@@ -76,10 +85,30 @@ export class apiService
         return this.httpclient.post("http://localhost:65000/",obj);
     }
 
+    deleteUser(postedData:User):Observable<any>{
+
+        let obj={
+            table:"EmployeeDetails",
+            request:"delete",
+            data:postedData
+        };
+        return this.httpclient.post("http://localhost:65000/",obj);
+    }
+
     updateRoom(postedData:Room):Observable<any>{
         
         let obj={
             table:"FloorPlan",
+            request:"update",
+            data:postedData
+        };
+        return this.httpclient.post("http://localhost:65000/",obj);
+    }
+
+    updateEmployee(postedData:User):Observable<any>{
+        
+        let obj={
+            table:"EmployeeDetails",
             request:"update",
             data:postedData
         };
