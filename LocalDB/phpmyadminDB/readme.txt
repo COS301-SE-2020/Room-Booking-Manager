@@ -1,0 +1,1 @@
+import SQL on phpmyadmin mysql before running dbConnection.js DB connection
