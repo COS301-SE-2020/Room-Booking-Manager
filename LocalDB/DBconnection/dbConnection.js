@@ -43,7 +43,24 @@ app.get('/FloorPlan', function(req, res){
 	});
 });
 
-//get available room
+//retrieve a specific room
+app.get('/FloorPlan:id', function(req, res){
+       
+        var id=req.params["id"];
+    var sql ="SELECT * FROM floorplan WHERE RoomID ="+id;
+
+    connection.query(sql, function (err, result) {
+    if (err){
+        res.writeHead(404);//not found or other error
+        res.end();
+        } 
+    else{
+        console.log(result);
+        res.send(result);
+        }
+    });
+});
+//get available rooms
 app.get('/FloorPlan/available', function(req, res){
        
         
