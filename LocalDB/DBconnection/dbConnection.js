@@ -303,6 +303,24 @@ app.get('/employeeDetails', function(req, res){
 	});
 });
 
+//get specific employee
+app.get('/employeeDetails:id', function(req, res){
+       
+        var id=req.params["id"];
+    var sql ="SELECT * FROM floorplan WHERE EmpEmail = " + id;
+
+    connection.query(sql, function (err, result) {
+    if (err){
+        res.writeHead(404);//not found or other error
+        res.end();
+        } 
+    else{
+        console.log(result);
+        res.send(result);
+        }
+    });
+});
+
 //add employee details
 app.post('/employeeDetails',function(req, res){
 		
