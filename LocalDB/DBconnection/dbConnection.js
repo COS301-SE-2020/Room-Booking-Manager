@@ -440,7 +440,7 @@ app.post('/employeeDetailsUpdate',function(req, res){
      });
 
 //Meetings
-//retrieve  booked meetings
+//retrieve all booked meetings
 app.get('/Meetings', function(req, res){
 		
 	var sql ="SELECT * FROM meetings;";
@@ -454,6 +454,24 @@ app.get('/Meetings', function(req, res){
 	    res.send(result);
 		}
 	});
+});
+
+//retrieve a specific meeting's details
+app.get('/Meetings:id', function(req, res){
+       
+        var id=req.params["id"];
+    var sql ="SELECT * FROM distance WHERE MeetingID ="+id;
+
+    connection.query(sql, function (err, result) {
+    if (err){
+        res.writeHead(404);//not found or other error
+        res.end();
+        } 
+    else{
+        console.log(result);
+        res.send(result);
+        }
+    });
 });
 
 //add a meetings details
