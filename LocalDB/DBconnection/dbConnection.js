@@ -198,6 +198,24 @@ app.get('/distance', function(req, res){
 	});
 });
 
+//retrieve a specific rooms distances to other rooms
+app.get('/distance:id', function(req, res){
+       
+        var id=req.params["id"];
+    var sql ="SELECT * FROM distance WHERE Rooms ="+id;
+
+    connection.query(sql, function (err, result) {
+    if (err){
+        res.writeHead(404);//not found or other error
+        res.end();
+        } 
+    else{
+        console.log(result);
+        res.send(result);
+        }
+    });
+});
+
 //inserts a distance of room from entrance
 app.post('/distance',function(req, res){
 		
