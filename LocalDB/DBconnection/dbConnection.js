@@ -43,6 +43,23 @@ app.get('/FloorPlan', function(req, res){
 	});
 });
 
+//get available room
+app.get('/FloorPlan/available', function(req, res){
+       
+        
+    var sql ="SELECT * FROM floorplan WHERE isAvailable = 1";
+
+    connection.query(sql, function (err, result) {
+    if (err){
+        res.writeHead(404);//not found or other error
+        res.end();
+        } 
+    else{
+        console.log(result);
+        res.send(result);
+        }
+    });
+});
 //inserts new room in floorplan table
 app.post('/FloorPlan',function(req, res){
 		console.log(req.body);
