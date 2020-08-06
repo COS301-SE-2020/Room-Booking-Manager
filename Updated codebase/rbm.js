@@ -114,9 +114,15 @@ return new Promise((resolve, reject) => {
 
 	const subscription = {
 		changeType: "created",
+<<<<<<< HEAD
 	   notificationUrl: "https://9ec707029ae0.ngrok.io/webhook",
 	   resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events",
 	   expirationDateTime:"2020-08-06T13:23:45.9356913Z",
+=======
+	   notificationUrl: "https://e608fe3db675.ngrok.io/webhook",
+	   resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events",
+	   expirationDateTime:"2020-08-06T15:23:45.9356913Z",
+>>>>>>> Webhook-Amenity-Integration
 	   clientState: "secretClientValue",
 	   latestSupportedTlsVersion: "v1_2"
 	}
