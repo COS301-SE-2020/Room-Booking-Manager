@@ -11,12 +11,13 @@ module.exports = {
         var description = eventD.bodyPreview;
         var startTime = eventD.start.dateTime;
         var endTime = eventD.end.dateTime;
+        var capacity = eventD.attendees.length;
         var cancelled = eventD.isCancelled;
         var recurring = eventD.recurrence;
         var attachments = eventD.hasAttachments;
 
         // Get Attendees list
-        for(var i = 0; i < eventD.attendees.length; i++)
+        for(var i = 0; i < capacity; i++)
         {
             attendeesMail.push(eventD.attendees[i].emailAddress.address);
         }
@@ -29,6 +30,7 @@ module.exports = {
             "Description" : description,
             "Start" : startTime,
             "End" : endTime,
+            "Capacity" : capacity,
             "Cancelled" : cancelled,
             "Recuuring" : recurring,
             "Attachments" : attachments
