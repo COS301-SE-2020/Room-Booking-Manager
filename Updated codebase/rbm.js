@@ -10,6 +10,7 @@ const { some } = require('bluebird');
 var myEnv = dotenv.config();
 dotenvExpand(myEnv);
 var AmenityAI = require ('./AmenityAI');
+var ExtractedDetails = require ('./ExtractedDetails');
 /*
 var WebHooks = require('node-webhooks')
 webHooks = new WebHooks({
@@ -114,9 +115,9 @@ return new Promise((resolve, reject) => {
 
 	const subscription = {
 		changeType: "created",
-	   notificationUrl: "https://9d9419093eaa.ngrok.io/webhook",
+	   notificationUrl: "https://42f3fede7a20.ngrok.io/webhook",
 	   resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events",
-	   expirationDateTime:"2020-08-06T21:45:45.9356913Z",
+	   expirationDateTime:"2020-08-06T22:15:45.9356913Z",
 	   clientState: "secretClientValue",
 	   latestSupportedTlsVersion: "v1_2"
 	}
@@ -165,46 +166,13 @@ async function beginProcess(eventDescription){
 	console.log(eventRes);
 
 	//JSON Object with necessary event information
-	var extractedDetails = await ExtractDetails(eventRes).then(res=>res);
+	console.log("Extracted Details");
+	var extractedDetails = await ExtractedDetails.EventDetails(eventRes).then(res=>res);
 	console.log(extractedDetails);
 	
 	console.log(eventRes.bodyPreview);
  	 var Amenity = AmenityAI.identify(eventRes.bodyPreview).then(res => res);
 	}
-}
-
-async function ExtractDetails(eventD)
-{
-	//Variables
-	var organizerMail = eventD.organizer.emailAddress.address;
-	var attendeesMail = [];
-	var subject = eventD.subject;
-	var description = eventD.bodyPreview;
-	var startTime = eventD.start.dateTime;
-	var endTime = eventD.end.dateTime;
-	var cancelled = eventD.isCancelled;
-	var recurring = eventD.recurrence;
-	var attachments = eventD.hasAttachments;
-
-	// Get Attendees list
-	for(var i = 0; i < eventD.attendees.length; i++)
-	{
-		attendeesMail.push(eventD.attendees[i].emailAddress.address);
-	}
-
-	//Store values in JSON object
-	var details = {
-		"Organizer": organizerMail,
-		"Attendees": attendeesMail,
-		"Subject" : subject,
-		"Description" : description,
-		"Start" : startTime,
-		"End" : endTime,
-		"Cancelled" : cancelled,
-		"Recuuring" : recurring,
-		"Attachments" : attachments
-	};
-	return details;
 }
 
 
