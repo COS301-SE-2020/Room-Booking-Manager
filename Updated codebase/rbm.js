@@ -114,15 +114,9 @@ return new Promise((resolve, reject) => {
 
 	const subscription = {
 		changeType: "created",
-<<<<<<< HEAD
-	   notificationUrl: "https://9ec707029ae0.ngrok.io/webhook",
+	   notificationUrl: "https://9d9419093eaa.ngrok.io/webhook",
 	   resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events",
-	   expirationDateTime:"2020-08-06T13:23:45.9356913Z",
-=======
-	   notificationUrl: "https://e608fe3db675.ngrok.io/webhook",
-	   resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events",
-	   expirationDateTime:"2020-08-06T15:23:45.9356913Z",
->>>>>>> Webhook-Amenity-Integration
+	   expirationDateTime:"2020-08-06T21:45:45.9356913Z",
 	   clientState: "secretClientValue",
 	   latestSupportedTlsVersion: "v1_2"
 	}
@@ -169,10 +163,50 @@ async function beginProcess(eventDescription){
 	var eventRes = await getDetails(eventUrl,access).then(res=>res);
 	console.log("This is event RES: ")
 	console.log(eventRes);
+
+	//JSON Object with necessary event information
+	var extractedDetails = await ExtractDetails(eventRes).then(res=>res);
+	console.log(extractedDetails);
+	
 	console.log(eventRes.bodyPreview);
  	 var Amenity = AmenityAI.identify(eventRes.bodyPreview).then(res => res);
 	}
 }
+
+async function ExtractDetails(eventD)
+{
+	//Variables
+	var organizerMail = eventD.organizer.emailAddress.address;
+	var attendeesMail = [];
+	var subject = eventD.subject;
+	var description = eventD.bodyPreview;
+	var startTime = eventD.start.dateTime;
+	var endTime = eventD.end.dateTime;
+	var cancelled = eventD.isCancelled;
+	var recurring = eventD.recurrence;
+	var attachments = eventD.hasAttachments;
+
+	// Get Attendees list
+	for(var i = 0; i < eventD.attendees.length; i++)
+	{
+		attendeesMail.push(eventD.attendees[i].emailAddress.address);
+	}
+
+	//Store values in JSON object
+	var details = {
+		"Organizer": organizerMail,
+		"Attendees": attendeesMail,
+		"Subject" : subject,
+		"Description" : description,
+		"Start" : startTime,
+		"End" : endTime,
+		"Cancelled" : cancelled,
+		"Recuuring" : recurring,
+		"Attachments" : attachments
+	};
+	return details;
+}
+
 
 async function getDetails(event,accessToken){
 
