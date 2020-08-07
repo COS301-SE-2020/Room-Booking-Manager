@@ -11,6 +11,7 @@ var myEnv = dotenv.config();
 dotenvExpand(myEnv);
 var AmenityAI = require ('./AmenityAI');
 var ExtractedDetails = require ('./ExtractedDetails');
+var DatabaseQuerries = require ('./DatabaseQuerries');
 /*
 var WebHooks = require('node-webhooks')
 webHooks = new WebHooks({
@@ -115,9 +116,9 @@ return new Promise((resolve, reject) => {
 
 	const subscription = {
 		changeType: "created",
-	   notificationUrl: "https://6dfe82b921a8.ngrok.io/webhook",
+	   notificationUrl: "https://1555947aa6f5.ngrok.io/webhook",
 	   resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events",
-	   expirationDateTime:"2020-08-06T22:35:45.9356913Z",
+	   expirationDateTime:"2020-08-07T09:02:45.9356913Z",
 	   clientState: "secretClientValue",
 	   latestSupportedTlsVersion: "v1_2"
 	}
@@ -170,8 +171,10 @@ async function beginProcess(eventDescription){
 	var extractedDetails = await ExtractedDetails.EventDetails(eventRes).then(res=>res);
 	console.log(extractedDetails);
 	
+	var location = await DatabaseQuerries.getLocation(extractedDetails.Attendees);
+	console.log(location);
 	console.log(eventRes.bodyPreview);
- 	 var Amenity = AmenityAI.identify(eventRes.bodyPreview).then(res => res);
+ 	var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then(res => res);
 	}
 }
 
