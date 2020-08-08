@@ -62,6 +62,38 @@ module.exports = {
                 }
             });
         });
+    },
+
+    //query retrieves distance of an employee from a their current location to a specific meeting room 
+     FindDistances: async function (MeetingRoom,attendLoc)
+    {
+        return new Promise((resolve, reject) => {
+            sql="SELECT "+MeetingRoom +" FROM distance WHERE Rooms ='"+attendLoc+"';";
+                connection.query(sql, function (err, result) {
+                    if (err){
+                    throw err;
+                        } 
+                    else{
+                        resolve(result);
+                        }
+                    });
+            });
+    },
+
+    //query retrieves the room name based on room id
+    roomNameQuery: async function (id)
+    {
+        return new Promise((resolve, reject) => {
+            sql="SELECT RoomName" +" FROM floorplan WHERE RoomID ='"+id+"';";
+                connection.query(sql, function (err, result) {
+                    if (err){
+                    throw err;
+                        } 
+                    else{
+                        resolve(result);
+                        }
+                    });
+            });
     }
 
     //Other Functions

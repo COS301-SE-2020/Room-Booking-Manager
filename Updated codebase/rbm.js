@@ -13,6 +13,7 @@ var AmenityAI = require ('./AmenityAI');
 var ExtractedDetails = require ('./ExtractedDetails');
 var DatabaseQuerries = require ('./DatabaseQuerries');
 var GatherFeasibleRooms = require ('./GatherFeasibleRooms');
+var bestRoomsInAsc = require ('./bestRoomsInAsc');
 /*
 var WebHooks = require('node-webhooks')
 webHooks = new WebHooks({
@@ -117,9 +118,9 @@ return new Promise((resolve, reject) => {
 
 	const subscription = {
 	   changeType: "created",
-	   notificationUrl: "https://ec64b5d4c8b8.ngrok.io/webhook",
+	   notificationUrl: "https://2b4d7e837520.ngrok.io/webhook",
 	   resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events",
-	   expirationDateTime:"2020-08-08T12:40:45.9356913Z",
+	   expirationDateTime:"2020-08-08T21:10:45.9356913Z",
 	   clientState: "secretClientValue",
 	   latestSupportedTlsVersion: "v1_2"
 	}
@@ -178,8 +179,13 @@ async function beginProcess(eventDescription){
 	console.log(eventRes.bodyPreview);
 	 var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then(res => res);
 
+	console.log("Amenity: "+Amenity);
 	var availRooms = await GatherFeasibleRooms.getFeasibleRooms(Amenity, extractedDetails.Capacity, extractedDetails.Start, extractedDetails.End).then(res=> res);
-	console.log(availRooms);
+	console.log("avail: " + availRooms);
+
+	 var ListOfRooms=await bestRoomsInAsc.getRoomsInOrderOfDistances(availRooms,location);//returns rooms in ascending order based on average distance of  employees to each meeting room
+	 console.log("ListOfRooms: " + ListOfRooms);
+
 	}
 }
 
