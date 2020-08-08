@@ -65,7 +65,7 @@ module.exports = {
 
                             if(start_diff == 0)//same start time 
                             {
-                                console.log("CASE 1: Sorry, room not available");//CASE 1 AVAILABE(new meeting starts at the same time as booked meeting)
+                                console.log("CASE 1: Sorry, room not available");//CASE 1 NOT AVAILABE(new meeting starts at the same time as booked meeting)
                                 avail = false;
                                 id = "";
                                 return resolve(avail);
