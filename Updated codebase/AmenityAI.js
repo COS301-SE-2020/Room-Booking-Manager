@@ -79,5 +79,6 @@ module.exports = {
         
     var res = classifier.categorize(eventDescription);
     console.log(res);
+    return res.predictedCategory;
      }
 };
