@@ -115,10 +115,10 @@ return new Promise((resolve, reject) => {
 
 
 	const subscription = {
-		changeType: "created",
-	   notificationUrl: "https://1555947aa6f5.ngrok.io/webhook",
+	   changeType: "created",
+	   notificationUrl: "https://01f8408d20e2.ngrok.io/webhook",
 	   resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events",
-	   expirationDateTime:"2020-08-07T09:02:45.9356913Z",
+	   expirationDateTime:"2020-08-08T08:35:45.9356913Z",
 	   clientState: "secretClientValue",
 	   latestSupportedTlsVersion: "v1_2"
 	}
@@ -162,17 +162,18 @@ async function beginProcess(eventDescription){
 	console.log("This is event APi call: " + eventUrl);
 	
 	var access = await getAccess().then(result => result.accessToken);
-	var eventRes = await getDetails(eventUrl,access).then(res=>res);
+	var eventRes = await getDetails(eventUrl,access).then(res => res);
 	console.log("This is event RES: ")
 	console.log(eventRes);
 
 	//JSON Object with necessary event information
 	console.log("Extracted Details");
-	var extractedDetails = await ExtractedDetails.EventDetails(eventRes).then(res=>res);
+	var extractedDetails = await ExtractedDetails.EventDetails(eventRes).then(res => res);
 	console.log(extractedDetails);
 	
-	var location = await DatabaseQuerries.getLocation(extractedDetails.Attendees);
-	console.log(location);
+	var location = await DatabaseQuerries.getLocation(extractedDetails.Attendees).then(res => res);
+	console.log("Location: " + location);
+
 	console.log(eventRes.bodyPreview);
  	var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then(res => res);
 	}

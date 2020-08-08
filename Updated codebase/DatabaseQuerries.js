@@ -1,34 +1,36 @@
-    var fs = require ('fs');
-    var mysql = require('mysql');
-    var express = require('express');
+var fs = require ('fs');
+var mysql = require('mysql');
+var express = require('express');
 
-    //Configure Database
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "cos301"
-    });
+//Configure Database
+var connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "cos301"
+});
 
 
-    //connecting to db
-    connection.connect(function(err) {
-        if (err){
-            throw err;
-        }
-    
-        else{
-            console.log("Connected!");
-        }
-    
-    });
+//connecting to db
+connection.connect(function(err) {
+    if (err){
+        throw err;
+    }
 
-    //Add other DB functions in here
-    module.exports = {
-        //Functions for querying the database
+    else{
+        console.log("Connected!");
+    }
 
-        getLocation : async function(emailAddress)
-        {
+});
+
+
+module.exports = {
+    //Functions for querying the database
+
+    getLocation : async function(emailAddress)
+    {
+        return new Promise((resolve, reject) => {
+        
             var LocationID = [];
 
             //Get query string according to emails
@@ -44,23 +46,24 @@
 
             connection.query(sqlQuery, function (err, data) {
                 if (err){
-                    // res.writeHead(404);//not found or other error
-                    // res.end();
-                    throw err;
+                    return reject(new Error(err));
                 } 
 
                 else{
                     
+                    //Retrieve location ID for each Employee
                     for(var i = 0; i < emailAddress.length; i++)
                     {
                         LocationID[i] = data[i].LocationID
                     }
 
-                    return LocationID;
+                    // connection.end();
+                    return resolve(LocationID);
                 }
             });
-        }
+        });
+    }
 
-        //Other Functions
+    //Other Functions
 
-    };
+};
