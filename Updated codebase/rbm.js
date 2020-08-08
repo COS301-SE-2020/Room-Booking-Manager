@@ -117,9 +117,9 @@ return new Promise((resolve, reject) => {
 
 	const subscription = {
 	   changeType: "created",
-	   notificationUrl: "https://a2c0713e0c54.ngrok.io/webhook",
+	   notificationUrl: "https://ec64b5d4c8b8.ngrok.io/webhook",
 	   resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events",
-	   expirationDateTime:"2020-08-08T10:23:45.9356913Z",
+	   expirationDateTime:"2020-08-08T12:40:45.9356913Z",
 	   clientState: "secretClientValue",
 	   latestSupportedTlsVersion: "v1_2"
 	}
@@ -178,8 +178,7 @@ async function beginProcess(eventDescription){
 	console.log(eventRes.bodyPreview);
 	 var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then(res => res);
 
-	console.log("Gather room info: Amenity: "+ Amenity +", Start: " + extractedDetails.Start +", End: " + extractedDetails.End +", Capacity: " + extractedDetails.Capacity)
-	var availRooms = await GatherFeasibleRooms.getFeasibleRooms("Whiteboard", extractedDetails.Capacity, extractedDetails.Start, extractedDetails.End).then(res=> res);
+	var availRooms = await GatherFeasibleRooms.getFeasibleRooms(Amenity, extractedDetails.Capacity, extractedDetails.Start, extractedDetails.End).then(res=> res);
 	console.log(availRooms);
 	}
 }

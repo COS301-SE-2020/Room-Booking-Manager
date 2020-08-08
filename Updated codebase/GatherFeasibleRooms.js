@@ -18,6 +18,8 @@ module.exports = {
 			//get all the rooms with matching amenities
 			try
 			{
+				stime = new Date(stime);
+				etime = new Date(etime);
 				await GetRooms.getRooms(amenity, capacity,stime,etime).then(res=>res);
 				console.log("done");
 				//console.log(feasibleRooms);
