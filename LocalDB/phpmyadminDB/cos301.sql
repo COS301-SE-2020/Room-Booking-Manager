@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 06, 2020 at 10:37 AM
--- Server version: 10.4.13-MariaDB
--- PHP Version: 7.4.8
+-- Generation Time: Aug 08, 2020 at 08:02 PM
+-- Server version: 10.4.11-MariaDB
+-- PHP Version: 7.4.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -146,8 +147,8 @@ INSERT INTO `floorplan` (`RoomID`, `RoomName`, `FloorNumber`, `maxSeats`, `Ameni
 
 CREATE TABLE `meetings` (
   `MeetingID` varchar(150) NOT NULL,
-  `StartTime` varchar(150) NOT NULL,
-  `EndTime` varchar(150) NOT NULL,
+  `StartTime` datetime(6) NOT NULL,
+  `EndTime` datetime(6) NOT NULL,
   `Organizer` varchar(150) NOT NULL,
   `Participants` varchar(150) NOT NULL,
   `OriginalAmenity` varchar(150) NOT NULL,
@@ -159,7 +160,9 @@ CREATE TABLE `meetings` (
 --
 
 INSERT INTO `meetings` (`MeetingID`, `StartTime`, `EndTime`, `Organizer`, `Participants`, `OriginalAmenity`, `RoomID`) VALUES
-('1Bmmb2', '1596257554', '1596264754', 'bob', '', 'projector', '2AW');
+('1Bmmb2', '2020-09-01 06:00:00.000000', '2020-09-01 06:30:00.000000', 'bob', '', 'projector', '2AW'),
+('a001', '2020-09-01 08:45:00.000000', '2020-09-01 09:00:00.000000', '', '', '', '1P2'),
+('A002', '2020-09-01 10:30:00.000000', '2020-09-01 10:45:00.000000', '', '', '', '1P2');
 
 --
 -- Indexes for dumped tables
