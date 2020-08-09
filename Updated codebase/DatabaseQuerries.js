@@ -94,6 +94,20 @@ module.exports = {
                         }
                     });
             });
+    },
+    roomIDQuery: async function(RoomName)
+    {
+        return new Promise((resolve, reject) => {
+            sql="SELECT RoomID FROM floorplan WHERE RoomName ='"+RoomName+"';";
+                connection.query(sql, function (err, result) {
+                    if (err){
+                    throw err;
+                        } 
+                    else{
+                        resolve(result);
+                        }
+                    });
+            });
     }
 
     //Other Functions
