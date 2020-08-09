@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 08, 2020 at 08:02 PM
+-- Generation Time: Aug 09, 2020 at 10:28 PM
 -- Server version: 10.4.11-MariaDB
--- PHP Version: 7.4.2
+-- PHP Version: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -146,23 +146,22 @@ INSERT INTO `floorplan` (`RoomID`, `RoomName`, `FloorNumber`, `maxSeats`, `Ameni
 --
 
 CREATE TABLE `meetings` (
-  `MeetingID` varchar(150) NOT NULL,
+  `MeetingID` int(11) NOT NULL,
   `StartTime` datetime(6) NOT NULL,
   `EndTime` datetime(6) NOT NULL,
   `Organizer` varchar(150) NOT NULL,
   `Participants` varchar(150) NOT NULL,
   `OriginalAmenity` varchar(150) NOT NULL,
-  `RoomID` varchar(3) NOT NULL
+  `RoomID` varchar(3) NOT NULL,
+  `BestRooms` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `meetings`
 --
 
-INSERT INTO `meetings` (`MeetingID`, `StartTime`, `EndTime`, `Organizer`, `Participants`, `OriginalAmenity`, `RoomID`) VALUES
-('1Bmmb2', '2020-09-01 06:00:00.000000', '2020-09-01 06:30:00.000000', 'bob', '', 'projector', '2AW'),
-('a001', '2020-09-01 08:45:00.000000', '2020-09-01 09:00:00.000000', '', '', '', '1P2'),
-('A002', '2020-09-01 10:30:00.000000', '2020-09-01 10:45:00.000000', '', '', '', '1P2');
+INSERT INTO `meetings` (`MeetingID`, `StartTime`, `EndTime`, `Organizer`, `Participants`, `OriginalAmenity`, `RoomID`, `BestRooms`) VALUES
+(7, '2020-09-05 15:00:00.000000', '2020-09-05 15:30:00.000000', 'AlexW@teamthreshold.onmicrosoft.com', 'AlexW@teamthreshold.onmicrosoft.com,COS301@teamthreshold.onmicrosoft.com', 'projector', '1P2', '1Q2,1S2,2P1,2P2');
 
 --
 -- Indexes for dumped tables
@@ -191,6 +190,16 @@ ALTER TABLE `floorplan`
 --
 ALTER TABLE `meetings`
   ADD PRIMARY KEY (`MeetingID`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `meetings`
+--
+ALTER TABLE `meetings`
+  MODIFY `MeetingID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
