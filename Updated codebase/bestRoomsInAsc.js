@@ -70,10 +70,14 @@ module.exports = {
                 }
             }
             //sorted array is in the form [[index 0,index 1],[index 0,index 1]...] index 0 is the room name index 1 is average distance to it
-        for(var e=0;e<sorted.length;e++)
-        {
-            sortedNames.push(sorted[e][0]);
-        }
+            var hold1,parsed2;
+            for(var e=0;e<sorted.length;e++)
+            {	
+                hold1=await DatabaseQuerries.roomIDQuery(sorted[e][0]);
+                hold1= JSON.stringify(hold1[0]);
+               parsed2=JSON.parse(hold1);
+                sortedNames.push(parsed2.RoomID);
+            }
 
         return sortedNames;
     }
