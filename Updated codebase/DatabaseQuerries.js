@@ -95,6 +95,7 @@ module.exports = {
                     });
             });
     },
+    //returns RoomID of a meeting room
     roomIDQuery: async function(RoomName)
     {
         return new Promise((resolve, reject) => {
@@ -108,7 +109,45 @@ module.exports = {
                         }
                     });
             });
-    }
+    },
+    //stores the best meeting room in db
+    storeRooms: async function(extractedDetails,amenity,ListOfRooms)
+    {
+
+  
+        return new Promise((resolve, reject) => {
+          var nextbest=[];
+          for(var i=1;i<ListOfRooms.length;i++)
+          {
+            nextbest.push(ListOfRooms[i]);
+          }
+          var sql = "INSERT INTO meetings (StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,BestRooms)"+
+        "VALUES('" +
+                  extractedDetails.Start +
+                  "','" +
+                 extractedDetails.End+
+                  "','" +
+                  extractedDetails.Organizer +
+                  "','" +
+                  extractedDetails.Attendees +
+                  "','" +
+                  amenity +
+                  "','" +
+                  ListOfRooms[0] +
+                  "','" +
+                  nextbest +
+                  "');";;
+            connection.query(sql, function (err, result) {
+                if (err){
+                   throw err;
+                    } 
+                else{
+                    resolve(result);
+                    }
+                });
+          });
+      
+      }
 
     //Other Functions
 

@@ -5,7 +5,8 @@ var DatabaseQuerries = require ('./DatabaseQuerries');
 app.use(bodyParser.json());
 
 
-module.exports = {
+module.exports = 
+{
     getRoomsInOrderOfDistances : async function(Frooms,attendeelocation) 
     {		var arr=[],arr2=[];
             var Boolkey=Infinity;
@@ -80,5 +81,9 @@ module.exports = {
             }
 
         return sortedNames;
+    },
+    bookMeetingRoom: async function(extractedDetails,amenity,ListOfRooms)
+    {
+        var wait=await DatabaseQuerries.storeRooms(extractedDetails,amenity,ListOfRooms);
     }
-}
+};
