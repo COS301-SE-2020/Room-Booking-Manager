@@ -221,3 +221,7 @@ function getAccess() {
         });
     });
 }
+
+// function backToBack() {
+GlobalOptimization.getBackToBackList();
+// }
