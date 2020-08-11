@@ -44,17 +44,19 @@ async function getBackToBackList() {
     var b2b = false;
 
     for (var x = 0; x < list.length - 1; x++) {
-        b2b = JSON.stringify(arrMeetings[x].EndTime) == JSON.stringify(arrMeetings[x + 1].StartTime);
-        for (var y = 0; y < list[x].length; y++) {
-            employee = list[x][y];
-            if (list[x + 1].includes(employee) && !backToBackList.includes(employee) && b2b) {
-                backToBackList.push(employee);
+        for (var b = x + 1; b < list.length; b++) {
+            b2b = JSON.stringify(arrMeetings[x].EndTime) == JSON.stringify(arrMeetings[b].StartTime);
+            for (var y = 0; y < list[x].length; y++) {
+                employee = list[x][y];
+                if (list[b].includes(employee) && !backToBackList.includes(employee) && b2b) {
+                    backToBackList.push(employee);
 
-                // Add only if the ID has not been added:
-                if (!arrB2bMeetingIDs.includes(arrMeetings[x].MeetingID))
-                    arrB2bMeetingIDs.push(arrMeetings[x].MeetingID);
-                if (!arrB2bMeetingIDs.includes(arrMeetings[x + 1].MeetingID))
-                    arrB2bMeetingIDs.push(arrMeetings[x + 1].MeetingID);
+                    // Add only if the ID has not been added:
+                    if (!arrB2bMeetingIDs.includes(arrMeetings[x].MeetingID))
+                        arrB2bMeetingIDs.push(arrMeetings[x].MeetingID);
+                    if (!arrB2bMeetingIDs.includes(arrMeetings[b].MeetingID))
+                        arrB2bMeetingIDs.push(arrMeetings[b].MeetingID);
+                }
             }
         }
     }
