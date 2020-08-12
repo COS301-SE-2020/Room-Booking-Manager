@@ -16,6 +16,7 @@ var DatabaseQuerries = require("./DatabaseQuerries");
 var GatherFeasibleRooms = require("./GatherFeasibleRooms");
 var bestRoomsInAsc = require("./bestRoomsInAsc");
 var GlobalOptimization = require("./GlobalOptimization");
+var UpdateLocation = require("./UpdateLocation");
 
 /*
 var WebHooks = require('node-webhooks')
@@ -101,9 +102,9 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://0e9048959d69.ngrok.io/webhook",
+            notificationUrl: "https://5fcf65fac59f.ngrok.io/webhook",
             resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events",
-            expirationDateTime: "2020-08-09T11:55:45.9356913Z",
+            expirationDateTime: "2020-08-12T01:55:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -172,6 +173,8 @@ async function beginProcess(eventDescription) {
 
         var ListOfRooms = await bestRoomsInAsc.getRoomsInOrderOfDistances(availRooms, location); //returns rooms in ascending order based on average distance of  employees to each meeting room
         console.log("ListOfRooms: " + ListOfRooms);
+
+        await UpdateLocation.update(access,extractedDetails.Organizer,extractedDetails.Subject,extractedDetails.Start, ListOfRooms[0]);
 
         bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
     }
