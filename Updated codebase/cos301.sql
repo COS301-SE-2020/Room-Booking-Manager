@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 08, 2020 at 10:08 PM
+-- Generation Time: Aug 12, 2020 at 09:06 AM
 -- Server version: 10.4.13-MariaDB
 -- PHP Version: 7.4.8
 
@@ -61,8 +61,19 @@ INSERT INTO `distance` (`Rooms`, `Texas`, `Colorado`, `Mississippi`, `NewJersey`
 ('1M1', 50, 54, 60, 63, 87, 94, 100, 94, 98, 104, 107),
 ('1M2', 9, 15, 19, 23, 94, 101, 107, 101, 105, 111, 114),
 ('1P1', 48, 53, 59, 62, 85, 93, 99, 92, 97, 103, 106),
+('1P2', 0, 7, 11, 15, 96, 104, 110, 103, 108, 114, 117),
+('1Q2', 7, 0, 6, 10, 101, 108, 114, 108, 112, 118, 121),
 ('1R1', 56, 61, 67, 70, 93, 101, 107, 100, 105, 111, 114),
-('1U1', 68, 73, 79, 82, 105, 113, 119, 112, 117, 123, 126);
+('1R2', 11, 6, 0, 6, 107, 114, 120, 114, 118, 124, 127),
+('1S2', 15, 10, 6, 0, 110, 117, 123, 117, 121, 127, 130),
+('1U1', 68, 73, 79, 82, 105, 113, 119, 112, 117, 123, 126),
+('2P1', 96, 101, 107, 110, 0, 9, 16, 52, 57, 63, 66),
+('2P2', 103, 108, 114, 117, 52, 60, 66, 0, 7, 11, 15),
+('2Q1', 104, 108, 114, 117, 9, 0, 9, 60, 64, 70, 73),
+('2Q2', 108, 112, 118, 121, 57, 64, 70, 7, 0, 6, 10),
+('2R1', 110, 114, 120, 123, 16, 9, 0, 66, 70, 76, 79),
+('2R2', 114, 118, 124, 127, 63, 70, 76, 11, 6, 0, 6),
+('2S2', 117, 121, 127, 130, 66, 73, 79, 15, 10, 6, 0);
 
 -- --------------------------------------------------------
 
@@ -113,7 +124,6 @@ CREATE TABLE `floorplan` (
   `RoomName` varchar(255) NOT NULL,
   `FloorNumber` int(2) NOT NULL,
   `maxSeats` int(2) NOT NULL,
-  `Amenity` varchar(255) NOT NULL,
   `isExternal` bit(1) NOT NULL,
   `Building` int(2) NOT NULL,
   `Whiteboard` bit(1) NOT NULL,
@@ -125,18 +135,18 @@ CREATE TABLE `floorplan` (
 -- Dumping data for table `floorplan`
 --
 
-INSERT INTO `floorplan` (`RoomID`, `RoomName`, `FloorNumber`, `maxSeats`, `Amenity`, `isExternal`, `Building`, `Whiteboard`, `Projector`, `Monitor`) VALUES
-('1P2', 'Texas', 2, 10, 'Whiteboard,Projector', b'0', 1, b'1', b'1', b'0'),
-('1Q2', 'Colorado', 2, 6, 'Whiteboard', b'0', 1, b'1', b'0', b'0'),
-('1R2', 'Mississippi', 2, 6, 'Projector', b'0', 1, b'0', b'1', b'0'),
-('1S2', 'NewJersey', 2, 6, 'Whiteboard,Monitor', b'0', 1, b'1', b'0', b'1'),
-('2P1', 'NewYork', 1, 10, 'Whiteboard,Projector', b'0', 2, b'1', b'1', b'0'),
-('2P2', 'Pennsylvania', 2, 10, 'Whiteboard,Projector', b'0', 2, b'1', b'1', b'0'),
-('2Q1', 'California', 1, 10, 'Whiteboard,Monitor', b'0', 2, b'1', b'0', b'1'),
-('2Q2', 'Georgia', 2, 6, 'Whiteboard', b'0', 2, b'1', b'0', b'0'),
-('2R1', 'Florida', 1, 10, 'Whiteboard,Monitor', b'0', 2, b'1', b'0', b'1'),
-('2R2', 'Tennessee', 2, 6, 'Monitor', b'0', 2, b'0', b'0', b'1'),
-('2S2', 'Washington', 2, 6, 'Whiteboard,Projector', b'0', 2, b'1', b'1', b'0');
+INSERT INTO `floorplan` (`RoomID`, `RoomName`, `FloorNumber`, `maxSeats`, `isExternal`, `Building`, `Whiteboard`, `Projector`, `Monitor`) VALUES
+('1P2', 'Texas', 2, 10, b'0', 1, b'1', b'1', b'0'),
+('1Q2', 'Colorado', 2, 6, b'0', 1, b'1', b'0', b'0'),
+('1R2', 'Mississippi', 2, 6, b'0', 1, b'0', b'1', b'0'),
+('1S2', 'NewJersey', 2, 6, b'0', 1, b'1', b'0', b'1'),
+('2P1', 'NewYork', 1, 10, b'0', 2, b'1', b'1', b'0'),
+('2P2', 'Pennsylvania', 2, 10, b'0', 2, b'1', b'1', b'0'),
+('2Q1', 'California', 1, 10, b'0', 2, b'1', b'0', b'1'),
+('2Q2', 'Georgia', 2, 6, b'0', 2, b'1', b'0', b'0'),
+('2R1', 'Florida', 1, 10, b'0', 2, b'1', b'0', b'1'),
+('2R2', 'Tennessee', 2, 6, b'0', 2, b'0', b'0', b'1'),
+('2S2', 'Washington', 2, 6, b'0', 2, b'1', b'1', b'0');
 
 -- --------------------------------------------------------
 
@@ -145,7 +155,7 @@ INSERT INTO `floorplan` (`RoomID`, `RoomName`, `FloorNumber`, `maxSeats`, `Ameni
 --
 
 CREATE TABLE `meetings` (
-  `MeetingID` varchar(150) NOT NULL,
+  `MeetingID` int(11) NOT NULL,
   `StartTime` datetime(6) NOT NULL,
   `EndTime` datetime(6) NOT NULL,
   `Organizer` varchar(150) NOT NULL,
@@ -160,9 +170,7 @@ CREATE TABLE `meetings` (
 --
 
 INSERT INTO `meetings` (`MeetingID`, `StartTime`, `EndTime`, `Organizer`, `Participants`, `OriginalAmenity`, `RoomID`, `BestRooms`) VALUES
-('1Bmmb2', '2020-09-01 06:00:00.000000', '2020-09-01 06:30:00.000000', 'bob', '', 'projector', '2AW', ''),
-('a001', '2020-09-01 08:45:00.000000', '2020-09-01 09:00:00.000000', '', '', '', '1P2', ''),
-('A002', '2020-09-01 10:30:00.000000', '2020-09-01 10:45:00.000000', '', '', '', '1P2', '');
+(7, '2020-09-05 15:00:00.000000', '2020-09-05 15:30:00.000000', 'AlexW@teamthreshold.onmicrosoft.com', 'AlexW@teamthreshold.onmicrosoft.com,COS301@teamthreshold.onmicrosoft.com', 'projector', '1P2', '1Q2,1S2,2P1,2P2');
 
 --
 -- Indexes for dumped tables
@@ -191,6 +199,16 @@ ALTER TABLE `floorplan`
 --
 ALTER TABLE `meetings`
   ADD PRIMARY KEY (`MeetingID`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `meetings`
+--
+ALTER TABLE `meetings`
+  MODIFY `MeetingID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
