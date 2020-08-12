@@ -18,15 +18,103 @@ connection.connect(function (err) {
     }
 });
 
-// run the back to back function
-// getBackToBackList();
+async function printResults() {
+    // run the back to back function
+    var backToback = await getBackToBackList();
+    console.log("FUNCTION RUNNING AS INTENDED:");
+    for (var x = 0; x < backToback.Events.length; x++) {
+        console.log("=> " + JSON.stringify(backToback.Events[x]));
+    }
+    console.log("\n");
+}
+
+printResults();
 
 // global variable for storing all meetings
 // initialised in getAttendeeList() function
 var arrMeetings;
 
-// global array for storing back to back meeting IDs
-var arrB2bMeetingIDs = [];
+var B2BEvents = {
+    Events: [],
+};
+
+async function getBackToBackList() {
+    // retrieve 2D arrray:
+    var list = await getAttendeeList().then((res) => res);
+    return new Promise((resolve, reject) => {
+        // initialize eventCount:
+        var eventCount = 0;
+
+        // Array to store meeting room IDs:
+        var arrRooms = [];
+
+        var backToBackList = [];
+
+        // Console log the first two meeting start and end times -- to be removed:
+        console.log("\nTESTING START & END TIMES FOR FIRST TWO MEETINGS:");
+        console.log("MEETING (0) END TIME:\n=>	" + arrMeetings[0].EndTime + "\nMEETING (1) START TIME:\n=>	" + arrMeetings[1].StartTime + "\n");
+
+        // variable to store each employee in Meeting N-1, as we search for that employee in Meeting N:
+        var employee;
+
+        // flag for 10 minute grace period between meetings, for a meeting to qualify as back to back:
+        var NextMeetingstartsWithinTenMinutes = false;
+
+        for (var x = 0; x < list.length - 1; x++) {
+            B2BEvents.Events[eventCount] = {
+                CurrentMeetingRoom: "",
+                Attendees: [],
+                NextMeetingRoom: "",
+            };
+
+            for (var b = x + 1; b < list.length; b++) {
+                NextMeetingstartsWithinTenMinutes = arrMeetings[b].StartTime.getTime() - arrMeetings[x].EndTime.getTime() <= 600000;
+
+                if (NextMeetingstartsWithinTenMinutes)
+                    for (var y = 0; y < list[x].length; y++) {
+                        employee = list[x][y];
+                        if (list[b].includes(employee)) {
+                            if (!backToBackList.includes(employee)) backToBackList.push(employee);
+
+                            // add employee to JSON object of events:
+                            B2BEvents.Events[eventCount].Attendees.push(employee);
+
+                            // Push RoomIDs into array for later use:
+                            arrRooms.push(arrMeetings[x].RoomID);
+                            arrRooms.push(arrMeetings[b].RoomID);
+                        }
+                    }
+            }
+
+            // if events were valid and back to back:
+            if (B2BEvents.Events[eventCount].Attendees.length > 0) {
+                // Add rooms to JSON object of event:
+                B2BEvents.Events[eventCount].NextMeetingRoom = arrRooms.pop();
+                B2BEvents.Events[eventCount].CurrentMeetingRoom = arrRooms.pop();
+                eventCount++;
+            } else delete B2BEvents.Events[eventCount];
+        }
+
+        console.log("\nLIST OF MEMBERS INVOLVED IN BACK TO BACK MEETINGS:\n=>	" + backToBackList + "\n");
+        console.log("\nLIST OF EVENTS:");
+        for (var x = 0; x < eventCount; x++) {
+            console.log("=>   Event " + x + ": " + JSON.stringify(B2BEvents.Events[x]));
+        }
+
+        console.log("\nBack To Back Solved!\n");
+
+        //eliminate all the null values from the data
+        B2BEvents.Events = B2BEvents.Events.filter(function (x) {
+            return x !== null;
+        });
+
+        // if there are no events:
+        if (B2BEvents.Events.length == 0) return reject(B2BEvents);
+
+        // nelse return the events:
+        return resolve(B2BEvents);
+    });
+}
 
 async function getAttendeeList() {
     return new Promise((resolve, reject) => {
@@ -53,10 +141,7 @@ async function getAttendeeList() {
 
                     // remove TeamThreshold and store participants in lowercase:
                     for (var col = 0; col < PreliminaryParticipants[row].length; col++) {
-                        if (
-                            PreliminaryParticipants[row][col].toLowerCase() !=
-                            "cos301@teamthreshold.onmicrosoft.com"
-                        ) {
+                        if (PreliminaryParticipants[row][col].toLowerCase() != "cos301@teamthreshold.onmicrosoft.com") {
                             Participants[row][colParticipants++] = PreliminaryParticipants[row][col].toLowerCase();
                         }
                     }
@@ -69,53 +154,3 @@ async function getAttendeeList() {
         });
     });
 }
-
-// getMeetings: async function () {
-//     return arrMeetings;
-// },
-
-// getBackToBackMeetingListIDs: async function () {
-//     return arrB2bMeetingIDs;
-// },
-
-module.exports = {
-    getBackToBackList: async function () {
-        // retrieve 2D arrray:
-        var list = await getAttendeeList().then((res) => res);
-        var backToBackList = [];
-
-        // Console log the first two meeting start and end times -- to be removed:
-        console.log("\nSTART & END TIMES FOR FIRST TWO MEETINGS:");
-        console.log("=>	" + arrMeetings[0].EndTime + "\n=>	" + arrMeetings[1].StartTime + "\n");
-
-        // variable to store each employee in Meeting N-1, as we search for that employee in Meeting N:
-        var employee;
-
-        // flag for back to back:
-        var b2b = false;
-
-        for (var x = 0; x < list.length - 1; x++) {
-            for (var b = x + 1; b < list.length; b++) {
-                b2b = JSON.stringify(arrMeetings[x].EndTime) == JSON.stringify(arrMeetings[b].StartTime);
-                for (var y = 0; y < list[x].length; y++) {
-                    employee = list[x][y];
-                    if (list[b].includes(employee) && !backToBackList.includes(employee) && b2b) {
-                        backToBackList.push(employee);
-
-                        // Add only if the ID has not been added:
-                        if (!arrB2bMeetingIDs.includes(arrMeetings[x].MeetingID))
-                            arrB2bMeetingIDs.push(arrMeetings[x].MeetingID);
-                        if (!arrB2bMeetingIDs.includes(arrMeetings[b].MeetingID))
-                            arrB2bMeetingIDs.push(arrMeetings[b].MeetingID);
-                    }
-                }
-            }
-        }
-
-        console.log("\nLIST OF MEMBERS INVOLVED IN BACK TO BACK MEETINGS:\n=>	" + backToBackList + "\n");
-        console.log("B2B MEETING IDs:\n=>	" + arrB2bMeetingIDs + "\n");
-        console.log("Back To Back Solved.\n");
-
-        return backToBackList;
-    },
-};
