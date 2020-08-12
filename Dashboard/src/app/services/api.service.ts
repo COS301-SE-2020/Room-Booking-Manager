@@ -19,6 +19,7 @@ export class apiService
     }
     getUsers(): Observable<any>
     {
+        console.log("ts in getusers");
         let body={
             table:"EmployeeDetails",
             request:"view",
