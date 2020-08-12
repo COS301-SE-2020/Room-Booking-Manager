@@ -32,16 +32,24 @@ module.exports = {
         return new Promise((resolve, reject) => {
         
             var LocationID = [];
+            var Email = [];
+            for(var i = 0; i < emailAddress.length; i++)
+            {
+                if(emailAddress[i] != "COS301@teamthreshold.onmicrosoft.com")
+                {
+                    Email.push(emailAddress[i]);
+                }
+            }
 
             //Get query string according to emails
-            var sqlQuery = "SELECT * FROM EmployeeDetails WHERE EmpEmail = '" + emailAddress[0] + "'";
-            for(var i = 1; i < emailAddress.length; i++)
+            var sqlQuery = "SELECT * FROM EmployeeDetails WHERE EmpEmail = '" + Email[0] + "'";
+            for(var i = 1; i < Email.length; i++)
             {
-                if(i != emailAddress.length)
+                if(i != Email.length)
                 {
                     sqlQuery = sqlQuery + " OR EmpEmail = ";
                 }
-                sqlQuery = sqlQuery +"'"+ emailAddress[i] + "'";
+                sqlQuery = sqlQuery +"'"+ Email[i] + "'";
             }
 
             connection.query(sqlQuery, function (err, data) {
@@ -52,7 +60,7 @@ module.exports = {
                 else{
                     
                     //Retrieve location ID for each Employee
-                    for(var i = 0; i < emailAddress.length; i++)
+                    for(var i = 0; i < Email.length; i++)
                     {
                         LocationID[i] = data[i].LocationID
                     }
