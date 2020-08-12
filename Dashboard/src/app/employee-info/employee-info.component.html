@@ -18,11 +18,18 @@
                 <td attr.class="{{user.LastName}}">{{user.LastName}}</td>
                 <td attr.class="{{user.EmpEmail}}">{{user.EmpEmail}}</td>
                 <td attr.class="{{user.LocationID}}">{{user.LocationID}}</td>
-                <td attr.class="{{user.isAdmin}}">{{user.isAdmin}}</td>
+                <td attr.class="{{user.isAdmin}}">
+                    <ng-template [ngIf]="user.isAdmin.data[0] > 0" [ngIfElse]="notAdmin">
+                        yes
+                    </ng-template>
+                    <ng-template #notAdmin>
+                        no
+                    </ng-template>
+                 </td>
                 <!-- <td></td> -->
                 <td>
                     <span>
-                        <button class="btn btn-danger"  (click)="delete(user.EmpEmail)">Delete</button>&nbsp;
+                        <button class="btn btn-danger" id="b1" (click)="delete(user.EmpEmail)">Delete</button>
                         <button class="btn btn-success" (click)="edit(user.FirstName,user.LastName,user.EmpEmail,user.LocationID,user.EmpPassword,user.isAdmin)">Edit</button>
                         <!-- <button class="btn btn-primary" >Assign Admin</button>&nbsp; -->
                     </span>
