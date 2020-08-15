@@ -17,6 +17,7 @@ var GatherFeasibleRooms = require("./GatherFeasibleRooms");
 var bestRoomsInAsc = require("./bestRoomsInAsc");
 var GlobalOptimization = require("./GlobalOptimization");
 var UpdateLocation = require("./UpdateLocation");
+var CheckConflict = require("./CheckConflict");
 
 /*
 var WebHooks = require('node-webhooks')
@@ -102,9 +103,9 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://5fcf65fac59f.ngrok.io/webhook",
+            notificationUrl: "https://0e9be031c010.ngrok.io/webhook",
             resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events",
-            expirationDateTime: "2020-08-12T01:55:45.9356913Z",
+            expirationDateTime: "2020-08-15T19:30:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -156,27 +157,35 @@ async function beginProcess(eventDescription) {
         var extractedDetails = await ExtractedDetails.EventDetails(eventRes).then((res) => res);
         console.log(extractedDetails);
 
-        var location = await DatabaseQuerries.getLocation(extractedDetails.Attendees).then((res) => res);
-        console.log("Location: " + location);
+        var canBook = await CheckConflict.start(extractedDetails.Organizer,extractedDetails.Start,extractedDetails.End).then((res) => res);
+        if(canBook)
+        {
+            var location = await DatabaseQuerries.getLocation(extractedDetails.Attendees).then((res) => res);
+            console.log("Location: " + location);
 
-        console.log(eventRes.bodyPreview);
-        var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then((res) => res);
+            console.log(eventRes.bodyPreview);
+            var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then((res) => res);
 
-        console.log("Amenity: " + Amenity);
-        var availRooms = await GatherFeasibleRooms.getFeasibleRooms(
-            Amenity,
-            extractedDetails.Capacity,
-            extractedDetails.Start,
-            extractedDetails.End
-        ).then((res) => res);
-        console.log("avail: " + availRooms);
+            console.log("Amenity: " + Amenity);
+            var availRooms = await GatherFeasibleRooms.getFeasibleRooms(
+                Amenity,
+                extractedDetails.Capacity,
+                extractedDetails.Start,
+                extractedDetails.End
+            ).then((res) => res);
+            console.log("avail: " + availRooms);
 
-        var ListOfRooms = await bestRoomsInAsc.getRoomsInOrderOfDistances(availRooms, location); //returns rooms in ascending order based on average distance of  employees to each meeting room
-        console.log("ListOfRooms: " + ListOfRooms);
+            var ListOfRooms = await bestRoomsInAsc.getRoomsInOrderOfDistances(availRooms, location); //returns rooms in ascending order based on average distance of  employees to each meeting room
+            console.log("ListOfRooms: " + ListOfRooms);
 
-        await UpdateLocation.update(access,extractedDetails.Organizer,extractedDetails.Subject,extractedDetails.Start, ListOfRooms[0]);
+            await UpdateLocation.update(access,extractedDetails.Organizer,extractedDetails.Subject,extractedDetails.Start, ListOfRooms[0]);
 
-        bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
+            bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
+        }
+        else
+        {
+            console.debug("Booking conflict");
+        }
     }
 }
 
@@ -226,5 +235,5 @@ function getAccess() {
 }
 
 // function backToBack() {
-GlobalOptimization.getBackToBackList();
+//GlobalOptimization.getBackToBackList();
 // }
