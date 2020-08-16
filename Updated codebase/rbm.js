@@ -158,8 +158,7 @@ async function beginProcess(eventDescription) {
         console.log(extractedDetails);
 
         var canBook = await CheckConflict.start(extractedDetails.Organizer,extractedDetails.Start,extractedDetails.End).then((res) => res);
-        if(canBook)
-        {
+       
             var location = await DatabaseQuerries.getLocation(extractedDetails.Attendees).then((res) => res);
             console.log("Location: " + location);
 
@@ -181,11 +180,7 @@ async function beginProcess(eventDescription) {
             await UpdateLocation.update(access,extractedDetails.Organizer,extractedDetails.Subject,extractedDetails.Start, ListOfRooms[0]);
 
             bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
-        }
-        else
-        {
-            console.debug("Booking conflict");
-        }
+       
     }
 }
 
