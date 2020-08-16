@@ -44,10 +44,10 @@ app.get('/FloorPlan', function(req, res){
 });
 
 //retrieve a specific room
-app.get('/FloorPlan:id', function(req, res){
+app.get('/FloorPlan/:id', function(req, res){
        
         var id=req.params["id"];
-    var sql ="SELECT * FROM floorplan WHERE RoomID ="+id;
+    var sql ="SELECT * FROM floorplan WHERE RoomID ='" + id + "';";
 
     connection.query(sql, function (err, result) {
     if (err){
@@ -199,10 +199,10 @@ app.get('/distance', function(req, res){
 });
 
 //retrieve a specific rooms distances to other rooms
-app.get('/distance:id', function(req, res){
+app.get('/distance/:id', function(req, res){
        
         var id=req.params["id"];
-    var sql ="SELECT * FROM distance WHERE Rooms ="+id;
+    var sql ="SELECT * FROM distance WHERE Rooms ='" + id + "';";
 
     connection.query(sql, function (err, result) {
     if (err){
@@ -339,13 +339,15 @@ app.get('/employeeDetails', function(req, res){
 });
 
 //get specific employee
-app.get('/employeeDetails:id', function(req, res){
+app.get('/employeeDetails/:id', function(req, res){
        
         var id=req.params["id"];
-    var sql ="SELECT * FROM floorplan WHERE EmpEmail = " + id;
 
+    var sql ="SELECT * FROM employeedetails WHERE EmpEmail ='" + id + "';";
+   
     connection.query(sql, function (err, result) {
     if (err){
+       console.log(err);
         res.writeHead(404);//not found or other error
         res.end();
         } 
@@ -457,10 +459,10 @@ app.get('/Meetings', function(req, res){
 });
 
 //retrieve a specific meeting's details
-app.get('/Meetings:id', function(req, res){
+app.get('/Meetings/:id', function(req, res){
        
         var id=req.params["id"];
-    var sql ="SELECT * FROM distance WHERE MeetingID ="+id;
+    var sql ="SELECT * FROM meetings WHERE MeetingID ='" + id + "';";
 
     connection.query(sql, function (err, result) {
     if (err){

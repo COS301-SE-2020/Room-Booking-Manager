@@ -26,7 +26,7 @@ app.post("/", function (req, res) {
     table = req.body.table;
     operation = req.body.request;
     bodyData = req.body.data;
-
+    console.log("in api");
     callAPI(table, operation, bodyData, res);
 });
 
@@ -103,8 +103,8 @@ function read_record(table, primaryKey, recordID, res) {
     });
 }
 
-function view_records(table, res) {
-   
+async function view_records(table, res) {
+
     if(table == "FloorPlan"){
         http.get("http://localhost:10000/FloorPlan",httpRes=>{
             var data="";
@@ -139,20 +139,38 @@ function view_records(table, res) {
     }
 
     else if(table == "Meetings"){
-        http.get("http://localhost:10000/Meetings",httpRes=>{
-            var data="";
+      var t,t2;
+      var array=[];
+     var data=await viewMeeting();
+     data=JSON.parse(data);
 
-            httpRes.on("data",chunk=>{
-                data+=chunk;
-            });
+     for(var i=0;i<data.length;i++)
+     {
+        t=data[i]["Participants"];
+        data[i]["StartTime"]=new Date(data[i]["StartTime"]).toISOString().replace(/T/, ' ').replace(/\..+/, '');
+        data[i]["EndTime"]=new Date(data[i]["EndTime"]).toISOString().replace(/T/, ' ').replace(/\..+/, '');
+        array = t.split(',');
+       
+        for(var u=0;u<array.length;u++)
+          {
+             t2=await querySingleEmplDetails(array[u]); //query for specific employee
+             if(t2=="ERROR")
+             {
+              console.log("error has occured");
+             }
+             else{
+              console.log("t2: "+t2);
+              t2=JSON.parse(t2);
+              array[u]=t2[0]["FirstName"]+" ";
+              array[u]+=t2[0]["LastName"];
+             }
+          }
+           data[i]["Participants"]=array;
+     } 
 
-            httpRes.on("end",()=>{
-                console.log(data);
-                res.send(data);
-            });
-        }).on("error",err=>{
-            console.log("ERROR view");
-        });
+      console.log(data);
+       res.send(data);
+        
     }
 
     else if(table == "Distance"){
@@ -171,6 +189,47 @@ function view_records(table, res) {
             console.log("ERROR view");
         });
     }
+}
+
+function querySingleEmplDetails(id)
+{
+  return new Promise((resolve, reject) => {
+   
+    var req="http://localhost:10000/employeeDetails/"+id;
+  http.get(req,httpRes=>{
+            var data="";
+
+            httpRes.on("data",chunk=>{
+                data+=chunk;
+            });
+
+            httpRes.on("end",()=>{
+                resolve(data);
+            });
+        }).on("error",err=>{
+            reject("ERROR");
+        });
+        });
+}
+
+function viewMeeting(){
+  return new Promise((resolve, reject) => {
+  http.get("http://localhost:10000/Meetings",httpRes=>{
+            var data="";
+
+            httpRes.on("data",chunk=>{
+                data+=chunk;
+            });
+
+            httpRes.on("end",()=>{
+              
+               resolve (data);
+            });
+        }).on("error",err=>{
+            console.log("ERROR view");
+            reject("error");
+        });
+        });
 }
 
 // TABLE FLOOR PLAN
