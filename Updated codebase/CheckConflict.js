@@ -73,8 +73,8 @@ async function conflict(organizer, sTime,eTime)
     var book = false;
     sTime = new Date(sTime);
     eTime = new Date(eTime);
-    console.log("Started function");
-    console.debug(organizer+" --- "+sTime+" --- "+eTime)
+    //console.log("Started function");
+    //console.debug(organizer+" --- "+sTime+" --- "+eTime)
 	 return new Promise(async function(resolve, reject)
      {
 		var sql1 ="SELECT * FROM meetings WHERE Organizer = '" + organizer + "'";
