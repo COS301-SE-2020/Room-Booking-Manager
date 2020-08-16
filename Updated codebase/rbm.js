@@ -102,9 +102,9 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://bbd0bf789f7b.ngrok.io/webhook",
+            notificationUrl: "https://8cc8c7cb35b2.ngrok.io/webhook",
             resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events 
-            expirationDateTime: "2020-08-12T12:55:45.9356913Z",
+            expirationDateTime: "2020-08-16T09:30:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -156,7 +156,12 @@ async function beginProcess(eventDescription) {
         var extractedDetails = await ExtractedDetails.EventDetails(eventRes).then((res) => res);
         console.log(extractedDetails);
 
-        var location = await DatabaseQuerries.getLocation(extractedDetails.Attendees).then((res) => res);
+        //Location ID of employees
+        var location = await DatabaseQuerries.getLocation(
+            extractedDetails.Attendees, 
+            extractedDetails.Start,
+            extractedDetails.End
+            ).then((res) => res);
         console.log("Attendee Locations: " + location);
 
         console.log("Event description input: "+eventRes.bodyPreview);
@@ -177,7 +182,7 @@ async function beginProcess(eventDescription) {
         await UpdateLocation.update(access,extractedDetails.Organizer,extractedDetails.Subject,extractedDetails.Start, ListOfRooms[0]);
 
         await bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
-        GlobalOptimization.getBackToBackList();
+        await GlobalOptimization.getBackToBackList();
        
     }
 }
@@ -226,7 +231,3 @@ function getAccess() {
         });
     });
 }
-
-// function backToBack() {
-
-// }
