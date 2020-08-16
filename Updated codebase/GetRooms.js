@@ -32,8 +32,13 @@ module.exports = {
         //feasibleRooms = [];
         return new Promise(async function(resolve, reject)
         {
+<<<<<<< HEAD
             var capRooms = await checkRoom(amenity,capacity).then(res=>res);
             if(capRooms.length > 0)
+=======
+            var sql ="SELECT * FROM floorplan WHERE " + amenity + " = 1";
+            await connection.query(sql, async function (err, result) 
+>>>>>>> develop
             {
                 for(var i = 0; i < capRooms.length; i++)
                 {

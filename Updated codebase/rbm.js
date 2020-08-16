@@ -103,9 +103,15 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
+<<<<<<< HEAD
             notificationUrl: "https://d415f3074836.ngrok.io/webhook",
             resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events",
             expirationDateTime: "2020-08-16T19:30:45.9356913Z",
+=======
+            notificationUrl: "https://8cc8c7cb35b2.ngrok.io/webhook",
+            resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events 
+            expirationDateTime: "2020-08-16T09:30:45.9356913Z",
+>>>>>>> develop
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -141,22 +147,23 @@ client
 }
 
 async function beginProcess(eventDescription) {
-    console.log("This is event triggered: ");
+    console.log("Event triggered: ");
     //console.log(JSON.stringify(eventDescription));
     if (eventDescription != undefined) {
         var eventUrl = eventDescription.value[0].resource;
-        console.log("This is event APi call: " + eventUrl);
+       // console.log("This is event APi call: " + eventUrl);
 
         var access = await getAccess().then((result) => result.accessToken);
         var eventRes = await getDetails(eventUrl, access).then((res) => res);
-        console.log("This is event RES: ");
-        console.log(eventRes);
+       // console.log("This is event RES: ");
+        //console.log(eventRes);
 
         //JSON Object with necessary event information
         console.log("Extracted Details");
         var extractedDetails = await ExtractedDetails.EventDetails(eventRes).then((res) => res);
         console.log(extractedDetails);
 
+<<<<<<< HEAD
         var canBook = await CheckConflict.start(extractedDetails.Organizer,extractedDetails.Start,extractedDetails.End).then((res) => res);
        
             var location = await DatabaseQuerries.getLocation(extractedDetails.Attendees).then((res) => res);
@@ -176,10 +183,39 @@ async function beginProcess(eventDescription) {
 
             var ListOfRooms = await bestRoomsInAsc.getRoomsInOrderOfDistances(availRooms, location); //returns rooms in ascending order based on average distance of  employees to each meeting room
             console.log("ListOfRooms: " + ListOfRooms);
+=======
+        //Location ID of employees
+        var location = await DatabaseQuerries.getLocation(
+            extractedDetails.Attendees, 
+            extractedDetails.Start,
+            extractedDetails.End
+            ).then((res) => res);
+        console.log("Attendee Locations: " + location);
+
+        console.log("Event description input: "+eventRes.bodyPreview);
+        var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then((res) => res);
+
+        console.log("Amenity: " + Amenity);
+        var availRooms = await GatherFeasibleRooms.getFeasibleRooms(
+            Amenity,
+            extractedDetails.Capacity,
+            extractedDetails.Start,
+            extractedDetails.End
+        ).then((res) => res);
+        console.log("Rooms available to select from: " + availRooms);
+
+        var ListOfRooms = await bestRoomsInAsc.getRoomsInOrderOfDistances(availRooms, location); //returns rooms in ascending order based on average distance of  employees to each meeting room
+        console.log("List Of Rooms sorted by distance: " + ListOfRooms);
+>>>>>>> develop
 
             await UpdateLocation.update(access,extractedDetails.Organizer,extractedDetails.Subject,extractedDetails.Start, ListOfRooms[0]);
 
+<<<<<<< HEAD
             bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
+=======
+        await bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
+        await GlobalOptimization.getBackToBackList();
+>>>>>>> develop
        
     }
 }
@@ -228,7 +264,10 @@ function getAccess() {
         });
     });
 }
+<<<<<<< HEAD
 
 // function backToBack() {
 //GlobalOptimization.getBackToBackList();
 // }
+=======
+>>>>>>> develop
