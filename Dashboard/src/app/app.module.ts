@@ -25,6 +25,7 @@ import { RegisterComponent } from './register/register.component';
 import { EmployeeInfoComponent } from './employee-info/employee-info.component';
 import { EditEmployeeComponent } from './edit-employee/edit-employee.component';
 import { MeetingInfoComponent } from './meeting-info/meeting-info.component';
+import { RegisterConfirmComponent } from './register-confirm/register-confirm.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { MeetingInfoComponent } from './meeting-info/meeting-info.component';
     RegisterComponent,
     EmployeeInfoComponent,
     EditEmployeeComponent,
-    MeetingInfoComponent
+    MeetingInfoComponent,
+    RegisterConfirmComponent
   ],
   imports: [
     BrowserModule,
