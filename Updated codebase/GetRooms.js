@@ -32,7 +32,7 @@ module.exports = {
         //feasibleRooms = [];
         return new Promise(async function(resolve, reject)
         {
-            var sql ="SELECT * FROM floorplan WHERE Amenity LIKE '%" + amenity + "%'";
+            var sql ="SELECT * FROM floorplan WHERE " + amenity + " = 1";
             await connection.query(sql, async function (err, result) 
             {
                 if (err)
