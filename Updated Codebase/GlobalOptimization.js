@@ -21,7 +21,7 @@ connection.connect(function (err) {
 async function printResults() {
     // run the back to back function
     var backToback = await getBackToBackList();
-    console.log("FUNCTION RUNNING AS INTENDED:");
+   // console.log("FUNCTION RUNNING AS INTENDED:");
     for (var x = 0; x < backToback.Events.length; x++) {
         console.log("=> " + JSON.stringify(backToback.Events[x]));
     }
@@ -38,7 +38,9 @@ var B2BEvents = {
     Events: [],
 };
 
-async function getBackToBackList() {
+module.exports = {
+
+    getBackToBackList: async function () {
     // retrieve 2D arrray:
     var list = await getAttendeeList().then((res) => res);
     return new Promise((resolve, reject) => {
@@ -51,8 +53,8 @@ async function getBackToBackList() {
         var backToBackList = [];
 
         // Console log the first two meeting start and end times -- to be removed:
-        console.log("\nTESTING START & END TIMES FOR FIRST TWO MEETINGS:");
-        console.log("MEETING (0) END TIME:\n=>	" + arrMeetings[0].EndTime + "\nMEETING (1) START TIME:\n=>	" + arrMeetings[1].StartTime + "\n");
+       // console.log("\nTESTING START & END TIMES FOR FIRST TWO MEETINGS:");
+       // console.log("MEETING (0) END TIME:\n=>	" + arrMeetings[0].EndTime + "\nMEETING (1) START TIME:\n=>	" + arrMeetings[1].StartTime + "\n");
 
         // variable to store each employee in Meeting N-1, as we search for that employee in Meeting N:
         var employee;
@@ -100,13 +102,15 @@ async function getBackToBackList() {
         for (var x = 0; x < eventCount; x++) {
             console.log("=>   Event " + x + ": " + JSON.stringify(B2BEvents.Events[x]));
         }
-
-        console.log("\nBack To Back Solved!\n");
-
+        if(eventCount==0)
+        console.log("\nBack To Back case not present\n");
+        else {
+        console.log("\nBack To Back Identified\n");
         //eliminate all the null values from the data
         B2BEvents.Events = B2BEvents.Events.filter(function (x) {
             return x !== null;
         });
+    }
 
         // if there are no events:
         if (B2BEvents.Events.length == 0) return reject(B2BEvents);
@@ -114,8 +118,8 @@ async function getBackToBackList() {
         // nelse return the events:
         return resolve(B2BEvents);
     });
-}
-
+    }
+};
 async function getAttendeeList() {
     return new Promise((resolve, reject) => {
         var sqlQuery = "SELECT * FROM meetings";
