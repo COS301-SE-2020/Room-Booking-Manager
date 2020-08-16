@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var express = require('express');
 var bodyParser= require('body-parser');
+var nodemailer = require('nodemailer');
 var app = express();
 
 //Configure Database
@@ -24,19 +25,43 @@ connection.connect(function(err) {
 
 });
   
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'cos301.teamthreshold@gmail.com',
+      pass: 'Threshold#301'
+    }
+  });
+
 //start(organiser,stime,etime);
 module.exports = {
     start: async function(organiser,stime,etime){
         return new Promise(async function(resolve, reject)
         {
             var valid = await conflict(organiser,stime,etime).then(res=>res);
-            if(valid)
+            // if(valid)
+            // {
+            //     console.debug("New Meeting is valid");
+            // }
+            if(!valid)
             {
-                console.debug("New Meeting is valid");
-            }
-            else
-            {
-                console.debug("New Meeting is not valid");
+                //console.debug("New Meeting is not valid");
+                var mailOptions = {
+                    from: 'cos301.teamthreshold@gmail.com',
+                    to: organiser,
+                    subject: 'Booking conflict',
+                    text: 'Do not reply.\n\nThere is a booking conflict. This may be because the meeting you\'re trying to create starts at the same time with'+ 
+                        ' a meeting\nyou\'ve already booked or the meeting times overlap.'+
+                        '\n\nKind Regards'
+                };
+
+                transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+                });
             }
             return resolve(valid);
         });
