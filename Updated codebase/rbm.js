@@ -17,6 +17,7 @@ var GatherFeasibleRooms = require("./GatherFeasibleRooms");
 var bestRoomsInAsc = require("./bestRoomsInAsc");
 var GlobalOptimization = require("./GlobalOptimization");
 var UpdateLocation = require("./UpdateLocation");
+var CheckConflict = require("./CheckConflict");
 
 /*
 var WebHooks = require('node-webhooks')
@@ -102,9 +103,9 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://8cc8c7cb35b2.ngrok.io/webhook",
+            notificationUrl: "https://786ab0a50ac1.ngrok.io/webhook",
             resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events 
-            expirationDateTime: "2020-08-16T09:30:45.9356913Z",
+            expirationDateTime: "2020-08-16T20:30:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -156,34 +157,42 @@ async function beginProcess(eventDescription) {
         var extractedDetails = await ExtractedDetails.EventDetails(eventRes).then((res) => res);
         console.log(extractedDetails);
 
-        //Location ID of employees
-        var location = await DatabaseQuerries.getLocation(
-            extractedDetails.Attendees, 
-            extractedDetails.Start,
-            extractedDetails.End
+        var canBook = await CheckConflict.start(extractedDetails.Organizer,extractedDetails.Start,extractedDetails.End).then((res) => res);
+
+        if(canBook)
+        {
+            //Location ID of employees
+            var location = await DatabaseQuerries.getLocation(
+                extractedDetails.Attendees, 
+                extractedDetails.Start,
+                extractedDetails.End
+                ).then((res) => res);
+            console.log("Attendee Locations: " + location);
+
+            console.log("Event description input: "+eventRes.bodyPreview);
+            var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then((res) => res);
+
+            console.log("Amenity: " + Amenity);
+            var availRooms = await GatherFeasibleRooms.getFeasibleRooms(
+                Amenity,
+                extractedDetails.Capacity,
+                extractedDetails.Start,
+                extractedDetails.End
             ).then((res) => res);
-        console.log("Attendee Locations: " + location);
+            console.log("Rooms available to select from: " + availRooms);
 
-        console.log("Event description input: "+eventRes.bodyPreview);
-        var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then((res) => res);
+            var ListOfRooms = await bestRoomsInAsc.getRoomsInOrderOfDistances(availRooms, location); //returns rooms in ascending order based on average distance of  employees to each meeting room
+            console.log("List Of Rooms sorted by distance: " + ListOfRooms);
 
-        console.log("Amenity: " + Amenity);
-        var availRooms = await GatherFeasibleRooms.getFeasibleRooms(
-            Amenity,
-            extractedDetails.Capacity,
-            extractedDetails.Start,
-            extractedDetails.End
-        ).then((res) => res);
-        console.log("Rooms available to select from: " + availRooms);
+                await UpdateLocation.update(access,extractedDetails.Organizer,extractedDetails.Subject,extractedDetails.Start, ListOfRooms[0]);
 
-        var ListOfRooms = await bestRoomsInAsc.getRoomsInOrderOfDistances(availRooms, location); //returns rooms in ascending order based on average distance of  employees to each meeting room
-        console.log("List Of Rooms sorted by distance: " + ListOfRooms);
-
-        await UpdateLocation.update(access,extractedDetails.Organizer,extractedDetails.Subject,extractedDetails.Start, ListOfRooms[0]);
-
-        await bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
-        await GlobalOptimization.getBackToBackList();
-       
+            await bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
+            await GlobalOptimization.getBackToBackList();
+        }
+        else
+        {
+            console.debug("Booking conflict");
+        }
     }
 }
 
