@@ -102,9 +102,9 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://5fcf65fac59f.ngrok.io/webhook",
-            resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events",
-            expirationDateTime: "2020-08-12T01:55:45.9356913Z",
+            notificationUrl: "https://bbd0bf789f7b.ngrok.io/webhook",
+            resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events 
+            expirationDateTime: "2020-08-12T12:55:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -140,16 +140,16 @@ client
 }
 
 async function beginProcess(eventDescription) {
-    console.log("This is event triggered: ");
+    console.log("Event triggered: ");
     //console.log(JSON.stringify(eventDescription));
     if (eventDescription != undefined) {
         var eventUrl = eventDescription.value[0].resource;
-        console.log("This is event APi call: " + eventUrl);
+       // console.log("This is event APi call: " + eventUrl);
 
         var access = await getAccess().then((result) => result.accessToken);
         var eventRes = await getDetails(eventUrl, access).then((res) => res);
-        console.log("This is event RES: ");
-        console.log(eventRes);
+       // console.log("This is event RES: ");
+        //console.log(eventRes);
 
         //JSON Object with necessary event information
         console.log("Extracted Details");
@@ -157,9 +157,9 @@ async function beginProcess(eventDescription) {
         console.log(extractedDetails);
 
         var location = await DatabaseQuerries.getLocation(extractedDetails.Attendees).then((res) => res);
-        console.log("Location: " + location);
+        console.log("Attendee Locations: " + location);
 
-        console.log(eventRes.bodyPreview);
+        console.log("Event description input: "+eventRes.bodyPreview);
         var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then((res) => res);
 
         console.log("Amenity: " + Amenity);
@@ -169,14 +169,16 @@ async function beginProcess(eventDescription) {
             extractedDetails.Start,
             extractedDetails.End
         ).then((res) => res);
-        console.log("avail: " + availRooms);
+        console.log("Rooms available to select from: " + availRooms);
 
         var ListOfRooms = await bestRoomsInAsc.getRoomsInOrderOfDistances(availRooms, location); //returns rooms in ascending order based on average distance of  employees to each meeting room
-        console.log("ListOfRooms: " + ListOfRooms);
+        console.log("List Of Rooms sorted by distance: " + ListOfRooms);
 
         await UpdateLocation.update(access,extractedDetails.Organizer,extractedDetails.Subject,extractedDetails.Start, ListOfRooms[0]);
 
-        bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
+        await bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
+        GlobalOptimization.getBackToBackList();
+       
     }
 }
 
@@ -226,5 +228,5 @@ function getAccess() {
 }
 
 // function backToBack() {
-GlobalOptimization.getBackToBackList();
+
 // }
