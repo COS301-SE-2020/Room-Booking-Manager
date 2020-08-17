@@ -24,6 +24,7 @@
     "@angular/router": "~9.1.11",
     "@material/radio": "^7.0.0",
     "@ng-bootstrap/ng-bootstrap": "^6.1.0",
+    "angular-dialog-service": "^5.3.0",
     "bootstrap": "^4.4.0",
     "ng-multiselect-dropdown": "^0.2.10",
     "rxjs": "~6.5.4",

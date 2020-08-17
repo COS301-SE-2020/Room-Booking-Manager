@@ -14,6 +14,7 @@ var connection = mysql.createConnection({
   database: "cos301"
 });
 
+//connecting to db
 connection.connect(function(err) {
   if (err){
   	throw err;
@@ -26,7 +27,7 @@ connection.connect(function(err) {
  
 });
 
-//floor plan
+//floor plan (retrieves all available rooms) 
 app.get('/FloorPlan', function(req, res){
 		
 	var sql ="SELECT * FROM floorplan;";
@@ -42,6 +43,41 @@ app.get('/FloorPlan', function(req, res){
 	});
 });
 
+//retrieve a specific room
+app.get('/FloorPlan/:id', function(req, res){
+       
+        var id=req.params["id"];
+    var sql ="SELECT * FROM floorplan WHERE RoomID ='" + id + "';";
+
+    connection.query(sql, function (err, result) {
+    if (err){
+        res.writeHead(404);//not found or other error
+        res.end();
+        } 
+    else{
+        console.log(result);
+        res.send(result);
+        }
+    });
+});
+//get available rooms
+app.get('/FloorPlan/available', function(req, res){
+       
+        
+    var sql ="SELECT * FROM floorplan WHERE isAvailable = 1";
+
+    connection.query(sql, function (err, result) {
+    if (err){
+        res.writeHead(404);//not found or other error
+        res.end();
+        } 
+    else{
+        console.log(result);
+        res.send(result);
+        }
+    });
+});
+//inserts new room in floorplan table
 app.post('/FloorPlan',function(req, res){
 		console.log(req.body);
 	var sql = "INSERT INTO floorplan (RoomID, RoomName,FloorNumber,maxSeats,Amenity,Building,Whiteboard,Projector,Monitor,isExternal,isAvailable)"+
@@ -83,6 +119,7 @@ app.post('/FloorPlan',function(req, res){
 
 	});
 
+//delete meeting room from floorplan table
 app.delete('/FloorPlan/:id', function(req, res){
 
 		var id=req.params["id"];
@@ -101,6 +138,7 @@ app.delete('/FloorPlan/:id', function(req, res){
 	  });
 	});
 
+//update meeting room in floorplan table
 app.post('/FloorPlanUpdate',function(req, res){
 
  var sql =
@@ -144,6 +182,7 @@ app.post('/FloorPlanUpdate',function(req, res){
      });
 
 //distance
+//retrieves distances  rooms
 app.get('/distance', function(req, res){
 		
 	var sql ="SELECT * FROM distance;";
@@ -159,6 +198,25 @@ app.get('/distance', function(req, res){
 	});
 });
 
+//retrieve a specific rooms distances to other rooms
+app.get('/distance/:id', function(req, res){
+       
+        var id=req.params["id"];
+    var sql ="SELECT * FROM distance WHERE Rooms ='" + id + "';";
+
+    connection.query(sql, function (err, result) {
+    if (err){
+        res.writeHead(404);//not found or other error
+        res.end();
+        } 
+    else{
+        console.log(result);
+        res.send(result);
+        }
+    });
+});
+
+//inserts a distance of room from entrance
 app.post('/distance',function(req, res){
 		
 	var sql = "INSERT INTO distance (Rooms, Texas,Colorado,Mississippi,NewJersey,NewYork,California,Florida,Pennsylvania,Georgia,Tennessee,Washington)"+
@@ -202,6 +260,7 @@ app.post('/distance',function(req, res){
 
 	});
 
+//delete calculated distance
 app.delete('/distance/:id', function(req, res){
 
 		var id=req.params["id"];
@@ -219,6 +278,7 @@ app.delete('/distance/:id', function(req, res){
 	  });
 	});
 
+//update distance of room
 app.post('/distanceUpdate',function(req, res){
 
  var sql =
@@ -262,6 +322,7 @@ app.post('/distanceUpdate',function(req, res){
      });
 
 //employeeDetails
+//retrieves employee details
 app.get('/employeeDetails', function(req, res){
 		
 	var sql ="SELECT * FROM employeedetails;";
@@ -277,6 +338,27 @@ app.get('/employeeDetails', function(req, res){
 	});
 });
 
+//get specific employee
+app.get('/employeeDetails/:id', function(req, res){
+       
+        var id=req.params["id"];
+
+    var sql ="SELECT * FROM employeedetails WHERE EmpEmail ='" + id + "';";
+   
+    connection.query(sql, function (err, result) {
+    if (err){
+       console.log(err);
+        res.writeHead(404);//not found or other error
+        res.end();
+        } 
+    else{
+        console.log(result);
+        res.send(result);
+        }
+    });
+});
+
+//add employee details
 app.post('/employeeDetails',function(req, res){
 		
 	var sql = "INSERT INTO employeedetails (FirstName, LastName,EmpEmail,EmpPassword,isAdmin,LocationID)"+
@@ -308,6 +390,7 @@ app.post('/employeeDetails',function(req, res){
 
 	});
 
+//remove employee details
 app.delete('/employeeDetails/:id', function(req, res){
 
 		var id=req.params["id"];
@@ -325,6 +408,7 @@ app.delete('/employeeDetails/:id', function(req, res){
 	  });
 	});
 
+//update employee details
 app.post('/employeeDetailsUpdate',function(req, res){
 
  var sql =
@@ -358,6 +442,7 @@ app.post('/employeeDetailsUpdate',function(req, res){
      });
 
 //Meetings
+//retrieve all booked meetings
 app.get('/Meetings', function(req, res){
 		
 	var sql ="SELECT * FROM meetings;";
@@ -373,6 +458,25 @@ app.get('/Meetings', function(req, res){
 	});
 });
 
+//retrieve a specific meeting's details
+app.get('/Meetings/:id', function(req, res){
+       
+        var id=req.params["id"];
+    var sql ="SELECT * FROM meetings WHERE MeetingID ='" + id + "';";
+
+    connection.query(sql, function (err, result) {
+    if (err){
+        res.writeHead(404);//not found or other error
+        res.end();
+        } 
+    else{
+        console.log(result);
+        res.send(result);
+        }
+    });
+});
+
+//add a meetings details
 app.post('/Meetings',function(req, res){
 		
 	var sql = "INSERT INTO meetings (MeetingID, StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID)"+
@@ -406,6 +510,7 @@ app.post('/Meetings',function(req, res){
 
 	});
 
+//remove a meetings details
 app.delete('/Meetings/:id', function(req, res){
 
 		var id=req.params["id"];
@@ -423,6 +528,7 @@ app.delete('/Meetings/:id', function(req, res){
 	  });
 	});
 
+//update an existing meetings details
 app.post('/MeetingsUpdate',function(req, res){
 
  var sql =
