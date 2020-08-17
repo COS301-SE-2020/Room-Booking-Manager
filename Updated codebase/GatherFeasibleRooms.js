@@ -5,7 +5,7 @@ var bodyParser = require("body-parser");
 var GetRooms = require("./GetRooms");
 var app = express();
 
-feasibleRooms = [];
+var feasibleRooms = [];
 
 module.exports = {
     //Functions for querying the database
@@ -19,9 +19,12 @@ module.exports = {
                 etime = new Date(etime);
                 await GetRooms.getRooms(amenity, capacity, stime, etime).then((res) => res);
                 console.log("done");
-                //console.log(feasibleRooms);
-                // let unique = new Set(feasibleRooms);
+
+                // console.log(feasibleRooms);
+                let unique = new Set(feasibleRooms);
                 // console.log(unique);
+                feasibleRooms = Array.from(unique);
+
                 return resolve(feasibleRooms);
             } catch (err) {
                 console.log(err);

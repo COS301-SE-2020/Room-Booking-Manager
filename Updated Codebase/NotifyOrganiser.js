@@ -35,8 +35,11 @@ module.exports = {
             var sqlQuery = "SELECT * FROM floorplan WHERE RoomID = '" + RoomID + "';";
             connection.query(sqlQuery, function (err, Room) {
                 if (err) {
+                    console.log("\nGET ROOM NAME NOT FOUND!");
                     return reject(new Error(err));
                 } else {
+                    console.log("\nGET ROOM NAME FOUND!");
+                    console.log(Room[0].RoomName);
                     return resolve(Room[0].RoomName);
                 }
             });
@@ -44,8 +47,12 @@ module.exports = {
     },
     sendOrganiserBookingNotification: async function (message, organiser, RoomID) {
         return new Promise(async (resolve, reject) => {
+            console.log("\n\nCHECKING ROOM NAME!");
+
             var room = await getRoomName(RoomID);
             var roomStatement = "Room (" + room + ")";
+
+            console.log("\nROOM NAME CHECKED!");
 
             var mailOptions = {
                 from: "cos301.teamthreshold@gmail.com",
