@@ -33,19 +33,13 @@ function classify(trained){
 /*
 */
 classifier.learn('We will be having a brainstorming session today', 'Whiteboard')
-classifier.learn('brainstorm', 'Whiteboard')
-classifier.learn('dicussion meeting', 'Whiteboard')
 classifier.learn('A brainstorming session will be held today', 'Whiteboard')
-classifier.learn('slideshow', 'Monitor')
-classifier.learn('on screen', 'Monitor')
-classifier.learn('A slideshow of certain tasks that need to be completed', 'Monitor')
-classifier.learn('A video presentation will be held', 'Monitor')
-classifier.learn('Video', 'Monitor')
-classifier.learn('Visual projection', 'Projector')
-classifier.learn('projection', 'Projector')
-classifier.learn('projector', 'Projector')
-classifier.learn('Projector', 'Projector')
-classifier.learn('wall', 'Projector')
+classifier.learn('A presentation of certain tasks that need to be completed', 'Presentation screen')
+classifier.learn('A video presentation will be held', 'Presentation screen')
+classifier.learn('Visual projection of the idea at hand', 'Projector')
+classifier.learn('Slideshow of monthly report', 'projector')
+classifier.learn('projector', 'projector')
+
 
 
 //classifier.categorize("Slideshow presentation will be held");
@@ -73,6 +67,15 @@ fs.writeFile('trainedDataAmenity.txt',saveMe,function (err){
 module.exports = {
    
     identify: async function (eventDescription){
+        classifier.learn('We will be having a brainstorming session today', 'Whiteboard')
+        classifier.learn('brainstorm', 'Whiteboard')
+        classifier.learn('dicussion meeting', 'Whiteboard')
+        classifier.learn('A brainstorming session will be held today', 'Whiteboard')
+        classifier.learn('A presentation of certain tasks that need to be completed', 'Presentation screen')
+        classifier.learn('A video presentation will be held', 'Presentation screen')
+        classifier.learn('Visual projection of the idea at hand', 'Projector')
+        classifier.learn('Slideshow of monthly report', 'projector')
+        classifier.learn('projector', 'projector')
         
     var res = classifier.categorize(eventDescription);
     console.log(res);

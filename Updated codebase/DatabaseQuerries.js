@@ -18,7 +18,7 @@ connection.connect(function(err) {
     }
 
     else{
-        console.log("Connected to DB!");
+        console.log("Connected!");
     }
 
 });
@@ -144,19 +144,13 @@ module.exports = {
     //query retrieves distance of an employee from a their current location to a specific meeting room 
      FindDistances: async function (MeetingRoom,attendLoc)
     {
-        console.log("Find distances function");
-        console.log(MeetingRoom +" "+ attendLoc);
-        
         return new Promise((resolve, reject) => {
-            sql="SELECT "+MeetingRoom +" FROM distance WHERE Rooms='"+attendLoc+"';";
-            console.log(sql);
+            sql="SELECT "+MeetingRoom +" FROM distance WHERE Rooms ='"+attendLoc+"';";
                 connection.query(sql, function (err, result) {
                     if (err){
-                    reject(err);
+                    throw err;
                         } 
                     else{
-                        console.log("returning ");
-                        console.log(result);
                         resolve(result);
                         }
                     });
@@ -230,21 +224,6 @@ module.exports = {
                 });
           });
       
-      },
-
-      getMeetingEndTime: async function (meetingId)
-      {
-        var sqlQuery = "SELECT * FROM meetings WHERE MeetingID='"+meetingId+"'";
-        return new Promise((resolve, reject) => {
-        connection.query(sql, function (err, result) {
-            if (err){
-               throw err;
-                } 
-            else{
-                resolve(result[0].EndTime);
-                }
-            });
-        });
       }
 
     //Other Functions

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 17, 2020 at 12:30 PM
+-- Generation Time: Aug 12, 2020 at 09:06 AM
 -- Server version: 10.4.13-MariaDB
 -- PHP Version: 7.4.8
 
@@ -87,32 +87,31 @@ CREATE TABLE `employeedetails` (
   `LastName` varchar(255) NOT NULL,
   `EmpPassword` varchar(255) NOT NULL,
   `isAdmin` bit(1) NOT NULL,
-  `LocationID` varchar(255) NOT NULL,
-  `AverageSpeed` int(10) UNSIGNED NOT NULL COMMENT 'Avg walking speed of attendees'
+  `LocationID` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `employeedetails`
 --
 
-INSERT INTO `employeedetails` (`EmpEmail`, `FirstName`, `LastName`, `EmpPassword`, `isAdmin`, `LocationID`, `AverageSpeed`) VALUES
-('AdeleV@teamthreshold.onmicrosoft.com', 'Adele', 'Vance', 'password', b'1', '1A1', 80),
-('AlexW@teamthreshold.onmicrosoft.com', 'Alex ', 'Wilber', 'password', b'0', '1D1', 80),
-('COS301@teamthreshold.onmicrosoft.com', 'Team', 'Threshold', 'Thresh#301', b'0', '1M1', 80),
-('DiegoS@teamthreshold.onmicrosoft.com', 'Diego', 'Siciliani', 'password', b'0', '1P1', 80),
-('GradyA@teamthreshold.onmicrosoft.com', 'Grady', 'Archie', 'password', b'0', '1U1', 80),
-('HenriettaM@teamthreshold.onmicrosoft.com', 'Henrietta', 'Mueller', 'password', b'0', '1K1', 80),
-('IsaiahL@teamthreshold.onmicrosoft.com', 'Isaiah', 'Langer', 'password', b'0', '1R1', 80),
-('JohannaL@teamthreshold.onmicrosoft.com', 'Johanna', 'Lorenz', 'password', b'0', '1L1', 80),
-('JoniS@teamthreshold.onmicrosoft.com', 'Joni', 'Sherman', 'password', b'0', '1J1', 80),
-('LeeG@teamthreshold.onmicrosoft.com', 'Lee', 'Gu', 'password', b'0', '1A2', 80),
-('LidiaH@teamthreshold.onmicrosoft.com', 'Lidia', 'Holloway', 'password', b'0', '1C2', 80),
-('LynneR@teamthreshold.onmicrosoft.com', 'Lynne', 'Robbins', 'password', b'0', '1F2', 80),
-('MeganB@teamthreshold.onmicrosoft.com', 'Megan', 'Bowen', 'password', b'0', '1I2', 80),
-('MiriamG@teamthreshold.onmicrosoft.com', 'Miriam', 'Graham', 'password', b'0', '1F2', 80),
-('NestorW@teamthreshold.onmicrosoft.com', 'Nestor', 'Wilke', 'password', b'0', '1M2', 80),
-('PattiF@teamthreshold.onmicrosoft.com', 'Patti', 'Fernandez', 'password', b'0', '1H2', 80),
-('PradeepG@teamthreshold.onmicrosoft.com', 'PradeepG', 'Gupta', 'password', b'1', '1L2', 80);
+INSERT INTO `employeedetails` (`EmpEmail`, `FirstName`, `LastName`, `EmpPassword`, `isAdmin`, `LocationID`) VALUES
+('AdeleV@teamthreshold.onmicrosoft.com', 'Adele', 'Vance', 'password', b'1', '1A1'),
+('AlexW@teamthreshold.onmicrosoft.com', 'Alex ', 'Wilber', 'password', b'0', '1D1'),
+('COS301@teamthreshold.onmicrosoft.com', 'Team', 'Threshold', 'Thresh#301', b'0', '1M1'),
+('DiegoS@teamthreshold.onmicrosoft.com', 'Diego', 'Siciliani', 'password', b'0', '1P1'),
+('GradyA@teamthreshold.onmicrosoft.com', 'Grady', 'Archie', 'password', b'0', '1U1'),
+('HenriettaM@teamthreshold.onmicrosoft.com', 'Henrietta', 'Mueller', 'password', b'0', '1K1'),
+('IsaiahL@teamthreshold.onmicrosoft.com', 'Isaiah', 'Langer', 'password', b'0', '1R1'),
+('JohannaL@teamthreshold.onmicrosoft.com', 'Johanna', 'Lorenz', 'password', b'0', '1L1'),
+('JoniS@teamthreshold.onmicrosoft.com', 'Joni', 'Sherman', 'password', b'0', '1J1'),
+('LeeG@teamthreshold.onmicrosoft.com', 'Lee', 'Gu', 'password', b'0', '1A2'),
+('LidiaH@teamthreshold.onmicrosoft.com', 'Lidia', 'Holloway', 'password', b'0', '1C2'),
+('LynneR@teamthreshold.onmicrosoft.com', 'Lynne', 'Robbins', 'password', b'0', '1F2'),
+('MeganB@teamthreshold.onmicrosoft.com', 'Megan', 'Bowen', 'password', b'0', '1I2'),
+('MiriamG@teamthreshold.onmicrosoft.com', 'Miriam', 'Graham', 'password', b'0', '1F2'),
+('NestorW@teamthreshold.onmicrosoft.com', 'Nestor', 'Wilke', 'password', b'0', '1M2'),
+('PattiF@teamthreshold.onmicrosoft.com', 'Patti', 'Fernandez', 'password', b'0', '1H2'),
+('PradeepG@teamthreshold.onmicrosoft.com', 'PradeepG', 'Gupta', 'password', b'1', '1L2');
 
 -- --------------------------------------------------------
 
@@ -125,7 +124,6 @@ CREATE TABLE `floorplan` (
   `RoomName` varchar(255) NOT NULL,
   `FloorNumber` int(2) NOT NULL,
   `maxSeats` int(2) NOT NULL,
-  `Amenity` varchar(255) NOT NULL,
   `isExternal` bit(1) NOT NULL,
   `Building` int(2) NOT NULL,
   `Whiteboard` bit(1) NOT NULL,
@@ -137,18 +135,18 @@ CREATE TABLE `floorplan` (
 -- Dumping data for table `floorplan`
 --
 
-INSERT INTO `floorplan` (`RoomID`, `RoomName`, `FloorNumber`, `maxSeats`, `Amenity`, `isExternal`, `Building`, `Whiteboard`, `Projector`, `Monitor`) VALUES
-('1P2', 'Texas', 2, 10, 'Whiteboard,Projector', b'0', 1, b'1', b'1', b'0'),
-('1Q2', 'Colorado', 2, 6, 'Whiteboard', b'0', 1, b'1', b'0', b'0'),
-('1R2', 'Mississippi', 2, 6, 'Projector', b'0', 1, b'0', b'1', b'0'),
-('1S2', 'NewJersey', 2, 6, 'Whiteboard,Monitor', b'0', 1, b'1', b'0', b'1'),
-('2P1', 'NewYork', 1, 10, 'Whiteboard,Projector', b'0', 2, b'1', b'1', b'0'),
-('2P2', 'Pennsylvania', 2, 10, 'Whiteboard,Projector', b'0', 2, b'1', b'1', b'0'),
-('2Q1', 'California', 1, 10, 'Whiteboard,Monitor', b'0', 2, b'1', b'0', b'1'),
-('2Q2', 'Georgia', 2, 6, 'Whiteboard', b'0', 2, b'1', b'0', b'0'),
-('2R1', 'Florida', 1, 10, 'Whiteboard,Monitor', b'0', 2, b'1', b'0', b'1'),
-('2R2', 'Tennessee', 2, 6, 'Monitor', b'0', 2, b'0', b'0', b'1'),
-('2S2', 'Washington', 2, 6, 'Whiteboard,Projector', b'0', 2, b'1', b'1', b'0');
+INSERT INTO `floorplan` (`RoomID`, `RoomName`, `FloorNumber`, `maxSeats`, `isExternal`, `Building`, `Whiteboard`, `Projector`, `Monitor`) VALUES
+('1P2', 'Texas', 2, 10, b'0', 1, b'1', b'1', b'0'),
+('1Q2', 'Colorado', 2, 6, b'0', 1, b'1', b'0', b'0'),
+('1R2', 'Mississippi', 2, 6, b'0', 1, b'0', b'1', b'0'),
+('1S2', 'NewJersey', 2, 6, b'0', 1, b'1', b'0', b'1'),
+('2P1', 'NewYork', 1, 10, b'0', 2, b'1', b'1', b'0'),
+('2P2', 'Pennsylvania', 2, 10, b'0', 2, b'1', b'1', b'0'),
+('2Q1', 'California', 1, 10, b'0', 2, b'1', b'0', b'1'),
+('2Q2', 'Georgia', 2, 6, b'0', 2, b'1', b'0', b'0'),
+('2R1', 'Florida', 1, 10, b'0', 2, b'1', b'0', b'1'),
+('2R2', 'Tennessee', 2, 6, b'0', 2, b'0', b'0', b'1'),
+('2S2', 'Washington', 2, 6, b'0', 2, b'1', b'1', b'0');
 
 -- --------------------------------------------------------
 
@@ -166,6 +164,13 @@ CREATE TABLE `meetings` (
   `RoomID` varchar(3) NOT NULL,
   `BestRooms` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `meetings`
+--
+
+INSERT INTO `meetings` (`MeetingID`, `StartTime`, `EndTime`, `Organizer`, `Participants`, `OriginalAmenity`, `RoomID`, `BestRooms`) VALUES
+(7, '2020-09-05 15:00:00.000000', '2020-09-05 15:30:00.000000', 'AlexW@teamthreshold.onmicrosoft.com', 'AlexW@teamthreshold.onmicrosoft.com,COS301@teamthreshold.onmicrosoft.com', 'projector', '1P2', '1Q2,1S2,2P1,2P2');
 
 --
 -- Indexes for dumped tables
@@ -203,7 +208,7 @@ ALTER TABLE `meetings`
 -- AUTO_INCREMENT for table `meetings`
 --
 ALTER TABLE `meetings`
-  MODIFY `MeetingID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `MeetingID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
