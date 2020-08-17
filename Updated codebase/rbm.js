@@ -5,11 +5,12 @@ require("isomorphic-fetch");
 var dotenv = require("dotenv");
 var dotenvExpand = require("dotenv-expand");
 var Promise = require("bluebird");
-const { some } = require("bluebird");
+
 // Environment config setup
 var myEnv = dotenv.config();
 dotenvExpand(myEnv);
 
+// Functional module imports
 var AmenityAI = require("./AmenityAI");
 var ExtractedDetails = require("./ExtractedDetails");
 var DatabaseQuerries = require("./DatabaseQuerries");
@@ -18,19 +19,9 @@ var bestRoomsInAsc = require("./bestRoomsInAsc");
 var GlobalOptimization = require("./GlobalOptimization");
 var UpdateLocation = require("./UpdateLocation");
 var CheckConflict = require("./CheckConflict");
-var NotifyOrganiser = require("./NotifyOrganiser");
+var B2BTimeOptimisation = require("./B2B_Time_Optimizer");
 
-/*
-var WebHooks = require('node-webhooks')
-webHooks = new WebHooks({
-    db: {"addPost": ["http://localhost:3000/posts"]}, // just an example
-})
-webHooks.add('shortname1', 'http://127.0.0.1:4040/prova/other_url').then(function(){
-    // done
-}).catch(function(err){
-    console.log(err)
-})
-*/
+
 // Load config parameters from Environment file into global variables
 var authorityHostUrl = process.env.authorityHostUrl; //'https://login.microsoftonline.com';
 var tenant = process.env.tenant; // Azure Active Directory Tenant name/ID.
@@ -40,18 +31,9 @@ var clientSecret = process.env.clientSecret; // Secret generated from app regist
 var resource = process.env.resource; // URI that identifies the resource for which the token is valid. e.g Graph API
 var redirect = "https://localhost:3000/callback";
 
-/*
-Webhook functionality
-- Persistent listener
-- only onCreated notification of events 
-- one function inside beginProcess(eventID)
-- 
-Parameter - eventID -> Takes in eventID of event triggered by webhook
-NB: This eventID is specific to cos301.teamThreshold.onmicrosoft.com account
-It cannot be used to update the actual event that the organizer booked. 
-*/
 
-//Sample webhook code
+
+//Local Webhook endpoint
 const express = require("express");
 const bodyParser = require("body-parser");
 const { urlencoded } = require("body-parser");
@@ -104,9 +86,9 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://9dc06dcb9627.ngrok.io/webhook",
-            resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events
-            expirationDateTime: "2020-08-17T11:55:45.9356913Z",
+            notificationUrl: "https://e225825256a3.ngrok.io/webhook",
+            resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events 
+            expirationDateTime: "2020-08-17T12:55:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -142,15 +124,15 @@ client
 }
 
 async function beginProcess(eventDescription) {
-    console.log("Event triggered: ");
+    console.log("New Event triggered: ");
     //console.log(JSON.stringify(eventDescription));
     if (eventDescription != undefined) {
         var eventUrl = eventDescription.value[0].resource;
-        // console.log("This is event APi call: " + eventUrl);
+       // console.log("This is event APi call: " + eventUrl);
 
         var access = await getAccess().then((result) => result.accessToken);
         var eventRes = await getDetails(eventUrl, access).then((res) => res);
-        // console.log("This is event RES: ");
+       // console.log("This is event RES: ");
         //console.log(eventRes);
 
         //JSON Object with necessary event information
@@ -158,22 +140,19 @@ async function beginProcess(eventDescription) {
         var extractedDetails = await ExtractedDetails.EventDetails(eventRes).then((res) => res);
         console.log(extractedDetails);
 
-        var canBook = await CheckConflict.start(
-            extractedDetails.Organizer,
-            extractedDetails.Start,
-            extractedDetails.End
-        ).then((res) => res);
+        var canBook = await CheckConflict.start(extractedDetails.Organizer,extractedDetails.Start,extractedDetails.End).then((res) => res);
 
-        if (canBook) {
+        if(canBook)
+        {
             //Location ID of employees
             var location = await DatabaseQuerries.getLocation(
-                extractedDetails.Attendees,
+                extractedDetails.Attendees, 
                 extractedDetails.Start,
                 extractedDetails.End
-            ).then((res) => res);
+                ).then((res) => res);
             console.log("Attendee Locations: " + location);
 
-            console.log("Event description input: " + eventRes.bodyPreview);
+            console.log("Event description input: "+eventRes.bodyPreview);
             var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then((res) => res);
 
             console.log("Amenity: " + Amenity);
@@ -187,46 +166,27 @@ async function beginProcess(eventDescription) {
 
             var ListOfRooms = await bestRoomsInAsc.getRoomsInOrderOfDistances(availRooms, location); //returns rooms in ascending order based on average distance of  employees to each meeting room
             console.log("List Of Rooms sorted by distance: " + ListOfRooms);
-
-            await UpdateLocation.update(
-                access,
-                extractedDetails.Organizer,
-                extractedDetails.Subject,
-                extractedDetails.Start,
-                ListOfRooms[0]
-            );
+            var roomName = await DatabaseQuerries.roomNameQuery(ListOfRooms[0]).then(res=>res);
+            console.log(roomName);
+            await UpdateLocation.update(access,extractedDetails.Organizer,extractedDetails.Subject,extractedDetails.Start,roomName[0].RoomName );
 
             await bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
-
-            // console.log("\n\nROOM = " + ListOfRooms[0]);
-
-            // Send confirmation notification:
-            var message =
-                " Has Been Reserved For Your Meeting On " +
-                new Date(extractedDetails.Start) +
-                " Until " +
-                new Date(extractedDetails.End) +
-                " With Subject Line (" +
-                extractedDetails.Subject +
-                ") and Amenities (" +
-                Amenity +
-                ")";
-
-            var confirmed = await NotifyOrganiser.sendOrganiserBookingNotification(
-                message,
-                extractedDetails.Organizer,
-                ListOfRooms[0]
-            );
-
-            if (confirmed) {
-                console.log("\nMeeting Room Confirmed! Check Mailbox.");
-            } else {
-                console.log("\nCould NOT Confirm Meeting Room.");
+            var B2BEventList = await GlobalOptimization.getBackToBackList();
+            console.log("B2B list if identified is :");
+            console.log(B2BEventList);
+            if(B2BEventList.Events[0].currentMeetingID == null)
+            {
+                // Do nothing
+                //console.log("No events to optimise for B2b.")
             }
-
-            await GlobalOptimization.getBackToBackList();
-        } else {
-            console.debug("Booking conflict");
+            else{
+                console.log("Events have been found to optimise for B2b.")
+                B2BTimeOptimisation.CalculateEndTimes(B2BEventList)
+            }
+        }
+        else
+        {
+            console.debug("Booking conflict identified");
         }
     }
 }
@@ -260,7 +220,10 @@ async function getDetails(event, accessToken) {
 function getAccess() {
     return new Promise((resolve, reject) => {
         var context = new AuthenticationContext(authorityUrl);
-        context.acquireTokenWithClientCredentials(resource, applicationId, clientSecret, function (err, tokenResponse) {
+        context.acquireTokenWithClientCredentials(resource, applicationId, clientSecret, function (
+            err,
+            tokenResponse
+        ) {
             if (err) {
                 console.log("well that didn't work: " + err.stack);
                 return reject(new Error("Something wrong"));
