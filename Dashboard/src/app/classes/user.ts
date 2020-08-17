@@ -4,7 +4,7 @@ export class User
     FirstName: string
     LastName: string
     EmpEmail: string
-    isAdmin: boolean
+    isAdmin: any
     EmpPassword:string
     LocationID = ""
 }

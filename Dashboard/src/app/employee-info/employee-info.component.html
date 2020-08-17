@@ -1,8 +1,6 @@
 <h2>Employee Information</h2>
 <div >
-    <div id="create">
-        <button class="btn btn-primary"  id="button-create">Add new Employee</button>
-    </div>
+    
     <div class="table-wrapper-scroll-y table-wrapper-scroll-x my-custom-scrollbar">
         <table class="table center tableRoom">
             <tr>
@@ -11,7 +9,7 @@
                 <th>Email</th>
                 <th>Location</th>
                 <th>Admin</th>
-                <th>#</th>
+                <th>Admin Privilege Settings</th>
             </tr>
             <tr *ngFor="let user of listEmployees">
                 <td attr.class="{{user.FirstName}}">{{user.FirstName}}</td>
@@ -19,7 +17,7 @@
                 <td attr.class="{{user.EmpEmail}}">{{user.EmpEmail}}</td>
                 <td attr.class="{{user.LocationID}}">{{user.LocationID}}</td>
                 <td attr.class="{{user.isAdmin}}">
-                    <ng-template [ngIf]="user.isAdmin.data[0] > 0" [ngIfElse]="notAdmin">
+                    <ng-template [ngIf]="user.isAdmin > 0" [ngIfElse]="notAdmin">
                         yes
                     </ng-template>
                     <ng-template #notAdmin>
@@ -28,12 +26,26 @@
                  </td>
                 <!-- <td></td> -->
                 <td>
+                    <ng-template [ngIf]="user.EmpEmail == 'AdeleV@teamthreshold.onmicrosoft.com'" [ngIfElse]="notAdel">
+                        -
+                    </ng-template>
+                    <ng-template #notAdel>
+                        <ng-template  [ngIf]="user.isAdmin > 0" [ngIfElse]="notA">
+                            <button class="btn btn-danger" id="b1" (click)="RevokeAdmin(user.FirstName,user.LastName,user.EmpEmail,user.LocationID,user.EmpPassword)">Revoke</button>
+                        </ng-template>
+                        <ng-template #notA>
+                            <button class="btn btn-primary" id="b1" (click)="makeAdmin(user.FirstName,user.LastName,user.EmpEmail,user.LocationID,user.EmpPassword)">Make</button>
+                        </ng-template>
+                    </ng-template>
+                    
+                </td>
+                <!-- <td>
                     <span>
                         <button class="btn btn-danger" id="b1" (click)="delete(user.EmpEmail)">Delete</button>
                         <button class="btn btn-success" (click)="edit(user.FirstName,user.LastName,user.EmpEmail,user.LocationID,user.EmpPassword,user.isAdmin)">Edit</button>
-                        <!-- <button class="btn btn-primary" >Assign Admin</button>&nbsp; -->
+                         <button class="btn btn-primary" >Assign Admin</button>&nbsp; -
                     </span>
-                </td>
+                </td> -->
             </tr>
         
         </table>

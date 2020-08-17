@@ -6,10 +6,10 @@
   </nav>
   <div class="sidenav">
     <div id=sideLinks>
-      <a class="active" *ngIf="_isAdmin" (click)="retrieveRooms()" >View Meeting Rooms</a>
-      <a class="active" *ngIf="_isAdmin"(click)="retrieveEmps()">View Employees</a>
-      <a class="active" *ngIf="_isAdmin" (click)="retrieveMeetings()">View Scheduled Meetings</a>
-      <a *ngIf="_isAdmin" href="#">Set Rules</a>
+      <a class="active" *ngIf="_isAdmin" (click)="retrieveMeetings()">Scheduled Meetings</a>
+      <a class="active" *ngIf="_isAdmin" (click)="retrieveRooms()" >Meeting Rooms</a>
+      <a class="active" *ngIf="_isAdmin"(click)="retrieveEmps()">Employees</a>
+      <!-- <a *ngIf="_isAdmin" href="#">Set Rules</a> -->
     </div>
   </div>
   <div id="routerPosition">

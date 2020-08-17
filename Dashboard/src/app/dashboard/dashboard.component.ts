@@ -28,6 +28,7 @@ export class DashboardComponent implements OnInit {
       this._isAdmin = false;
       console.log("Not admin");
     }
+   this.retrieveMeetings();
   }
 
   retrieveRooms():void
