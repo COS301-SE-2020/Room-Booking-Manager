@@ -19,8 +19,8 @@ module.exports = {
                     done(null, accessToken);
                 },
             });
-            orgid = await getOrganizerID(accessToken,orgEmail).then(res=>res);
-            meetingID = await getMeetingID(accessToken,orgid,subject,time).then(res=>res);
+            orgid = await module.exports.getOrganizerID(accessToken,orgEmail).then(res=>res);
+            meetingID = await module.exports.getMeetingID(accessToken,orgid,subject,time).then(res=>res);
             const _location = {
                 location: 
                         {
@@ -40,11 +40,9 @@ module.exports = {
             });
             
         });
-    }
+    },
 
-};
-
-async function getOrganizerID(accessToken,orgEmail)
+ getOrganizerID: async function (accessToken,orgEmail)
 {
     return new Promise(function(resolve, reject)
     {
@@ -70,11 +68,10 @@ async function getOrganizerID(accessToken,orgEmail)
                     //console.debug(orgEmail + " has id of " + orgID);
                     return resolve(orgID);
                 }
-                else
-                {
-                    reject();
-                }
+             
             }
+ 
+                reject(" Could not find organizer ID in tenant");
             
         })
         .catch((err) => {
@@ -83,9 +80,9 @@ async function getOrganizerID(accessToken,orgEmail)
         });
     
     });
-}
+},
 
-async function getMeetingID(accessToken,orgid,subject,time)
+getMeetingID : async function (accessToken,orgid,subject,time)
 {
     return new Promise(async function(resolve, reject)
         {
@@ -120,7 +117,7 @@ async function getMeetingID(accessToken,orgid,subject,time)
                     }
                     else
                     {
-                        reject();
+                        reject("Unable to get meeting ID");
                     }
                 }
                 
@@ -133,3 +130,4 @@ async function getMeetingID(accessToken,orgid,subject,time)
         });
 }
 
+};
