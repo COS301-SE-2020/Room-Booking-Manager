@@ -27,39 +27,116 @@ connection.connect(function(err) {
 module.exports = {
     //Functions for querying the database
 
-    getLocation : async function(emailAddress)
+    getLocation : async function(Attendees, startTime, endTime)
     {
         return new Promise((resolve, reject) => {
         
-            var LocationID = [];
+            var BackToBackEmp = [];
+            var locationID = [];
+            var noBackToBack = [];
 
-            //Get query string according to emails
-            var sqlQuery = "SELECT * FROM EmployeeDetails WHERE EmpEmail = '" + emailAddress[0] + "'";
-            for(var i = 1; i < emailAddress.length; i++)
-            {
-                if(i != emailAddress.length)
-                {
-                    sqlQuery = sqlQuery + " OR EmpEmail = ";
-                }
-                sqlQuery = sqlQuery +"'"+ emailAddress[i] + "'";
-            }
+            //Store a list of participants in other meetings in 2D array
+            var participants = [];
+            var found = false;
 
+            //Initialize the times
+            var sTime = new Date(startTime);
+            var before = new Date(startTime);
+            before.setMinutes(before.getMinutes() - 15);
+
+            //Convert to string format for querying the database
+            sTime = sTime.toISOString();
+            before = before.toISOString();
+
+            //Start database queries using times
+            var sqlQuery = "SELECT * FROM Meetings WHERE EndTime >= '" + before +"' AND EndTime <= '" + startTime + "'";
             connection.query(sqlQuery, function (err, data) {
                 if (err){
-                    return reject(new Error(err));
-                } 
 
+                    return reject(new Error(err));
+                }
                 else{
-                    
-                    //Retrieve location ID for each Employee
-                    for(var i = 0; i < emailAddress.length; i++)
+
+                    //Get Participants from table
+                    for(var i = 0; i < data.length; i++)
                     {
-                        LocationID[i] = data[i].LocationID
+                        participants.push(data[i].Participants.split(','))
                     }
 
-                    // connection.end();
-                    return resolve(LocationID);
+                    //Cross reference to find Employees with Back To Back Meetings
+                    for(var i =0; i < Attendees.length; i++)
+                    {
+                        for(var j = 0; j < participants.length; j++)
+                        {
+                            
+                            for(var k = 0; k < participants[j].length; k++)
+                            {
+                                if(Attendees[i] == participants[j][k])
+                                {
+                                    //Store Employees with Back To Back Meetings
+                                    BackToBackEmp.push(participants[j][k]);
+
+                                    //Store Meeting Room ID 
+                                    locationID.push(data[j].RoomID);
+                                }
+                            }
+                        }
+                    }
+
+                    for(var i = 0; i < Attendees.length; i++)
+                    {
+                        for(var j = 0; j < BackToBackEmp.length; j++)
+                        {
+                            if(Attendees[i] == BackToBackEmp[j])
+                            {
+                                found = true;
+                                
+                            }
+                        }
+
+                        if(found == false)
+                        {
+                            noBackToBack.push(Attendees[i]);
+                        }
+
+                        found = false;
+                    }
                 }
+                // for(var i = 0; i < emailAddress.length; i++)
+                // {
+                //     if(emailAddress[i] != "COS301@teamthreshold.onmicrosoft.com")
+                //     {
+                //         Email.push(emailAddress[i]);
+                //     }
+                // }
+
+                //Get Location IDs for rest of Employees that dont have back to back
+                sqlQuery = "SELECT * FROM EmployeeDetails WHERE EmpEmail = '" + noBackToBack[0] + "'";
+                for(var i = 1; i < noBackToBack.length; i++)
+                {
+                    if(i != noBackToBack.length)
+                    {
+                        sqlQuery = sqlQuery + " OR EmpEmail = ";
+                    }
+                    sqlQuery = sqlQuery +"'"+ noBackToBack[i] + "'";
+                }
+
+                connection.query(sqlQuery, function (err, data) {
+                    if (err){
+                        return reject(new Error(err));
+                    } 
+        
+                    else{
+                        
+                        //Retrieve location ID for each Employee
+                        for(var i = 0; i < noBackToBack.length; i++)
+                        {
+                            locationID.push(data[i].LocationID);
+                        }
+        
+                        return resolve(locationID);
+                    }
+                });
             });
         });
     },

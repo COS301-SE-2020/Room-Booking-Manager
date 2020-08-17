@@ -3,7 +3,8 @@ import {FormGroup,FormControl,Validators} from '@angular/forms';
 import { apiService } from '../services/api.service';
 import { User } from '../classes/user';
 import { Router } from '@angular/router';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog,MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
+import { RegisterConfirmComponent } from '../register-confirm/register-confirm.component';
 
 
 @Component({
@@ -13,7 +14,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 })
 export class RegisterComponent implements OnInit {
 
-  constructor(private _apiService: apiService, private _router: Router,public dialogRef:MatDialogRef<RegisterComponent>) { }
+  constructor(private _apiService: apiService, private _router: Router,private dialog:MatDialog,public dialogRef:MatDialogRef<RegisterComponent>) { }
 
   registerForm = new FormGroup({  
     roomID: new FormControl('', Validators.required),
@@ -86,7 +87,7 @@ export class RegisterComponent implements OnInit {
         .subscribe(
           data=>{
             console.log('Response post', data);
-            localStorage.setItem('loggedIn', "true");
+            this.done();
           }
         );
         // console.warn(this.RoomInfo.value)
@@ -98,6 +99,13 @@ export class RegisterComponent implements OnInit {
   }
   cancel(){
     this.dialogRef.close();
-    this._router.navigate(['dashboard']);
+    
+  }
+  done()
+  {
+    this.dialogRef.close();
+    const editDialog=new MatDialogConfig();
+    editDialog.backdropClass="backGround";
+    this.dialog.open(RegisterConfirmComponent,editDialog);
   }
 }
