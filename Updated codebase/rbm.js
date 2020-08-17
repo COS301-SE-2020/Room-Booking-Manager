@@ -104,9 +104,9 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://3230e77f2c15.ngrok.io/webhook",
+            notificationUrl: "https://9dc06dcb9627.ngrok.io/webhook",
             resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events
-            expirationDateTime: "2020-08-17T11:25:45.9356913Z",
+            expirationDateTime: "2020-08-17T11:55:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -215,7 +215,7 @@ async function beginProcess(eventDescription) {
             var confirmed = await NotifyOrganiser.sendOrganiserBookingNotification(
                 message,
                 extractedDetails.Organizer,
-                "Mississippi"
+                ListOfRooms[0]
             );
 
             if (confirmed) {
