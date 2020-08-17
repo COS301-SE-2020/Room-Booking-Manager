@@ -15,13 +15,14 @@ module.exports = {
         return new Promise(async function (resolve, reject) {
             //get all the rooms with matching amenities
             try {
+               
                 stime = new Date(stime);
                 etime = new Date(etime);
                 await GetRooms.getRooms(amenity, capacity, stime, etime).then((res) => res);
                 console.log("done");
-                //console.log(feasibleRooms);
-                // let unique = new Set(feasibleRooms);
-                // console.log(unique);
+                console.log(feasibleRooms);
+                 let unique = new Set(feasibleRooms);
+                 console.log(unique);
                 return resolve(feasibleRooms);
             } catch (err) {
                 console.log(err);

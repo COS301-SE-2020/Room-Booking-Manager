@@ -9,6 +9,7 @@ module.exports =
 {
     getRoomsInOrderOfDistances : async function(Frooms,attendeelocation) 
     {		var arr=[],arr2=[];
+            console.log(Frooms + attendeelocation);
             var Boolkey=Infinity;
             var bestRoom;
             var arrayofAverageDistances=[];
@@ -36,6 +37,8 @@ module.exports =
             for(var j=0;j<attendeelocation.length;j++)
             {
                 temp2=await DatabaseQuerries.FindDistances(room,attendeelocation[j]);
+                console.log("temp2 = ");
+                console.log(temp2);
                 temp2= JSON.stringify(temp2[0]);
                 var parsed=JSON.parse(temp2);			
                 temp+=parsed[room];

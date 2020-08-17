@@ -29,7 +29,7 @@ module.exports = {
 
     getRooms : async function(amenity, capacity,sTime,eTime)
     {
-        //feasibleRooms = [];
+        feasibleRooms = [];
         return new Promise(async function(resolve, reject)
         {
             var capRooms = await checkRoom(amenity,capacity).then(res=>res);
