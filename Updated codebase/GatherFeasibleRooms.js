@@ -5,10 +5,9 @@ var bodyParser = require("body-parser");
 var GetRooms = require("./GetRooms");
 var app = express();
 
-var feasibleRooms = [];
-
 module.exports = {
     //Functions for querying the database
+    feasibleRooms: [],
 
     getFeasibleRooms: async function (amenity, capacity, stime, etime) {
         console.log("Started function");
