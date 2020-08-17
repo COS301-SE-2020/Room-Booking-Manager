@@ -145,8 +145,9 @@ function findJSONIndex(JSONFile, EmployeeArray) {
             if (JSONFile.Events[x].CurrentMeetingID != null) {
                 if (
                     JSONFile.Events[x].CurrentMeetingID == EmployeeArray[0] &&
-                    JSONFile.Events[x].CurrentMeetingRoom == EmployeeArray[1] &&
-                    JSONFile.Events[x].Email != EmployeeArray[4]
+                    JSONFile.Events[x].CurrentMeetingRoom == EmployeeArray[1]
+                    //&&
+                    //JSONFile.Events[x].Email != EmployeeArray[4]
                 )
                     return x;
                 else return -1;
