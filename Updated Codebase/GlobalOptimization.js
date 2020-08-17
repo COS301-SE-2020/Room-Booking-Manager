@@ -19,124 +19,6 @@ connection.connect(function (err) {
     }
 });
 
-// run the back to back function
-getBackToBackList();
-
-// global variable for storing all meetings
-// initialised in getAttendeeList() function
-var arrMeetings;
-
-async function getBackToBackList() {
-    // retrieve 2D arrray:
-    var list = await getAttendeeList().then((res) => res);
-    return new Promise((resolve, reject) => {
-        // initialize eventCount:
-        var eventCount = 0;
-
-        // Console log the first two meeting start and end times -- to be removed:
-        console.log("\nTESTING START & END TIMES FOR FIRST TWO MEETINGS:");
-        console.log(
-            "MEETING (0) END TIME:\n=>	" +
-                arrMeetings[0].EndTime +
-                "\nMEETING (1) START TIME:\n=>	" +
-                arrMeetings[1].StartTime +
-                "\n"
-        );
-
-        // variable to store each employee in Meeting N-1, as we search for that employee in Meeting N:
-        var employee;
-
-        // JSON to return
-        var B2BEvents = {
-            Events: [
-                {
-                    CurrentMeetingID: null,
-                    CurrentMeetingRoom: null,
-                    Attendees: new Array(),
-                },
-            ],
-        };
-
-        // flag for 10 minute grace period between meetings, for a meeting to qualify as back to back:
-        var NextMeetingstartsWithinTenMinutes = false;
-
-        console.log("MEETINGS ATTENDEES LIST:");
-        for (var z = 0; z < list.length; z++) console.log("=>   " + list[z]);
-
-        var arrStoreEmployees = [];
-
-        for (var originalRow = 0; originalRow < list.length - 1; originalRow++) {
-            for (var x = 0; x < list[originalRow].length; x++) {
-                for (var compareRow = originalRow + 1; compareRow < list.length; compareRow++) {
-                    NextMeetingstartsWithinTenMinutes =
-                        arrMeetings[compareRow].StartTime.getTime() - arrMeetings[originalRow].EndTime.getTime() <=
-                        600000;
-
-                    if (NextMeetingstartsWithinTenMinutes) {
-                        employee = list[originalRow][x];
-                        if (list[compareRow].includes(employee)) {
-                            // FORMAT: CurrentMeetingID, CurrentMeeting Room, NextMeetingID, NextMeetingRoom, Email
-                            arrStoreEmployees.push(
-                                arrMeetings[originalRow].MeetingID +
-                                    "#" +
-                                    arrMeetings[originalRow].RoomID +
-                                    "#" +
-                                    arrMeetings[compareRow].MeetingID +
-                                    "#" +
-                                    arrMeetings[compareRow].RoomID +
-                                    "#" +
-                                    employee
-                            );
-                        }
-                    }
-                }
-            }
-        }
-
-        // store in JSON:
-        for (var x = 0; x < arrStoreEmployees.length; x++) {
-            var tempEmployee = arrStoreEmployees[x].trim().split("#");
-
-            var countIndex = findJSONIndex(B2BEvents, tempEmployee);
-
-            // FORMAT: CurrentMeetingID, CurrentMeeting Room, NextMeetingID, NextMeetingRoom, Email
-
-            var entry = {
-                Email: tempEmployee[4],
-                NextMeetingID: tempEmployee[2],
-                NextMeetingRoom: tempEmployee[3],
-            };
-
-            if (countIndex >= 0) {
-                B2BEvents.Events[countIndex].Attendees.push(entry);
-            } else {
-                B2BEvents.Events[eventCount++] = {
-                    CurrentMeetingID: tempEmployee[0],
-                    CurrentMeetingRoom: tempEmployee[1],
-                    Attendees: [entry],
-                };
-            }
-        }
-
-        console.log("\nLIST OF MEMBERS INVOLVED IN BACK TO BACK MEETINGS:");
-        for (var x = 0; x < arrStoreEmployees.length; x++) {
-            console.log("=> " + arrStoreEmployees[x].trim().split("#")[4]);
-        }
-
-        console.log("\nLIST OF EVENTS:");
-        for (var x = 0; x < B2BEvents.Events.length; x++) {
-            console.log("\nCurrentMeetingID : " + B2BEvents.Events[x].CurrentMeetingID);
-            console.log("CurrentMeetingRoom : " + B2BEvents.Events[x].CurrentMeetingRoom);
-            console.log("Attendees : ");
-            console.log(B2BEvents.Events[x].Attendees);
-        }
-
-        console.log("\nBack To Back Solved!\n");
-
-        return resolve(B2BEvents);
-    });
-}
-
 function findJSONIndex(JSONFile, EmployeeArray) {
     // FORMAT: CurrentMeetingID, CurrentMeetingRoom, NextMeetingID, NextMeetingRoom, Email
 
@@ -145,9 +27,8 @@ function findJSONIndex(JSONFile, EmployeeArray) {
             if (JSONFile.Events[x].CurrentMeetingID != null) {
                 if (
                     JSONFile.Events[x].CurrentMeetingID == EmployeeArray[0] &&
-                    JSONFile.Events[x].CurrentMeetingRoom == EmployeeArray[1]
-                    //&&
-                    //JSONFile.Events[x].Email != EmployeeArray[4]
+                    JSONFile.Events[x].CurrentMeetingRoom == EmployeeArray[1] &&
+                    JSONFile.Events[x].Email != EmployeeArray[4]
                 )
                     return x;
                 else return -1;
@@ -160,7 +41,7 @@ function findJSONIndex(JSONFile, EmployeeArray) {
 
 async function getAttendeeList() {
     return new Promise((resolve, reject) => {
-        var sqlQuery = "SELECT * FROM meetings";
+        var sqlQuery = "SELECT * FROM meetings;";
 
         connection.query(sqlQuery, function (err, attendeeList) {
             if (err) {
@@ -197,3 +78,128 @@ async function getAttendeeList() {
         });
     });
 }
+
+// run the back to back function
+// console.log(isBackToBackPresent());
+// getBackToBackList();
+
+// global variable for storing all meetings
+// initialised in getAttendeeList() function
+var arrMeetings;
+
+// JSON to return
+var B2BEvents = {
+    Events: [
+        {
+            CurrentMeetingID: null,
+            CurrentMeetingRoom: null,
+            Attendees: new Array(),
+        },
+    ],
+};
+
+module.exports = {
+    checkBackToBack: async function () {
+        if (B2BEvents.Events.CurrentMeetingID == null) return false;
+        return true;
+    },
+    getBackToBackList: async function () {
+        // retrieve 2D arrray:
+        var list = await getAttendeeList().then((res) => res);
+        return new Promise((resolve, reject) => {
+            // initialize eventCount:
+            var eventCount = 0;
+
+            // Console log the first two meeting start and end times -- to be removed:
+            console.log("\nTESTING START & END TIMES FOR FIRST TWO MEETINGS:");
+            console.log(
+                "MEETING (0) END TIME:\n=>	" +
+                    arrMeetings[0].EndTime +
+                    "\nMEETING (1) START TIME:\n=>	" +
+                    arrMeetings[1].StartTime +
+                    "\n"
+            );
+
+            // variable to store each employee in Meeting N-1, as we search for that employee in Meeting N:
+            var employee;
+
+            // flag for 10 minute grace period between meetings, for a meeting to qualify as back to back:
+            var NextMeetingstartsWithinTenMinutes = false;
+
+            console.log("MEETINGS ATTENDEES LIST:");
+            for (var z = 0; z < list.length; z++) console.log("=>   " + list[z]);
+
+            var arrStoreEmployees = [];
+
+            for (var originalRow = 0; originalRow < list.length - 1; originalRow++) {
+                for (var x = 0; x < list[originalRow].length; x++) {
+                    for (var compareRow = originalRow + 1; compareRow < list.length; compareRow++) {
+                        NextMeetingstartsWithinTenMinutes =
+                            arrMeetings[compareRow].StartTime.getTime() - arrMeetings[originalRow].EndTime.getTime() <=
+                            600000;
+
+                        if (NextMeetingstartsWithinTenMinutes) {
+                            employee = list[originalRow][x];
+                            if (list[compareRow].includes(employee)) {
+                                // FORMAT: CurrentMeetingID, CurrentMeeting Room, NextMeetingID, NextMeetingRoom, Email
+                                arrStoreEmployees.push(
+                                    arrMeetings[originalRow].MeetingID +
+                                        "#" +
+                                        arrMeetings[originalRow].RoomID +
+                                        "#" +
+                                        arrMeetings[compareRow].MeetingID +
+                                        "#" +
+                                        arrMeetings[compareRow].RoomID +
+                                        "#" +
+                                        employee
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+
+            // store in JSON:
+            for (var x = 0; x < arrStoreEmployees.length; x++) {
+                var tempEmployee = arrStoreEmployees[x].trim().split("#");
+
+                var countIndex = findJSONIndex(B2BEvents, tempEmployee);
+
+                // FORMAT: CurrentMeetingID, CurrentMeeting Room, NextMeetingID, NextMeetingRoom, Email
+
+                var entry = {
+                    Email: tempEmployee[4],
+                    NextMeetingID: tempEmployee[2],
+                    NextMeetingRoom: tempEmployee[3],
+                };
+
+                if (countIndex >= 0) {
+                    B2BEvents.Events[countIndex].Attendees.push(entry);
+                } else {
+                    B2BEvents.Events[eventCount++] = {
+                        CurrentMeetingID: tempEmployee[0],
+                        CurrentMeetingRoom: tempEmployee[1],
+                        Attendees: [entry],
+                    };
+                }
+            }
+
+            console.log("\nLIST OF MEMBERS INVOLVED IN BACK TO BACK MEETINGS:");
+            for (var x = 0; x < arrStoreEmployees.length; x++) {
+                console.log("=> " + arrStoreEmployees[x].trim().split("#")[4]);
+            }
+
+            console.log("\nLIST OF EVENTS:");
+            for (var x = 0; x < B2BEvents.Events.length; x++) {
+                console.log("\nCurrentMeetingID : " + B2BEvents.Events[x].CurrentMeetingID);
+                console.log("CurrentMeetingRoom : " + B2BEvents.Events[x].CurrentMeetingRoom);
+                console.log("Attendees : ");
+                console.log(B2BEvents.Events[x].Attendees);
+            }
+
+            console.log("\nBack To Back Solved!\n");
+
+            return resolve(B2BEvents);
+        });
+    },
+};
