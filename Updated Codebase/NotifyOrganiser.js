@@ -46,10 +46,21 @@ module.exports = {
     //     });
     // },
 
-    sendOrganiserBookingNotification: async function (message, organiser, RoomID) {
+    sendOrganiserBookingNotification: async function (extractedDetails, RoomName, Amenity) {
         return new Promise(async (resolve, reject) => {
-            // var room = await getRoomName(RoomID);
-            var roomStatement = "Room (" + RoomID + ")";
+            // Send confirmation notification:
+            var message =
+                " Has Been Reserved For Your Meeting On " +
+                new Date(extractedDetails.Start) +
+                " Until " +
+                new Date(extractedDetails.End) +
+                " With Subject Line (" +
+                extractedDetails.Subject +
+                ") and Amenities (" +
+                Amenity +
+                ")";
+
+            var roomStatement = "Room (" + RoomName + ")";
 
             var mailOptions = {
                 from: "cos301.teamthreshold@gmail.com",

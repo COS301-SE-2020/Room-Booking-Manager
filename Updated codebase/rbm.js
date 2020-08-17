@@ -20,7 +20,7 @@ var GlobalOptimization = require("./GlobalOptimization");
 var UpdateLocation = require("./UpdateLocation");
 var CheckConflict = require("./CheckConflict");
 var B2BTimeOptimisation = require("./B2B_Time_Optimizer");
-
+var NotifyOrganiser = require("./NotifyOrganiser");
 
 // Load config parameters from Environment file into global variables
 var authorityHostUrl = process.env.authorityHostUrl; //'https://login.microsoftonline.com';
@@ -30,8 +30,6 @@ var applicationId = process.env.applicationId; // Application ID of app register
 var clientSecret = process.env.clientSecret; // Secret generated from app registration.
 var resource = process.env.resource; // URI that identifies the resource for which the token is valid. e.g Graph API
 var redirect = "https://localhost:3000/callback";
-
-
 
 //Local Webhook endpoint
 const express = require("express");
@@ -87,7 +85,7 @@ async function getEventdetails(accessToken) {
         const subscription = {
             changeType: "created",
             notificationUrl: "https://e225825256a3.ngrok.io/webhook",
-            resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events 
+            resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events
             expirationDateTime: "2020-08-17T12:55:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
@@ -128,11 +126,11 @@ async function beginProcess(eventDescription) {
     //console.log(JSON.stringify(eventDescription));
     if (eventDescription != undefined) {
         var eventUrl = eventDescription.value[0].resource;
-       // console.log("This is event APi call: " + eventUrl);
+        // console.log("This is event APi call: " + eventUrl);
 
         var access = await getAccess().then((result) => result.accessToken);
         var eventRes = await getDetails(eventUrl, access).then((res) => res);
-       // console.log("This is event RES: ");
+        // console.log("This is event RES: ");
         //console.log(eventRes);
 
         //JSON Object with necessary event information
@@ -140,19 +138,22 @@ async function beginProcess(eventDescription) {
         var extractedDetails = await ExtractedDetails.EventDetails(eventRes).then((res) => res);
         console.log(extractedDetails);
 
-        var canBook = await CheckConflict.start(extractedDetails.Organizer,extractedDetails.Start,extractedDetails.End).then((res) => res);
+        var canBook = await CheckConflict.start(
+            extractedDetails.Organizer,
+            extractedDetails.Start,
+            extractedDetails.End
+        ).then((res) => res);
 
-        if(canBook)
-        {
+        if (canBook) {
             //Location ID of employees
             var location = await DatabaseQuerries.getLocation(
-                extractedDetails.Attendees, 
+                extractedDetails.Attendees,
                 extractedDetails.Start,
                 extractedDetails.End
-                ).then((res) => res);
+            ).then((res) => res);
             console.log("Attendee Locations: " + location);
 
-            console.log("Event description input: "+eventRes.bodyPreview);
+            console.log("Event description input: " + eventRes.bodyPreview);
             var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then((res) => res);
 
             console.log("Amenity: " + Amenity);
@@ -166,26 +167,42 @@ async function beginProcess(eventDescription) {
 
             var ListOfRooms = await bestRoomsInAsc.getRoomsInOrderOfDistances(availRooms, location); //returns rooms in ascending order based on average distance of  employees to each meeting room
             console.log("List Of Rooms sorted by distance: " + ListOfRooms);
-            var roomName = await DatabaseQuerries.roomNameQuery(ListOfRooms[0]).then(res=>res);
+            var roomName = await DatabaseQuerries.roomNameQuery(ListOfRooms[0]).then((res) => res);
             console.log(roomName);
-            await UpdateLocation.update(access,extractedDetails.Organizer,extractedDetails.Subject,extractedDetails.Start,roomName[0].RoomName );
+            await UpdateLocation.update(
+                access,
+                extractedDetails.Organizer,
+                extractedDetails.Subject,
+                extractedDetails.Start,
+                roomName[0].RoomName
+            );
 
             await bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
             var B2BEventList = await GlobalOptimization.getBackToBackList();
+
             console.log("B2B list if identified is :");
             console.log(B2BEventList);
-            if(B2BEventList.Events[0].currentMeetingID == null)
-            {
+
+            if (!GlobalOptimization.checkBackToBack()) {
                 // Do nothing
+                var confirmed = await NotifyOrganiser.sendOrganiserBookingNotification(
+                    extractedDetails,
+                    roomName,
+                    Amenity
+                );
+
+                if (confirmed) {
+                    console.log("\nMeeting Room Confirmed! Check Mailbox.");
+                } else {
+                    console.log("\nCould NOT Confirm Meeting Room.");
+                }
+
                 //console.log("No events to optimise for B2b.")
+            } else {
+                console.log("Events have been found to optimise for B2b.");
+                B2BTimeOptimisation.CalculateEndTimes(B2BEventList);
             }
-            else{
-                console.log("Events have been found to optimise for B2b.")
-                B2BTimeOptimisation.CalculateEndTimes(B2BEventList)
-            }
-        }
-        else
-        {
+        } else {
             console.debug("Booking conflict identified");
         }
     }
@@ -220,10 +237,7 @@ async function getDetails(event, accessToken) {
 function getAccess() {
     return new Promise((resolve, reject) => {
         var context = new AuthenticationContext(authorityUrl);
-        context.acquireTokenWithClientCredentials(resource, applicationId, clientSecret, function (
-            err,
-            tokenResponse
-        ) {
+        context.acquireTokenWithClientCredentials(resource, applicationId, clientSecret, function (err, tokenResponse) {
             if (err) {
                 console.log("well that didn't work: " + err.stack);
                 return reject(new Error("Something wrong"));
