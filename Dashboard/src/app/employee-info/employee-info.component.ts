@@ -35,6 +35,56 @@ export class EmployeeInfoComponent implements OnInit {
     );
   }
 
+  makeAdmin(fName:string,lName:string,email:string,location:string,password:string,)
+  {
+    if(confirm(`Are you sure you want to make ${fName} an admin?`))
+    { 
+      var formData=new User();
+      formData.FirstName = fName;
+      formData.LastName = lName;
+      formData.EmpEmail = email;
+      formData.LocationID = location;
+      formData.EmpPassword = password;
+      formData.isAdmin = 1;
+
+      this.apiDB.updateEmployee(formData)
+    .subscribe(
+      data=>{
+       // console.log('Response post', data);
+      }
+    );
+        
+        this.ngOnInit();
+     
+      
+    }
+  }
+
+  RevokeAdmin(fName:string,lName:string,email:string,location:string,password:string,)
+  {
+    if(confirm(`Are you sure you want to remove ${fName}'s admin privilege?`))
+    { 
+      var formData=new User();
+      formData.FirstName = fName;
+      formData.LastName = lName;
+      formData.EmpEmail = email;
+      formData.LocationID = location;
+      formData.EmpPassword = password;
+      formData.isAdmin = 0;
+
+      this.apiDB.updateEmployee(formData)
+    .subscribe(
+      data=>{
+        //console.log('Response post', data);
+      }
+    );
+        
+        this.ngOnInit();
+     
+      
+    }
+  }
+
   edit(fName:string,lName:string,email:string,location:string,password:string,isAdmin:boolean)
   {
     var formData=new User();
@@ -58,6 +108,7 @@ export class EmployeeInfoComponent implements OnInit {
     // configDialog.height='400px';
     this.dialog.open(EditEmployeeComponent,editDialog);
   }
+
   delete(id:string){
     if(confirm(`Are you sure to delete Room number ${id}`)) {
       console.log("Implement delete functionality here");
