@@ -53,8 +53,6 @@ async function getBackToBackList() {
                     CurrentMeetingID: null,
                     CurrentMeetingRoom: null,
                     Attendees: new Array(),
-                    NextMeetingID: null,
-                    NextMeetingRoom: null,
                 },
             ],
         };
@@ -103,15 +101,19 @@ async function getBackToBackList() {
 
             // FORMAT: CurrentMeetingID, CurrentMeeting Room, NextMeetingID, NextMeetingRoom, Email
 
+            var entry = {
+                Email: tempEmployee[4],
+                NextMeetingID: tempEmployee[2],
+                NextMeetingRoom: tempEmployee[3],
+            };
+
             if (countIndex >= 0) {
-                B2BEvents.Events[countIndex].Attendees.push(tempEmployee[4]);
+                B2BEvents.Events[countIndex].Attendees.push(entry);
             } else {
                 B2BEvents.Events[eventCount++] = {
                     CurrentMeetingID: tempEmployee[0],
                     CurrentMeetingRoom: tempEmployee[1],
-                    Attendees: [tempEmployee[4]],
-                    NextMeetingID: tempEmployee[2],
-                    NextMeetingRoom: tempEmployee[3],
+                    Attendees: [entry],
                 };
             }
         }
@@ -122,7 +124,12 @@ async function getBackToBackList() {
         }
 
         console.log("\nLIST OF EVENTS:");
-        console.log(B2BEvents.Events);
+        for (var x = 0; x < B2BEvents.Events.length; x++) {
+            console.log("\nCurrentMeetingID : " + B2BEvents.Events[x].CurrentMeetingID);
+            console.log("CurrentMeetingRoom : " + B2BEvents.Events[x].CurrentMeetingRoom);
+            console.log("Attendees : ");
+            console.log(B2BEvents.Events[x].Attendees);
+        }
 
         console.log("\nBack To Back Solved!\n");
 
@@ -138,9 +145,7 @@ function findJSONIndex(JSONFile, EmployeeArray) {
             if (JSONFile.Events[x].CurrentMeetingID != null) {
                 if (
                     JSONFile.Events[x].CurrentMeetingID == EmployeeArray[0] &&
-                    JSONFile.Events[x].CurrentMeetingRoom == EmployeeArray[1] &&
-                    JSONFile.Events[x].NextMeetingID == EmployeeArray[2] &&
-                    JSONFile.Events[x].NextMeetingRoom == EmployeeArray[3]
+                    JSONFile.Events[x].CurrentMeetingRoom == EmployeeArray[1]
                 )
                     return x;
                 else return -1;
