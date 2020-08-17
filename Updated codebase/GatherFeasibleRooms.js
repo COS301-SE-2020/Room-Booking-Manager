@@ -7,7 +7,6 @@ var app = express();
 
 module.exports = {
     //Functions for querying the database
-    feasibleRooms: [],
 
     getFeasibleRooms: async function (amenity, capacity, stime, etime) {
         console.log("Started function");
@@ -22,7 +21,7 @@ module.exports = {
                 // console.log(feasibleRooms);
                 let unique = new Set(feasibleRooms);
                 // console.log(unique);
-                feasibleRooms = Array.from(unique);
+                var feasibleRooms = Array.from(unique);
 
                 return resolve(feasibleRooms);
             } catch (err) {
