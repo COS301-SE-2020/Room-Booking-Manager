@@ -20,7 +20,8 @@
     "express": "^4.17.1",
     "isomorphic-fetch": "^2.2.1",
     "mysql": "^2.18.1",
-    "node-webhooks": "^1.4.2"
+    "node-webhooks": "^1.4.2",
+    "nodemailer": "^6.4.11"
   },
   "devDependencies": {
     "@microsoft/microsoft-graph-types": "^1.13.0"

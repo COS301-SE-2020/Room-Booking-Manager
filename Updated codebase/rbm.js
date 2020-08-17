@@ -18,6 +18,7 @@ var bestRoomsInAsc = require("./bestRoomsInAsc");
 var GlobalOptimization = require("./GlobalOptimization");
 var UpdateLocation = require("./UpdateLocation");
 var CheckConflict = require("./CheckConflict");
+var NotifyOrganiser = require("./NotifyOrganiser");
 
 /*
 var WebHooks = require('node-webhooks')
@@ -103,9 +104,9 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://786ab0a50ac1.ngrok.io/webhook",
-            resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events 
-            expirationDateTime: "2020-08-16T20:30:45.9356913Z",
+            notificationUrl: "https://bd733032c07d.ngrok.io/webhook",
+            resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events
+            expirationDateTime: "2020-08-17T03:05:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -145,11 +146,11 @@ async function beginProcess(eventDescription) {
     //console.log(JSON.stringify(eventDescription));
     if (eventDescription != undefined) {
         var eventUrl = eventDescription.value[0].resource;
-       // console.log("This is event APi call: " + eventUrl);
+        // console.log("This is event APi call: " + eventUrl);
 
         var access = await getAccess().then((result) => result.accessToken);
         var eventRes = await getDetails(eventUrl, access).then((res) => res);
-       // console.log("This is event RES: ");
+        // console.log("This is event RES: ");
         //console.log(eventRes);
 
         //JSON Object with necessary event information
@@ -157,19 +158,22 @@ async function beginProcess(eventDescription) {
         var extractedDetails = await ExtractedDetails.EventDetails(eventRes).then((res) => res);
         console.log(extractedDetails);
 
-        var canBook = await CheckConflict.start(extractedDetails.Organizer,extractedDetails.Start,extractedDetails.End).then((res) => res);
+        var canBook = await CheckConflict.start(
+            extractedDetails.Organizer,
+            extractedDetails.Start,
+            extractedDetails.End
+        ).then((res) => res);
 
-        if(canBook)
-        {
+        if (canBook) {
             //Location ID of employees
             var location = await DatabaseQuerries.getLocation(
-                extractedDetails.Attendees, 
+                extractedDetails.Attendees,
                 extractedDetails.Start,
                 extractedDetails.End
-                ).then((res) => res);
+            ).then((res) => res);
             console.log("Attendee Locations: " + location);
 
-            console.log("Event description input: "+eventRes.bodyPreview);
+            console.log("Event description input: " + eventRes.bodyPreview);
             var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then((res) => res);
 
             console.log("Amenity: " + Amenity);
@@ -184,13 +188,42 @@ async function beginProcess(eventDescription) {
             var ListOfRooms = await bestRoomsInAsc.getRoomsInOrderOfDistances(availRooms, location); //returns rooms in ascending order based on average distance of  employees to each meeting room
             console.log("List Of Rooms sorted by distance: " + ListOfRooms);
 
-                await UpdateLocation.update(access,extractedDetails.Organizer,extractedDetails.Subject,extractedDetails.Start, ListOfRooms[0]);
+            await UpdateLocation.update(
+                access,
+                extractedDetails.Organizer,
+                extractedDetails.Subject,
+                extractedDetails.Start,
+                ListOfRooms[0]
+            );
 
             await bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
+
+            // Send confirmation notification:
+            var message =
+                " Has Been Reserved For Your Meeting On " +
+                new Date(extractedDetails.Start) +
+                " Until " +
+                new Date(extractedDetails.End) +
+                " With Subject Line (" +
+                extractedDetails.Subject +
+                ") and Amenities (" +
+                Amenity +
+                ")";
+
+            var confirmed = await NotifyOrganiser.sendOrganiserBookingNotification(
+                message,
+                extractedDetails.Organizer,
+                ListOfRooms[0]
+            );
+
+            if (confirmed) {
+                console.log("\nMeeting Room Confirmed! Check Mailbox.");
+            } else {
+                console.log("\nCould NOT Confirm Meeting Room.");
+            }
+
             await GlobalOptimization.getBackToBackList();
-        }
-        else
-        {
+        } else {
             console.debug("Booking conflict");
         }
     }
@@ -225,10 +258,7 @@ async function getDetails(event, accessToken) {
 function getAccess() {
     return new Promise((resolve, reject) => {
         var context = new AuthenticationContext(authorityUrl);
-        context.acquireTokenWithClientCredentials(resource, applicationId, clientSecret, function (
-            err,
-            tokenResponse
-        ) {
+        context.acquireTokenWithClientCredentials(resource, applicationId, clientSecret, function (err, tokenResponse) {
             if (err) {
                 console.log("well that didn't work: " + err.stack);
                 return reject(new Error("Something wrong"));
