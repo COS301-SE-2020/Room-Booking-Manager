@@ -23,6 +23,9 @@ module.exports = {
                 console.log(feasibleRooms);
                  let unique = new Set(feasibleRooms);
                  console.log(unique);
+                feasibleRooms = Array.from(unique);
+                console.log("Unique feasible rooms identified");
+                console.log(feasibleRooms);
                 return resolve(feasibleRooms);
             } catch (err) {
                 console.log(err);

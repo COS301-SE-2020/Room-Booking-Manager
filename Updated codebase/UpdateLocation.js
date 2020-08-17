@@ -117,7 +117,7 @@ getMeetingID : async function (accessToken,orgid,subject,time)
                     }
                     else
                     {
-                        reject();
+                        reject("Unable to get meeting ID");
                     }
                 }
                 

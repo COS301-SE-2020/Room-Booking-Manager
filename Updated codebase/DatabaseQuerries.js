@@ -143,16 +143,20 @@ module.exports = {
 
     //query retrieves distance of an employee from a their current location to a specific meeting room 
      FindDistances: async function (MeetingRoom,attendLoc)
-    {console.log("Find distances function");
-        console.log(MeetingRoom + attendLoc);
+    {
+        console.log("Find distances function");
+        console.log(MeetingRoom +" "+ attendLoc);
         
         return new Promise((resolve, reject) => {
-            sql="SELECT '"+MeetingRoom +"' FROM distance WHERE Rooms='"+attendLoc+"';";
+            sql="SELECT "+MeetingRoom +" FROM distance WHERE Rooms='"+attendLoc+"';";
+            console.log(sql);
                 connection.query(sql, function (err, result) {
                     if (err){
                     reject(err);
                         } 
                     else{
+                        console.log("returning ");
+                        console.log(result);
                         resolve(result);
                         }
                     });
