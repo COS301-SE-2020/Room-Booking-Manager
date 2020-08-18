@@ -87,7 +87,7 @@ module.exports = {
         console.log("\n\nSORTED NAMES = " + sortedNames);
         return sortedNames;
     },
-    bookMeetingRoom: async function (extractedDetails, amenity, ListOfRooms) {
-        var wait = await DatabaseQuerries.storeRooms(extractedDetails, amenity, ListOfRooms);
+    bookMeetingRoom: async function (meetingID,extractedDetails, amenity, ListOfRooms) {
+        var wait = await DatabaseQuerries.storeRooms(meetingID, extractedDetails, amenity, ListOfRooms);
     },
 };
