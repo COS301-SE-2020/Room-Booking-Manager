@@ -184,21 +184,16 @@ module.exports = {
             for (var x = 0; x < uniqueAttendees.length; x++) console.log("=> " + uniqueAttendees[x]);
 
             // List the back to back events:
-            toStringB2B();
-
+            console.log("\nLIST OF BACK TO BACK EVENTS:");
+            for (var x = 0; x < B2BEvents.Events.length; x++) {
+                console.log("\nCurrentMeetingID : " + B2BEvents.Events[x].CurrentMeetingID);
+                console.log("CurrentMeetingRoom : " + B2BEvents.Events[x].CurrentMeetingRoom);
+                console.log("Attendees : ");
+                console.log(B2BEvents.Events[x].Attendees);
+            }
             console.log("\nBack To Back Solved!\n");
 
             return resolve(B2BEvents);
         });
-    },
-
-    toStringB2B: async function () {
-        console.log("\nLIST OF BACK TO BACK EVENTS:");
-        for (var x = 0; x < B2BEvents.Events.length; x++) {
-            console.log("\nCurrentMeetingID : " + B2BEvents.Events[x].CurrentMeetingID);
-            console.log("CurrentMeetingRoom : " + B2BEvents.Events[x].CurrentMeetingRoom);
-            console.log("Attendees : ");
-            console.log(B2BEvents.Events[x].Attendees);
-        }
     },
 };

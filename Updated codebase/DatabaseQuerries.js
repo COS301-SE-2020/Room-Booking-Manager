@@ -33,12 +33,12 @@ module.exports = {
             var found = false;
 
             //Initialize the times
-            var sTime = new Date(startTime);
+            // var sTime = new Date(startTime);
             var before = new Date(startTime);
             before.setMinutes(before.getMinutes() - 15);
 
             //Convert to string format for querying the database
-            sTime = sTime.toISOString();
+            // sTime = sTime.toISOString();
             before = before.toISOString();
 
             //Start database queries using times
@@ -124,8 +124,10 @@ module.exports = {
             var sql = "SELECT " + MeetingRoom + " FROM distance WHERE Rooms = '" + attendLoc + "';";
             connection.query(sql, function (err, result) {
                 if (err) {
+                    console.log("ERROR: Result is = " + JSON.stringify(err));
                     reject(err);
                 } else {
+                    console.log("SUCCESS: Result is = " + JSON.stringify(result));
                     resolve(result);
                 }
             });
@@ -135,7 +137,7 @@ module.exports = {
     //query retrieves the room name based on room id
     roomNameQuery: async function (id) {
         return new Promise((resolve, reject) => {
-            sql = "SELECT RoomName" + " FROM floorplan WHERE RoomID ='" + id + "';";
+            var sql = "SELECT RoomName" + " FROM floorplan WHERE RoomID ='" + id + "';";
             connection.query(sql, function (err, result) {
                 if (err) {
                     throw err;
@@ -148,7 +150,7 @@ module.exports = {
     //returns RoomID of a meeting room
     roomIDQuery: async function (RoomName) {
         return new Promise((resolve, reject) => {
-            sql = "SELECT RoomID FROM floorplan WHERE RoomName ='" + RoomName + "';";
+            var sql = "SELECT RoomID FROM floorplan WHERE RoomName ='" + RoomName + "';";
             connection.query(sql, function (err, result) {
                 if (err) {
                     throw err;
@@ -195,7 +197,7 @@ module.exports = {
     getMeetingEndTime: async function (meetingId) {
         var sqlQuery = "SELECT * FROM meetings WHERE MeetingID='" + meetingId + "';";
         return new Promise((resolve, reject) => {
-            connection.query(sql, function (err, result) {
+            connection.query(sqlQuery, function (err, result) {
                 if (err) {
                     throw err;
                 } else {

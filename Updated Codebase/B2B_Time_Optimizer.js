@@ -21,40 +21,47 @@ connection.connect(function (err) {
 // Given JSON object
 module.exports = {
     CalculateEndTimes: async function async(B2bEventDetails) {
-        console.log("Entered Calculate EndTimes function \n");
+        console.log("\nEntered Calculate EndTimes Function");
 
         // For each event, for each attendee calcuate distance from current event room to each employees next
         // location.
         var listSize = B2bEventDetails.Events.length; // Number of events identified as B2B
         for (var i = 0; i < listSize; i++) {
-            var currentRoom = B2bEventDetails.Events[i].currentMeetingRoom;
+            var meetingID = B2bEventDetails.Events[i].CurrentMeetingID;
+            var currentRoom = B2bEventDetails.Events[i].CurrentMeetingRoom;
             var NoOfAttendees = B2bEventDetails.Events[i].Attendees.length;
             var maxDist = 0;
             var maxAttendee;
             for (var j = 0; j < NoOfAttendees; j++) {
-                console.log("\n\nATTENDEE = " + B2bEventDetails[i].Attendees[j]);
+                console.log("\nATTENDEE = " + JSON.stringify(B2bEventDetails.Events[i].Attendees[j]));
+                var nextEventRoom = B2bEventDetails.Events[i].Attendees[j].NextMeetingRoom;
 
-                var nextEventRoom = B2bEventDetails[i].Attendees[j].NextMeetingRoom;
+                // NOTE TO ABU: Check FindDistances and adjust accordingly. Remove SUCCESS/ERROR comments after fixing.
+
                 //var distance = await DatabaseQuerries.FindDistances(nextEventRoom,currentRoom); //TODO Check DBQueries for this specific
-                var distance = await DatabaseQuerries.FindDistances(nextEventRoom, currentRoom).then((res) => {
-                    if (res > maxDist) {
-                        maxDist = res;
-                        maxAttendee = B2bEventDetails[i].Attendees[j].Email;
-                    }
-                }); // See if parameters match
+                // var distance = await DatabaseQuerries.FindDistances("*", nextEventRoom).then((res) => {
+                //     if (res > maxDist) {
+                //         maxDist = res;
+                //         maxAttendee = B2bEventDetails.Events[i].Attendees[j].Email;
+                //     }
+                // }); // See if parameters match
             }
+
             var time = await module.exports.getTimeFromAttSpeed(maxDist, maxAttendee);
-            var endTime = DatabaseQuerries.getMeetingEndTime(meetingID);
+
+            var endTime = await DatabaseQuerries.getMeetingEndTime(meetingID);
+
             var cTime = new Date(endTime);
             time = time * 1000; // To get seconds
             cTime = cTime.getTime();
             cTime = cTime - time;
             cTime.setTime(cTime);
             cTime = cTime.toISOString;
-            var status = await module.exports.adjustEventTimeInDB(MeetingId, cTime);
-            var cStatus = await module.exports.adjustTimeinCalendar(eventId, cTime, meetingID);
+            var status = await module.exports.adjustEventTimeInDB(meetingID, cTime);
+
+            var cStatus = await module.exports.adjustTimeinCalendar(cTime, meetingID);
         }
-        console.log("Exited Calculate EndTimes function \n");
+        console.log("\nExited Calculate EndTimes Function");
     },
     getTimeFromAttSpeed: function async(maxDist, attendee) {
         // Select FROM Employee table column for attendee get avg speed
@@ -81,7 +88,7 @@ module.exports = {
                 if (err) {
                     return reject(new Error(err));
                 } else {
-                    return resolve("Meeting time updated in DB");
+                    return resolve("Meeting Time Updated In DB");
                 }
                 // maxDistance / attendee.avgSpeed;
                 // return time in seconds

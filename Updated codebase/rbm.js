@@ -82,9 +82,9 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://782a76670097.ngrok.io/webhook",
+            notificationUrl: "https://f94143197f5e.ngrok.io/webhook",
             resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events
-            expirationDateTime: "2020-08-18T05:30:45.9356913Z",
+            expirationDateTime: "2020-08-18T05:50:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -201,7 +201,10 @@ async function beginProcess(eventDescription) {
                 console.log("\nLOCAL OPTIMIZATION COMPLETED.");
             } else {
                 console.log("\nGLOBAL OPTIMIZATION: Events Have Been Found To Optimise For Back To Back Scenario.");
-                B2BTimeOptimisation.CalculateEndTimes(B2BEventList);
+
+                // NOTE TO ABU: PLEASE FIX THE FUNCTION.
+
+                // await B2BTimeOptimisation.CalculateEndTimes(B2BEventList);
 
                 // var confirmed = await NotifyOrganiser.sendOrganiserBookingNotification(
                 //     extractedDetails,
