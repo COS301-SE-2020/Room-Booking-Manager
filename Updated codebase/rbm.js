@@ -82,7 +82,7 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://f94143197f5e.ngrok.io/webhook",
+            notificationUrl: "https://889f5ca4b93a.ngrok.io/webhook",
             resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events
             expirationDateTime: "2020-08-18T05:50:45.9356913Z",
             clientState: "secretClientValue",
@@ -201,6 +201,9 @@ async function beginProcess(eventDescription) {
                 console.log("\nLOCAL OPTIMIZATION COMPLETED.");
             } else {
                 console.log("\nGLOBAL OPTIMIZATION: Events Have Been Found To Optimise For Back To Back Scenario.");
+
+                // display the back to back events:
+                GlobalOptimization.toStringB2B(B2BEventList);
 
                 // NOTE TO ABU: PLEASE FIX THE FUNCTION.
 

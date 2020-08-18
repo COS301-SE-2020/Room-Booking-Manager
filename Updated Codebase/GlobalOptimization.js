@@ -94,6 +94,16 @@ module.exports = {
         return false;
     },
 
+    toStringB2B: async function (JSONFile) {
+        console.log("\nLIST OF BACK TO BACK EVENTS:");
+        for (var x = 0; x < JSONFile.Events.length; x++) {
+            console.log("\nCurrentMeetingID : " + JSONFile.Events[x].CurrentMeetingID);
+            console.log("CurrentMeetingRoom : " + JSONFile.Events[x].CurrentMeetingRoom);
+            console.log("Attendees : ");
+            console.log(JSONFile.Events[x].Attendees);
+        }
+    },
+
     getBackToBackList: async function () {
         // retrieve 2D arrray:
         var list = await getAttendeeList().then((res) => res);
@@ -102,14 +112,14 @@ module.exports = {
             var eventCount = 0;
 
             // Console log the first two meeting start and end times -- to be removed:
-            console.log("\nTESTING START & END TIMES FOR FIRST TWO MEETINGS:");
-            console.log(
-                "MEETING (0) END TIME:\n=>	" +
-                    arrMeetings[0].EndTime +
-                    "\nMEETING (1) START TIME:\n=>	" +
-                    arrMeetings[1].StartTime +
-                    "\n"
-            );
+            // console.log("\nTESTING START & END TIMES FOR FIRST TWO MEETINGS:");
+            // console.log(
+            //     "MEETING (0) END TIME:\n=>	" +
+            //         arrMeetings[0].EndTime +
+            //         "\nMEETING (1) START TIME:\n=>	" +
+            //         arrMeetings[1].StartTime +
+            //         "\n"
+            // );
 
             // variable to store each employee in Meeting N-1, as we search for that employee in Meeting N:
             var employee;
@@ -184,14 +194,9 @@ module.exports = {
             for (var x = 0; x < uniqueAttendees.length; x++) console.log("=> " + uniqueAttendees[x]);
 
             // List the back to back events:
-            console.log("\nLIST OF BACK TO BACK EVENTS:");
-            for (var x = 0; x < B2BEvents.Events.length; x++) {
-                console.log("\nCurrentMeetingID : " + B2BEvents.Events[x].CurrentMeetingID);
-                console.log("CurrentMeetingRoom : " + B2BEvents.Events[x].CurrentMeetingRoom);
-                console.log("Attendees : ");
-                console.log(B2BEvents.Events[x].Attendees);
-            }
-            console.log("\nBack To Back Solved!\n");
+            // module.exports.toStringB2B(B2BEvents);
+
+            console.log("\nBack To Back Solved!");
 
             return resolve(B2BEvents);
         });
