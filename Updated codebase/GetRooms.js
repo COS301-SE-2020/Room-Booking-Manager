@@ -55,7 +55,15 @@ module.exports = {
 async function checkRoom(amenity, capacity) {
     return new Promise(async function (resolve, reject) {
         var availRooms = [];
-        var sql = "SELECT * FROM floorplan WHERE " + amenity + " = '1' AND maxSeats = " + capacity;
+        var sql;
+        if(amenity == "")
+        {
+            sql = "SELECT * FROM floorplan WHERE maxSeats = " + capacity;
+        }
+        else
+        {
+            sql = "SELECT * FROM floorplan WHERE " + amenity + " = '1' AND maxSeats = " + capacity;
+        }
         await connection.query(sql, async function (err, result) {
             if (err) {
                 console.log(err);
@@ -76,8 +84,17 @@ async function checkRoom(amenity, capacity) {
 
 async function getAll(amenity, capacity) {
     var allRooms = [];
+    var sql1;
     return new Promise(async function (resolve, reject) {
-        var sql1 = "SELECT * FROM floorplan WHERE " + amenity + " = '1' ORDER BY maxSeats";
+        if(amenity == "")
+        {
+            sql1 = "SELECT * FROM floorplan ORDER BY maxSeats";
+        }
+        else
+        {
+            sql1 = "SELECT * FROM floorplan WHERE " + amenity + " = '1' ORDER BY maxSeats";
+        }
+        // var sql1 = "SELECT * FROM floorplan WHERE " + amenity + " = '1' ORDER BY maxSeats";
         await connection.query(sql1, async function (err1, result1) {
             if (err1) {
                 console.log(err1);
@@ -97,6 +114,7 @@ async function nextFeasible(rooms, amenity, capacity) {
     return new Promise(async function (resolve, reject) {
         var avRooms = [];
         var i = rooms.length;
+        var sql2;
         // console.debug(i);
         // console.debug(rooms);
         i = --i;
@@ -106,7 +124,15 @@ async function nextFeasible(rooms, amenity, capacity) {
         // console.debug(rooms[++i]);
         i = ++i;
         // console.debug(capacity + " ==== " +rooms.length +"=="+rooms[i].maxSeats)
-        var sql2 = "SELECT * FROM floorplan WHERE " + amenity + " = '1' AND maxSeats = '" + rooms[i].maxSeats + "'";
+        if(amenity == "")
+        {
+            sql2 = "SELECT * FROM floorplan WHERE maxSeats = '" + rooms[i].maxSeats + "'";
+        }
+        else
+        {
+            sql2 = "SELECT * FROM floorplan WHERE " + amenity + " = '1' AND maxSeats = '" + rooms[i].maxSeats + "'";
+        }
+        // var sql2 = "SELECT * FROM floorplan WHERE " + amenity + " = '1' AND maxSeats = '" + rooms[i].maxSeats + "'";
         await connection.query(sql2, async function (err2, result2) {
             if (err2) {
                 console.log(err2);
