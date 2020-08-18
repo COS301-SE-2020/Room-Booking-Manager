@@ -64,7 +64,7 @@ module.exports = {
 
             var mailOptions = {
                 from: "cos301.teamthreshold@gmail.com",
-                to: organiser,
+                to: extractedDetails.Organizer,
                 subject: "[Automated] Meeting Room Confirmation",
                 text: roomStatement + message,
             };

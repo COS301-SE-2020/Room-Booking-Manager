@@ -42,7 +42,7 @@ const PORT = 3000;
 app.use(bodyParser.json());
 
 // Start express on the defined port
-app.listen(PORT, () => console.log(` Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`RBM Server running on Port ${PORT}`));
 app.use(bodyParser.json());
 
 app.post("/webhook", (req, res) => {
@@ -78,15 +78,13 @@ async function getEventdetails(accessToken) {
         },
     });
 
-    // im in
-
     // Get the name of the authenticated user with promises
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://e225825256a3.ngrok.io/webhook",
+            notificationUrl: "https://782a76670097.ngrok.io/webhook",
             resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events
-            expirationDateTime: "2020-08-17T12:55:45.9356913Z",
+            expirationDateTime: "2020-08-18T05:30:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -122,11 +120,11 @@ client
 }
 
 async function beginProcess(eventDescription) {
-    console.log("New Event triggered: ");
-    //console.log(JSON.stringify(eventDescription));
+    console.log("\nNew Event Triggered: ");
+    // console.log("\n EVENT DESCRIPTION = " + JSON.stringify(eventDescription));
     if (eventDescription != undefined) {
         var eventUrl = eventDescription.value[0].resource;
-        // console.log("This is event APi call: " + eventUrl);
+        // console.log("\n\nThis is event API call: " + eventUrl);
 
         var access = await getAccess().then((result) => result.accessToken);
         var eventRes = await getDetails(eventUrl, access).then((res) => res);
@@ -134,7 +132,7 @@ async function beginProcess(eventDescription) {
         //console.log(eventRes);
 
         //JSON Object with necessary event information
-        console.log("Extracted Details");
+        console.log("\nExtracted Details");
         var extractedDetails = await ExtractedDetails.EventDetails(eventRes).then((res) => res);
         console.log(extractedDetails);
 
@@ -151,24 +149,24 @@ async function beginProcess(eventDescription) {
                 extractedDetails.Start,
                 extractedDetails.End
             ).then((res) => res);
-            console.log("Attendee Locations: " + location);
+            console.log("\nAttendee Locations: " + location);
 
-            console.log("Event description input: " + eventRes.bodyPreview);
+            console.log("\nEvent Description Input: " + eventRes.bodyPreview);
             var Amenity = await AmenityAI.identify(eventRes.bodyPreview).then((res) => res);
 
-            console.log("Amenity: " + Amenity);
+            console.log("\nAmenity: " + Amenity);
             var availRooms = await GatherFeasibleRooms.getFeasibleRooms(
                 Amenity,
                 extractedDetails.Capacity,
                 extractedDetails.Start,
                 extractedDetails.End
             ).then((res) => res);
-            console.log("Rooms available to select from: " + availRooms);
+            console.log("\nRooms Available To Select From: " + availRooms);
 
             var ListOfRooms = await bestRoomsInAsc.getRoomsInOrderOfDistances(availRooms, location); //returns rooms in ascending order based on average distance of  employees to each meeting room
-            console.log("List Of Rooms sorted by distance: " + ListOfRooms);
+            console.log("\nList Of Rooms Sorted By Distance: " + ListOfRooms);
             var roomName = await DatabaseQuerries.roomNameQuery(ListOfRooms[0]).then((res) => res);
-            console.log(roomName);
+            console.log("\nROOM NAME = " + JSON.stringify(roomName));
             await UpdateLocation.update(
                 access,
                 extractedDetails.Organizer,
@@ -180,14 +178,17 @@ async function beginProcess(eventDescription) {
             await bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
             var B2BEventList = await GlobalOptimization.getBackToBackList();
 
-            console.log("B2B list if identified is :");
-            console.log(B2BEventList);
+            // console.log("B2B List If Identified Is:");
+            // console.log(B2BEventList);
 
-            if (!GlobalOptimization.checkBackToBack()) {
-                // Do nothing
+            var checkB2B = await GlobalOptimization.checkBackToBack(B2BEventList);
+
+            if (!checkB2B) {
+                console.log("\nLOCAL OPTIMIZATION: No Events To Optimise For Back To Back.");
+
                 var confirmed = await NotifyOrganiser.sendOrganiserBookingNotification(
                     extractedDetails,
-                    roomName,
+                    roomName[0].RoomName,
                     Amenity
                 );
 
@@ -197,13 +198,27 @@ async function beginProcess(eventDescription) {
                     console.log("\nCould NOT Confirm Meeting Room.");
                 }
 
-                //console.log("No events to optimise for B2b.")
+                console.log("\nLOCAL OPTIMIZATION COMPLETED.");
             } else {
-                console.log("Events have been found to optimise for B2b.");
+                console.log("\nGLOBAL OPTIMIZATION: Events Have Been Found To Optimise For Back To Back Scenario.");
                 B2BTimeOptimisation.CalculateEndTimes(B2BEventList);
+
+                // var confirmed = await NotifyOrganiser.sendOrganiserBookingNotification(
+                //     extractedDetails,
+                //     roomName[0].RoomName,
+                //     Amenity
+                // );
+
+                // if (confirmed) {
+                //     console.log("\nMeeting Room Confirmed! Check Mailbox.");
+                // } else {
+                //     console.log("\nCould NOT Confirm Meeting Room.");
+                // }
+
+                console.log("\nGLOBAL OPTIMIZATION COMPLETED.");
             }
         } else {
-            console.debug("Booking conflict identified");
+            console.debug("\nBOOKING CONFLICT IDENTIFIED.");
         }
     }
 }
@@ -242,7 +257,7 @@ function getAccess() {
                 console.log("well that didn't work: " + err.stack);
                 return reject(new Error("Something wrong"));
             } else {
-                token = tokenResponse;
+                // var token = tokenResponse;
                 //console.log("In getAccessToken we have got: "+ tokenResponse.accessToken);
                 return resolve(tokenResponse);
             }
