@@ -24,13 +24,13 @@ module.exports = {
 
     remove: async function (meetingID) {
         return new Promise(async function (resolve, reject) {
-            var sql = "DELETE FROM meetings WHERE MeetingID = '" + 8 + "';";
+            var sql = "DELETE FROM meetings WHERE MeetingID = '" + meetingID + "';";
             await connection.query(sql, async function (err, result) {
                 if (err) {
                     console.log(err);
                     return reject();
                 } else {
-                   console.log(result);
+                   console.log("Meeting removed");
                     return resolve();
                 }
             });
