@@ -10,12 +10,12 @@ var sql = require("mssql");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "cos301"
-});
+// var connection = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "",
+//   database: "cos301"
+// });
 
 var table = "";
 var operation = "";
@@ -284,7 +284,7 @@ console.log("plan.length: "+plan.length);
   {
     var singleFloorDist=2.5;//distance between floors
     var buildDist=10;//assume every building is 10m apart
-    var temp,floorTemp;
+    var temp,temp2,floorTemp;
     var arr1=[];
     var DataFloor=parseInt(data["RoomID"][0]);
     var distance,t;
@@ -292,7 +292,8 @@ console.log("plan.length: "+plan.length);
     for(var t=0;t<plan.length;t++)
     { 
       temp=plan[t]["RoomID"];
-      console.log("temp:"+temp);
+      temp2=plan[t]["RoomName"];
+      console.log("RoomName:"+temp2);
       if(temp[0]==DataFloor && temp[1]==data["RoomID"][1]){ console.log("rooms on the same building and floor");}
 
       else if(temp[1]==data["RoomID"][1])//meeting rooms on the same building
@@ -301,35 +302,35 @@ console.log("plan.length: "+plan.length);
         floorTemp=floorTemp*singleFloorDist;
         distance=parseInt(data["DistanceFromElevator"]) +floorTemp+parseInt(plan[t]["DistanceFromElevator"]);
         //first insert for temp
+       // var arr={RoomName:data["RoomName"],dist:distance,Rooms:plan[t]["RoomID"]};
+       // console.log("Arr: "+JSON.stringify(arr));
         var arr={RoomName:data["RoomName"],dist:distance,Rooms:plan[t]["RoomID"]};
         console.log("Arr: "+JSON.stringify(arr));
-
-        var sql = "UPDATE distance SET "+arr.RoomName+"='" +arr.dist+
-            "' WHERE Rooms ='" +arr.Rooms +"';";
-
-        connection.query(sql, function (err, result) {
-          if (err){
-                console.log(err);
-                
-          //res.writeHead(403);//already exists or other error
-        //res.end();
-          } 
-          else{
-          console.log("1 record updated");
-            }
-          });
-        //then insert for data
-        //console.log("plan[t][RoomName]: "+plan[t]["RoomName"]);
-        // var arr2={RoomName:plan[t]["RoomName"],dist:distance,Rooms:data["RoomID"]};
-
-        // t=await DIST_update_record(JSON.stringify(arr2));    
+        DIST_update_record(JSON.stringify(arr));
+        
+        //then insert for datas row
+        var arr2={RoomName:temp2,dist:distance,Rooms:data["RoomID"]};
+         DIST_update_record(JSON.stringify(arr2));
+           
       }
 
       else{//different buildings
 
-
+        floorTemp=Math.abs(temp[0]-DataFloor);
+        floorTemp=floorTemp*singleFloorDist;
+        distance=parseInt(data["DistanceFromElevator"]) +floorTemp+parseInt(plan[t]["DistanceFromElevator"])+buildDist;
+        //first insert for temp
+        var arr={RoomName:data["RoomName"],dist:distance,Rooms:plan[t]["RoomID"]};
+        console.log("Arr: "+JSON.stringify(arr));
+        DIST_update_record(JSON.stringify(arr));
+      
+        var arr2={RoomName:temp2,dist:distance,Rooms:data["RoomID"]};
+         DIST_update_record(JSON.stringify(arr2));
+      
       }
     }
+    var arr2={RoomName:data["RoomName"],dist:0,Rooms:data["RoomID"]};
+         DIST_update_record(JSON.stringify(arr2));
 
   }
   else
@@ -679,8 +680,7 @@ function DIST_create_record(body_data, res) {
 }
 
 function DIST_update_record(body_data) {
-  return new Promise((resolve, reject) =>
-  {
+  
     var stringbody_data=body_data;
        console.log(body_data+"data suppose to be");
     const options = {
@@ -696,7 +696,7 @@ function DIST_update_record(body_data) {
 
     const httpreq = http.request(options, (httpres) => {
       console.log(`statusCode: ${httpres.statusCode}`);
-        resolve("ok");
+        return("ok");
       httpres.on('data', (d) => {
         process.stdout.write(d)
 
@@ -705,12 +705,12 @@ function DIST_update_record(body_data) {
 
     httpreq.on('error', (error) => {
       console.error(error)
-      reject(error);
+      return error;
     });
 
     httpreq.write(stringbody_data);
     httpreq.end();
-  });
+  
 }
 
 // TABLE MEETINGS:
