@@ -80,11 +80,13 @@ app.get('/FloorPlan/available', function(req, res){
 //inserts new room in floorplan table
 app.post('/FloorPlan',function(req, res){
 		console.log(req.body);
-	var sql = "INSERT INTO floorplan (RoomID, RoomName,FloorNumber,maxSeats,Amenity,Building,Whiteboard,Projector,Monitor,isExternal,isAvailable)"+
+	var sql = "INSERT INTO floorplan (RoomID, RoomName,DistanceFromElevator,FloorNumber,maxSeats,Amenity,Building,Whiteboard,Projector,Monitor,isExternal)"+
 	"VALUES('" +
 			req.body.RoomID +
             "','" +
             req.body.RoomName +
+            "','" +
+            req.body.DistanceFromElevator +//new
             "','" +
             req.body.FloorNumber +
             "','" +
@@ -101,12 +103,14 @@ app.post('/FloorPlan',function(req, res){
             req.body.Monitor +
             "','" +
             req.body.isExternal +
-            "','" +
-            req.body.isAvailable +
             "');";
+            //  +
+            // req.body.isAvailable +
+            // "');";
 
    connection.query(sql, function (err, result) {
     if (err){
+        console.log(err);
     res.writeHead(403);//already exists or other error
 	res.end();
     } 
@@ -260,6 +264,24 @@ app.post('/distance',function(req, res){
 
 	});
 
+app.post('/distanceAddColumn',function(req, res){
+    var sql ="ALTER TABLE distance ADD "+ req.body.RoomName +" int(3);";
+    console.log("Sql: "+sql);
+
+    connection.query(sql, function (err, result) {
+    if (err){
+    res.writeHead(403);//already exists or other error
+    res.end();
+    } 
+    else{
+    console.log("1 record inserted");
+    res.writeHead(204);
+    res.end();
+        }
+    });  
+    
+});
+
 //delete calculated distance
 app.delete('/distance/:id', function(req, res){
 
@@ -410,7 +432,7 @@ app.delete('/employeeDetails/:id', function(req, res){
 
 //update employee details
 app.post('/employeeDetailsUpdate',function(req, res){
-
+console.log("req.body.isAdmin :"+req.body.isAdmin );
  var sql =
             "UPDATE EmployeeDetails SET FirstName = '" +
             req.body.FirstName +
