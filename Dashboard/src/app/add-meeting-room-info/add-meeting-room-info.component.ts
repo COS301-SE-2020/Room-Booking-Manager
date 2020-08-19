@@ -51,8 +51,9 @@ export class AddMeetingRoomInfoComponent implements OnInit {
     formData.isExternal = false;
     var rID = (<string><any>formData.FloorNumber).concat(<string><any>formData.Building);
     rID = rID.concat(roomNumber);
-    formData.RoomID = rID;
     var dist = <number><any>this.RoomInfo.controls['Distance'].value;
+    formData.RoomID = rID;
+    formData.Distance = dist;
     console.log("Room ID- " + rID + "; distance from elevator- " + dist);
     if(formData.Amenity.includes("Whiteboard"))
     {

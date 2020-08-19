@@ -36,7 +36,7 @@ module.exports = {
             })
             .catch((err) => {
                 console.log(err)
-                reject(err);
+                return reject(err);
             });
             
         });

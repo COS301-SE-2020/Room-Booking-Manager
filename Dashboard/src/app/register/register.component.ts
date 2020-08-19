@@ -88,8 +88,9 @@ export class RegisterComponent implements OnInit {
         formData.isAdmin = false;
         var rID = (<string><any>this.registerForm.get('floorNumber').value).concat(<string><any>this.registerForm.get('building').value);
         rID = rID.concat(<string><any>this.registerForm.get('roomNum').value);
-        var dist = <string><any>this.registerForm.get('distance').value
+        var dist = <number><any>this.registerForm.get('distance').value
         formData.LocationID= rID;
+        formData.Distance= dist;
         console.log(rID + "--" + dist);
 
         // console.log(formData.userID + " - " + formData.firstName + " - " + formData.lastName + " - " + formData.email);
