@@ -57,7 +57,7 @@ export class RetrieveMeetingRoomInfoComponent implements OnInit,AfterViewInit {
     formData.Whiteboard = Whiteboard;
     formData.Projector = Projector;
     formData.Monitor = Monitor;
-    formData.isAvailable = is_Available;
+    // formData.isAvailable = is_Available;
     console.log(formData);
     this.setRoom = formData;
     // this.apiDB.getRecord(formData)

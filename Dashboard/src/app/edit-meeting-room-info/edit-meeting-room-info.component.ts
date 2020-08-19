@@ -68,7 +68,7 @@ export class EditMeetingRoomInfoComponent implements OnInit {
     formData.Whiteboard = this.getRoom.Whiteboard;
     formData.Projector = this.getRoom.Projector;
     formData.Monitor = this.getRoom.Monitor;
-    formData.isAvailable = this.getRoom.isAvailable;
+    // formData.isAvailable = this.getRoom.isAvailable;
     console.log(formData);
     this.apiDB.updateRoom(formData)
     .subscribe(
@@ -90,6 +90,6 @@ export class EditMeetingRoomInfoComponent implements OnInit {
     this.onClose();
   }
   done(){
-    window.location.reload();
+    // window.location.reload();
   }
 }

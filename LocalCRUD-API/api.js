@@ -67,7 +67,7 @@ function callAPI(table, option, data, res) {
     } else if (option == "create") {
         // POST
         if (table == "EmployeeDetails") UD_create_record(data, res);
-        else if (table == "FloorPlan") FP_create_record(data, res);
+        else if (table == "FloorPlan"){ FP_create_record(data, res);}
         else if (table == "Meetings") MEET_create_record(data, res);
         else if (table == "Distance") DIST_create_record(data, res);
     } else if (option == "update") {

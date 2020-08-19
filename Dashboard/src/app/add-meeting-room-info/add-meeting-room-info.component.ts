@@ -5,6 +5,7 @@ import {Room} from '../classes/room';
 //import { MatDialogRef,MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { concat } from 'rxjs';
 
 @Component({
   selector: 'app-add-meeting-room-info',
@@ -17,13 +18,16 @@ export class AddMeetingRoomInfoComponent implements OnInit {
   constructor(private _router: Router,private apiDB: apiService,public dialogRef:MatDialogRef<AddMeetingRoomInfoComponent>) { }
   
   amenityList: string[] = ['Projector', 'Whiteboard', 'Monitor', 'Polycom Telephone'];
+  floorNumbers: string[] = ['1','2','3','4'];
+  buildingList: string[] = ['A','B','C','D'];
   RoomInfo=new FormGroup({
-    RoomNumber:new FormControl('',[Validators.required]),
-    FloorNumber:new FormControl('',[Validators.required,Validators.pattern("^[0-9]*$")]),
+    RoomNumber:new FormControl('',[Validators.required,Validators.pattern("^[0-9]*$")]),
+    FloorNumber:new FormControl(''),
     Amenity:new FormControl(''),
     NrSeats:new FormControl('',[Validators.required,Validators.pattern("^[0-9]*$")]),
     RoomName:new FormControl('',[Validators.required]),
-    Building:new FormControl('',[Validators.required,Validators.pattern("^[0-9]*$")])
+    Building:new FormControl(''),
+    Distance:new FormControl('',[Validators.required,Validators.pattern("^[0-9]*$")])
   });
   ngOnInit(): void {
     if(localStorage.getItem('loggedIn') == "false")
@@ -35,14 +39,21 @@ export class AddMeetingRoomInfoComponent implements OnInit {
   onSubmit(){
     console.log("no seats",this.RoomInfo.controls['Amenity'].value);
     var formData=new Room();
-    formData.RoomID=<string><any>this.RoomInfo.controls['RoomNumber'].value;
+    
+    var roomNumber =<string><any>this.RoomInfo.controls['RoomNumber'].value;
     formData.Amenity=<string><any>this.RoomInfo.controls['Amenity'].value;
     formData.FloorNumber=<number><any>this.RoomInfo.controls['FloorNumber'].value;
     formData.RoomName=<string><any>this.RoomInfo.controls['RoomName'].value;
     formData.maxSeats=<number><any>this.RoomInfo.controls['NrSeats'].value;
-    formData.Building = <number><any>this.RoomInfo.controls['Building'].value;;
-    formData.isAvailable = true;
+    formData.Building = <number><any>this.RoomInfo.controls['Building'].value;
+    
+    // formData.isAvailable = true;
     formData.isExternal = false;
+    var rID = (<string><any>formData.FloorNumber).concat(<string><any>formData.Building);
+    rID = rID.concat(roomNumber);
+    formData.RoomID = rID;
+    var dist = <number><any>this.RoomInfo.controls['Distance'].value;
+    console.log("Room ID- " + rID + "; distance from elevator- " + dist);
     if(formData.Amenity.includes("Whiteboard"))
     {
       formData.Whiteboard = true;
@@ -88,7 +99,7 @@ export class AddMeetingRoomInfoComponent implements OnInit {
     this.onClose();
   }
   done(){
-    window.location.reload();
+    // window.location.reload();
   }
 
 }
