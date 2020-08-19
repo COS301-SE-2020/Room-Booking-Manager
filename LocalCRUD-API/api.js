@@ -106,36 +106,12 @@ function read_record(table, primaryKey, recordID, res) {
 async function view_records(table, res) {
 
     if(table == "FloorPlan"){
-        http.get("http://localhost:10000/FloorPlan",httpRes=>{
-            var data="";
-
-            httpRes.on("data",chunk=>{
-                data+=chunk;
-            });
-
-            httpRes.on("end",()=>{
-                console.log(data);
-                res.send(data);
-            });
-        }).on("error",err=>{
-            console.log("ERROR view");
-        });
+      var data=await viewFloorPlan();
+        res.send(data);
     }
     else if(table == "EmployeeDetails"){
-        http.get("http://localhost:10000/employeeDetails",httpRes=>{
-            var data="";
-
-            httpRes.on("data",chunk=>{
-                data+=chunk;
-            });
-
-            httpRes.on("end",()=>{
-                console.log(data);
-                res.send(data);
-            });
-        }).on("error",err=>{
-            console.log("ERROR view");
-        });
+        var data=await ViewEmployeeDetails();
+        res.send(data);
     }
 
     else if(table == "Meetings"){
@@ -166,6 +142,7 @@ async function view_records(table, res) {
              }
           }
            data[i]["Participants"]=array;
+           data[i]["Organizer"]=array[0];
      } 
 
       console.log(data);
@@ -174,21 +151,76 @@ async function view_records(table, res) {
     }
 
     else if(table == "Distance"){
-        http.get("http://localhost:10000/distance",httpRes=>{
+        var data=await viewDistance();
+        res.send(data);
+    }
+}
+function viewFloorPlan(){
+  return new Promise((resolve, reject) =>
+    {
+      http.get("http://localhost:10000/FloorPlan",httpRes=>
+      {
+        var data="";
+
+        httpRes.on("data",chunk=>{
+            data+=chunk;
+        });
+
+        httpRes.on("end",()=>
+        {
+            resolve(data);
+        });
+      }).on("error",err=>
+      {
+        reject("ERROR");
+                      });
+    });
+}
+
+function ViewEmployeeDetails()
+{
+  return new Promise((resolve, reject) =>
+    {
+      http.get("http://localhost:10000/employeeDetails",httpRes=>
+      {
+        var data="";
+        httpRes.on("data",chunk=>{
+                data+=chunk;
+            });
+
+            httpRes.on("end",()=>
+        {
+            resolve(data);
+        });
+
+      }).on("error",err=>
+      {
+        reject("ERROR");
+                      });
+    });
+}
+
+function viewDistance()
+{
+  return new Promise((resolve, reject) => {
+
+    http.get("http://localhost:10000/distance",httpRes=>{
             var data="";
 
             httpRes.on("data",chunk=>{
                 data+=chunk;
             });
 
-            httpRes.on("end",()=>{
-                console.log(data);
-                res.send(data);
-            });
-        }).on("error",err=>{
-            console.log("ERROR view");
+            httpRes.on("end",()=>
+        {
+            resolve(data);
         });
-    }
+
+      }).on("error",err=>
+      {
+        reject("ERROR");
+                      });
+      });
 }
 
 function querySingleEmplDetails(id)
@@ -235,6 +267,7 @@ function viewMeeting(){
 // TABLE FLOOR PLAN
 
 function FP_create_record(body_data, res) {
+
    
    var stringbody_data=JSON.stringify(body_data);
        console.log(body_data+"data suppose to be");
