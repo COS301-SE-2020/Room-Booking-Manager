@@ -30,26 +30,41 @@ var transporter = nodemailer.createTransport({
 });
 
 module.exports = {
-    getRoomName: async function (RoomID) {
-        return new Promise((resolve, reject) => {
-            var sqlQuery = "SELECT * FROM floorplan WHERE RoomID = '" + RoomID + "';";
-            connection.query(sqlQuery, function (err, Room) {
-                if (err) {
-                    return reject(new Error(err));
-                } else {
-                    return resolve(Room[0].RoomName);
-                }
-            });
-        });
-    },
-    sendOrganiserBookingNotification: async function (message, organiser, RoomID) {
+    // getRoomName: async function (RoomID) {
+    //     return new Promise((resolve, reject) => {
+    //         var sqlQuery = "SELECT * FROM floorplan WHERE RoomID = '" + RoomID + "';";
+    //         connection.query(sqlQuery, function (err, Room) {
+    //             if (err) {
+    //                 console.log("\nGET ROOM NAME NOT FOUND!");
+    //                 return reject(new Error(err));
+    //             } else {
+    //                 console.log("\nGET ROOM NAME FOUND!");
+    //                 console.log(Room[0].RoomName);
+    //                 return resolve(Room[0].RoomName);
+    //             }
+    //         });
+    //     });
+    // },
+
+    sendOrganiserBookingNotification: async function (extractedDetails, RoomName, Amenity) {
         return new Promise(async (resolve, reject) => {
-            var room = await getRoomName(RoomID);
-            var roomStatement = "Room (" + room + ")";
+            // Send confirmation notification:
+            var message =
+                " Has Been Reserved For Your Meeting On " +
+                new Date(extractedDetails.Start) +
+                " Until " +
+                new Date(extractedDetails.End) +
+                " With Subject Line (" +
+                extractedDetails.Subject +
+                ") and Amenities (" +
+                Amenity +
+                ")";
+
+            var roomStatement = "Room (" + RoomName + ")";
 
             var mailOptions = {
                 from: "cos301.teamthreshold@gmail.com",
-                to: organiser,
+                to: extractedDetails.Organizer,
                 subject: "[Automated] Meeting Room Confirmation",
                 text: roomStatement + message,
             };
