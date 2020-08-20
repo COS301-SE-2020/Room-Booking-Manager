@@ -30,10 +30,8 @@ module.exports = {
 
             //Remove COS301@teamthreshold.onmicrosoft.com from the list
             var finalAttendees = [];
-            for(var i = 0; i < Attendees.length; i++)
-            {
-                if(Attendees[i] != "COS301@teamthreshold.onmicrosoft.com")
-                    finalAttendees.push(Attendees[i]);
+            for (var i = 0; i < Attendees.length; i++) {
+                if (Attendees[i] != "COS301@teamthreshold.onmicrosoft.com") finalAttendees.push(Attendees[i]);
             }
 
             //Store a list of participants in other meetings in 2D array
@@ -65,7 +63,6 @@ module.exports = {
                         for (var j = 0; j < participants.length; j++) {
                             for (var k = 0; k < participants[j].length; k++) {
                                 if (finalAttendees[i] == participants[j][k]) {
-
                                     //Store Employees with Back To Back Meetings
                                     BackToBackEmp.push(participants[j][k]);
 
@@ -194,6 +191,42 @@ module.exports = {
             });
         });
     },
+
+    //stores the best meeting room in db
+    // storeRecurringMeetings: async function (extractedDetails, amenity, ListOfRooms) {
+    //     return new Promise((resolve, reject) => {
+    //         var sql =
+    //             "INSERT INTO recurringmeetings (StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,type,interval,daysOfWeek)" +
+    //             "VALUES('" +
+    //             extractedDetails.Start +
+    //             "','" +
+    //             extractedDetails.End +
+    //             "','" +
+    //             extractedDetails.Organizer +
+    //             "','" +
+    //             extractedDetails.Attendees +
+    //             "','" +
+    //             amenity +
+    //             "','" +
+    //             ListOfRooms +
+    //             "','" +
+    //             extractedDetails.Recurring.pattern.type +
+    //             "','" +
+    //             extractedDetails.Recurring.pattern.interval +
+    //             "','" +
+    //             extractedDetails.Recurring.pattern.daysOfWeek +
+    //             "');";
+
+    //         connection.query(sql, function (err, result) {
+    //             if (err) {
+    //                 console.log("\n\nERROR! " + err);
+    //                 throw err;
+    //             } else {
+    //                 resolve(result);
+    //             }
+    //         });
+    //     });
+    // },
 
     getMeetingEndTime: async function (meetingId) {
         var sqlQuery = "SELECT * FROM meetings WHERE MeetingID='" + meetingId + "';";
