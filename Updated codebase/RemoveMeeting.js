@@ -15,7 +15,7 @@ connection.connect(function (err) {
     if (err) {
         throw err;
     } else {
-        console.log("Connected To Database For remove meeting Function!");
+        console.log("\nConnected To Database For Removing A Meeting!");
     }
 });
 
@@ -30,11 +30,10 @@ module.exports = {
                     console.log(err);
                     return reject();
                 } else {
-                   console.log("Meeting removed");
+                    console.log("Meeting removed");
                     return resolve();
                 }
             });
         });
     },
 };
-

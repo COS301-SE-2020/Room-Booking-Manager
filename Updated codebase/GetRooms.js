@@ -56,12 +56,9 @@ async function checkRoom(amenity, capacity) {
     return new Promise(async function (resolve, reject) {
         var availRooms = [];
         var sql;
-        if(amenity == "")
-        {
+        if (amenity == "") {
             sql = "SELECT * FROM floorplan WHERE maxSeats = " + capacity;
-        }
-        else
-        {
+        } else {
             sql = "SELECT * FROM floorplan WHERE " + amenity + " = '1' AND maxSeats = " + capacity;
         }
         await connection.query(sql, async function (err, result) {
@@ -86,12 +83,9 @@ async function getAll(amenity, capacity) {
     var allRooms = [];
     var sql1;
     return new Promise(async function (resolve, reject) {
-        if(amenity == "")
-        {
+        if (amenity == "") {
             sql1 = "SELECT * FROM floorplan ORDER BY maxSeats";
-        }
-        else
-        {
+        } else {
             sql1 = "SELECT * FROM floorplan WHERE " + amenity + " = '1' ORDER BY maxSeats";
         }
         // var sql1 = "SELECT * FROM floorplan WHERE " + amenity + " = '1' ORDER BY maxSeats";
@@ -124,12 +118,9 @@ async function nextFeasible(rooms, amenity, capacity) {
         // console.debug(rooms[++i]);
         i = ++i;
         // console.debug(capacity + " ==== " +rooms.length +"=="+rooms[i].maxSeats)
-        if(amenity == "")
-        {
+        if (amenity == "") {
             sql2 = "SELECT * FROM floorplan WHERE maxSeats = '" + rooms[i].maxSeats + "'";
-        }
-        else
-        {
+        } else {
             sql2 = "SELECT * FROM floorplan WHERE " + amenity + " = '1' AND maxSeats = '" + rooms[i].maxSeats + "'";
         }
         // var sql2 = "SELECT * FROM floorplan WHERE " + amenity + " = '1' AND maxSeats = '" + rooms[i].maxSeats + "'";
