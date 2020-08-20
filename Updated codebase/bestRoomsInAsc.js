@@ -8,7 +8,7 @@ module.exports = {
     getRoomsInOrderOfDistances: async function (Frooms, attendeelocation) {
         var arr = [],
             arr2 = [];
-       // console.log(Frooms + attendeelocation);
+        console.log(Frooms + attendeelocation);
         var Boolkey = Infinity;
         var bestRoom;
         var arrayofAverageDistances = [];
@@ -37,8 +37,8 @@ module.exports = {
             room = Feasibleroom[i]; //assuming room names are given in this array instead of roomid
             for (var j = 0; j < attendeelocation.length; j++) {
                 temp2 = await DatabaseQuerries.FindDistances(room, attendeelocation[j]);
-              //  console.log("\ntemp2 =>");
-                //console.log(temp2);
+                console.log("\ntemp2 =>");
+                console.log(temp2);
                 temp2 = JSON.stringify(temp2[0]);
                 var parsed = JSON.parse(temp2);
                 temp += parsed[room];
@@ -66,8 +66,8 @@ module.exports = {
             f = 0;
             bool = false;
             while (!bool) {
-             //   console.log("arr2 contains: ");
-               // console.log(arr2);
+                console.log("arr2 contains: ");
+                console.log(arr2);
                 if (arr2[f][1] == arrayofAverageDistances[u]) {
                     bool = true;
                     sorted.push(arr2[f]);
@@ -84,7 +84,7 @@ module.exports = {
             sortedNames.push(parsed2.RoomID);
         }
 
-      //  console.log("\n\nSORTED NAMES = " + sortedNames);
+        console.log("\n\nSORTED NAMES = " + sortedNames);
         return sortedNames;
     },
     bookMeetingRoom: async function (extractedDetails, amenity, ListOfRooms) {

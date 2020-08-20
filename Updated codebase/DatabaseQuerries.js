@@ -15,7 +15,7 @@ connection.connect(function (err) {
     if (err) {
         throw err;
     } else {
-        //console.log("Connected to DB!");
+        console.log("Connected to DB!");
     }
 });
 
@@ -118,17 +118,17 @@ module.exports = {
 
     //query retrieves distance of an employee from a their current location to a specific meeting room
     FindDistances: async function (MeetingRoom, attendLoc) {
-       // console.log("\nStarting Find Distances Function:");
-        //console.log(MeetingRoom + attendLoc);
+        console.log("\nStarting Find Distances Function:");
+        console.log(MeetingRoom + attendLoc);
 
         return new Promise((resolve, reject) => {
             var sql = "SELECT " + MeetingRoom + " FROM distance WHERE Rooms = '" + attendLoc + "';";
             connection.query(sql, function (err, result) {
                 if (err) {
-                  //  console.log("ERROR: Result is = " + JSON.stringify(err));
+                    console.log("ERROR: Result is = " + JSON.stringify(err));
                     reject(err);
                 } else {
-                  //  console.log("SUCCESS: Result is = " + JSON.stringify(result));
+                    console.log("SUCCESS: Result is = " + JSON.stringify(result));
                     resolve(result);
                 }
             });
