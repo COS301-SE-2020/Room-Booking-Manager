@@ -16,12 +16,17 @@ export class RegisterComponent implements OnInit {
 
   constructor(private _apiService: apiService, private _router: Router,private dialog:MatDialog,public dialogRef:MatDialogRef<RegisterComponent>) { }
 
+  floorNumbers: string[] = ['1','2','3','4'];
+  buildingList: string[] = ['A','B','C','D'];
   registerForm = new FormGroup({  
-    roomID: new FormControl('', Validators.required),
+    roomNum: new FormControl('', Validators.required),
     firstname: new FormControl('', Validators.required),  
     lastname: new FormControl('', Validators.required),
     email: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
+    floorNumber:new FormControl(''),
+    building:new FormControl(''),
+    distance: new FormControl('',[Validators.required,Validators.pattern("^[0-9]*$")])
     // submit: new FormControl()
   });
   get roomID() {  
@@ -79,8 +84,14 @@ export class RegisterComponent implements OnInit {
         formData.LastName=this.registerForm.get('lastname').value;
         formData.EmpEmail=this.registerForm.get('email').value;
         formData.EmpPassword=this.registerForm.get('password').value;
-        formData.LocationID=this.registerForm.get('roomID').value;
+        
         formData.isAdmin = false;
+        var rID = (<string><any>this.registerForm.get('floorNumber').value).concat(<string><any>this.registerForm.get('building').value);
+        rID = rID.concat(<string><any>this.registerForm.get('roomNum').value);
+        var dist = <number><any>this.registerForm.get('distance').value
+        formData.LocationID= rID;
+        formData.Distance= dist;
+        console.log(rID + "--" + dist);
 
         // console.log(formData.userID + " - " + formData.firstName + " - " + formData.lastName + " - " + formData.email);
         this._apiService.registerUser(formData)
@@ -90,16 +101,15 @@ export class RegisterComponent implements OnInit {
             this.done();
           }
         );
-        // console.warn(this.RoomInfo.value)
-        // console.log(this.RoomInfo.controls['RoomNumber'].value);//individual values
-        //from here send json format to the DB 
+        //console.warn(this.RoomInfo.value)
+        //console.log(this.RoomInfo.controls['RoomNumber'].value);//individual values
+        //from here send json format to the DB
         this.cancel();
     }
     this.buttonReg ="clicked";
   }
   cancel(){
     this.dialogRef.close();
-    
   }
   done()
   {

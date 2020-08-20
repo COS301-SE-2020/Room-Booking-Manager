@@ -70,7 +70,7 @@ fs.writeFile('trainedDataAmenity.txt',saveMe,function (err){
 module.exports = {
     identify: async function (eventDescription) {
         var res = classifier.categorize(eventDescription);
-        console.log(res);
+        //console.log(res);
         return res.predictedCategory;
     },
 };

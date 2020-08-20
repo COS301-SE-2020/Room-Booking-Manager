@@ -32,11 +32,11 @@ module.exports = {
             .patch(_location)
             .then((res) => {
                 console.log("Location Update successful");
-                resolve(res);
+                return resolve(true);
             })
             .catch((err) => {
                 console.log(err)
-                reject(err);
+                return reject(err);
             });
             
         });

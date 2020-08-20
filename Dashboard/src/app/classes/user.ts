@@ -6,5 +6,6 @@ export class User
     EmpEmail: string
     isAdmin: any
     EmpPassword:string
-    LocationID = ""
+    LocationID:string
+    Distance:number
 }
