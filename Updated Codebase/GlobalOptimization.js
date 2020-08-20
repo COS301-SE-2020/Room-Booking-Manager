@@ -111,16 +111,6 @@ module.exports = {
             // initialize eventCount:
             var eventCount = 0;
 
-            // Console log the first two meeting start and end times -- to be removed:
-            // console.log("\nTESTING START & END TIMES FOR FIRST TWO MEETINGS:");
-            // console.log(
-            //     "MEETING (0) END TIME:\n=>	" +
-            //         arrMeetings[0].EndTime +
-            //         "\nMEETING (1) START TIME:\n=>	" +
-            //         arrMeetings[1].StartTime +
-            //         "\n"
-            // );
-
             // variable to store each employee in Meeting N-1, as we search for that employee in Meeting N:
             var employee;
 
