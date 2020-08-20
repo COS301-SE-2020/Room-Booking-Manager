@@ -88,6 +88,6 @@ module.exports = {
         return sortedNames;
     },
     bookMeetingRoom: async function (extractedDetails, amenity, ListOfRooms) {
-        var wait = await DatabaseQuerries.storeRooms(extractedDetails, amenity, ListOfRooms);
+        await DatabaseQuerries.storeRooms(extractedDetails, amenity, ListOfRooms);
     },
 };
