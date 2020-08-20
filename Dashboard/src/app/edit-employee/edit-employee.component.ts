@@ -75,12 +75,12 @@ export class EditEmployeeComponent implements OnInit {
     formData.EmpPassword = <string><any>this.EmpInfo.controls['password'].value;
     formData.isAdmin = <boolean><any>this.EmpInfo.controls['admin'].value;
     console.log(formData);
-    // this.apiDB.updateEmployee(formData)
-    // .subscribe(
-    //   data=>{
-    //     console.log('Response post', data);
-    //   }
-    // );
+    this.apiDB.updateEmployee(formData)
+    .subscribe(
+      data=>{
+        console.log('Response post', data);
+      }
+    );
     this.cancel();
     this.done();
 

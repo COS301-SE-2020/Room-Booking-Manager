@@ -82,9 +82,9 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://e82da2037efb.ngrok.io/webhook",
+            notificationUrl: "https://e749277a82e0.ngrok.io/webhook",
             resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events
-            expirationDateTime: "2020-08-18T20:30:45.9356913Z",
+            expirationDateTime: "2020-08-20T08:30:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -154,14 +154,11 @@ async function beginProcess(eventDescription) {
             console.log("\nEvent Description Input: " + eventRes.bodyPreview);
 
             var Amenity;
-            if(extractedDetails.Attachments == true)
-            {
+            if (extractedDetails.Attachments == true) {
                 Amenity = "Projector";
-            }
-            else{
+            } else {
                 Amenity = await AmenityAI.identify(eventRes.bodyPreview).then((res) => res);
             }
-            
 
             console.log("\nAmenity: " + Amenity);
             var availRooms = await GatherFeasibleRooms.getFeasibleRooms(
@@ -218,17 +215,17 @@ async function beginProcess(eventDescription) {
 
                 // await B2BTimeOptimisation.CalculateEndTimes(B2BEventList);
 
-                // var confirmed = await NotifyOrganiser.sendOrganiserBookingNotification(
-                //     extractedDetails,
-                //     roomName[0].RoomName,
-                //     Amenity
-                // );
+                confirmed = await NotifyOrganiser.sendOrganiserBookingNotification(
+                    extractedDetails,
+                    roomName[0].RoomName,
+                    Amenity
+                );
 
-                // if (confirmed) {
-                //     console.log("\nMeeting Room Confirmed! Check Mailbox.");
-                // } else {
-                //     console.log("\nCould NOT Confirm Meeting Room.");
-                // }
+                if (confirmed) {
+                    console.log("\nMeeting Room Confirmed! Check Mailbox.");
+                } else {
+                    console.log("\nCould NOT Confirm Meeting Room.");
+                }
 
                 console.log("\nGLOBAL OPTIMIZATION COMPLETED.");
             }

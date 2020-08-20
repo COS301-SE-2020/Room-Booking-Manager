@@ -33,7 +33,7 @@ var B2BEvents = {
 function findJSONIndex(JSONFile, EmployeeArray) {
     // FORMAT: CurrentMeetingID, CurrentMeetingRoom, NextMeetingID, NextMeetingRoom, Email
 
-    if (JSONFile.Events.length > 1 && JSONFile.Events[0].CurrentMeetingID != null) {
+    if (JSONFile.Events.length >= 1 && JSONFile.Events[0].CurrentMeetingID != null) {
         for (var x = 0; x < JSONFile.Events.length; x++) {
             if (
                 JSONFile.Events[x].CurrentMeetingID == EmployeeArray[0] &&
@@ -111,16 +111,6 @@ module.exports = {
             // initialize eventCount:
             var eventCount = 0;
 
-            // Console log the first two meeting start and end times -- to be removed:
-            // console.log("\nTESTING START & END TIMES FOR FIRST TWO MEETINGS:");
-            // console.log(
-            //     "MEETING (0) END TIME:\n=>	" +
-            //         arrMeetings[0].EndTime +
-            //         "\nMEETING (1) START TIME:\n=>	" +
-            //         arrMeetings[1].StartTime +
-            //         "\n"
-            // );
-
             // variable to store each employee in Meeting N-1, as we search for that employee in Meeting N:
             var employee;
 
@@ -162,7 +152,7 @@ module.exports = {
             }
 
             // store in JSON:
-            for (var x = 0; x < arrStoreEmployees.length; x++) {
+            for (x = 0; x < arrStoreEmployees.length; x++) {
                 var tempEmployee = arrStoreEmployees[x].trim().split("#");
 
                 var countIndex = findJSONIndex(B2BEvents, tempEmployee);
@@ -188,10 +178,9 @@ module.exports = {
 
             console.log("\nLIST OF MEMBERS INVOLVED IN BACK TO BACK MEETINGS:");
             var tempArray = [];
-            for (var x = 0; x < arrStoreEmployees.length; x++)
-                tempArray.push(arrStoreEmployees[x].trim().split("#")[4]);
+            for (x = 0; x < arrStoreEmployees.length; x++) tempArray.push(arrStoreEmployees[x].trim().split("#")[4]);
             var uniqueAttendees = Array.from(new Set(tempArray));
-            for (var x = 0; x < uniqueAttendees.length; x++) console.log("=> " + uniqueAttendees[x]);
+            for (x = 0; x < uniqueAttendees.length; x++) console.log("=> " + uniqueAttendees[x]);
 
             // List the back to back events:
             // module.exports.toStringB2B(B2BEvents);

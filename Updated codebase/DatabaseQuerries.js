@@ -162,15 +162,17 @@ module.exports = {
         });
     },
     //stores the best meeting room in db
-    storeRooms: async function (extractedDetails, amenity, ListOfRooms) {
+    storeRooms: async function (MeetingID,extractedDetails, amenity, ListOfRooms) {
         return new Promise((resolve, reject) => {
             var nextbest = [];
             for (var i = 1; i < ListOfRooms.length; i++) {
                 nextbest.push(ListOfRooms[i]);
             }
             var sql =
-                "INSERT INTO meetings (StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,BestRooms)" +
+                "INSERT INTO meetings (MeetingID, StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,BestRooms)" +
                 "VALUES('" +
+                MeetingID +
+                "','" +
                 extractedDetails.Start +
                 "','" +
                 extractedDetails.End +

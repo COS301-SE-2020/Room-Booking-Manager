@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register-confirm',
@@ -8,13 +9,13 @@ import { MatDialogRef } from '@angular/material/dialog';
 })
 export class RegisterConfirmComponent implements OnInit {
 
-  constructor(public dialogRef:MatDialogRef<RegisterConfirmComponent>) { }
+  constructor(private _router: Router,public dialogRef:MatDialogRef<RegisterConfirmComponent>) { }
 
   ngOnInit(): void {
   }
   submit()
   {
-    this.dialogRef.close();
+    this._router.navigate(['login']);
   }
 
 }
