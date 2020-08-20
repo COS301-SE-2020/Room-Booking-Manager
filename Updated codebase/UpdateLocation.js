@@ -32,7 +32,7 @@ module.exports = {
             .patch(_location)
             .then((res) => {
                 console.log("Location Update successful");
-                return resolve(meetingID);
+                return resolve(true);
             })
             .catch((err) => {
                 console.log(err)
