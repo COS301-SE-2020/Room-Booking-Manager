@@ -162,7 +162,7 @@ module.exports = {
             }
 
             // store in JSON:
-            for (var x = 0; x < arrStoreEmployees.length; x++) {
+            for (x = 0; x < arrStoreEmployees.length; x++) {
                 var tempEmployee = arrStoreEmployees[x].trim().split("#");
 
                 var countIndex = findJSONIndex(B2BEvents, tempEmployee);
@@ -188,10 +188,9 @@ module.exports = {
 
             console.log("\nLIST OF MEMBERS INVOLVED IN BACK TO BACK MEETINGS:");
             var tempArray = [];
-            for (var x = 0; x < arrStoreEmployees.length; x++)
-                tempArray.push(arrStoreEmployees[x].trim().split("#")[4]);
+            for (x = 0; x < arrStoreEmployees.length; x++) tempArray.push(arrStoreEmployees[x].trim().split("#")[4]);
             var uniqueAttendees = Array.from(new Set(tempArray));
-            for (var x = 0; x < uniqueAttendees.length; x++) console.log("=> " + uniqueAttendees[x]);
+            for (x = 0; x < uniqueAttendees.length; x++) console.log("=> " + uniqueAttendees[x]);
 
             // List the back to back events:
             // module.exports.toStringB2B(B2BEvents);
