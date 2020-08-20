@@ -79,12 +79,14 @@ app.get('/FloorPlan/available', function(req, res){
 });
 //inserts new room in floorplan table
 app.post('/FloorPlan',function(req, res){
-		console.log(req.body);
-	var sql = "INSERT INTO floorplan (RoomID, RoomName,FloorNumber,maxSeats,Amenity,Building,Whiteboard,Projector,Monitor,isExternal,isAvailable)"+
+		//console.log("distance from elevator: "+req.body.DistanceFromElevator);
+	var sql = "INSERT INTO floorplan (RoomID, RoomName,DistanceFromElevator,FloorNumber,maxSeats,Amenity,Building,Whiteboard,Projector,Monitor,isExternal)"+
 	"VALUES('" +
 			req.body.RoomID +
             "','" +
             req.body.RoomName +
+            "','" +
+            req.body.DistanceFromElevator +//new
             "','" +
             req.body.FloorNumber +
             "','" +
@@ -101,12 +103,14 @@ app.post('/FloorPlan',function(req, res){
             req.body.Monitor +
             "','" +
             req.body.isExternal +
-            "','" +
-            req.body.isAvailable +
             "');";
+            //  +
+            // req.body.isAvailable +
+            // "');";
 
    connection.query(sql, function (err, result) {
     if (err){
+        console.log(err);
     res.writeHead(403);//already exists or other error
 	res.end();
     } 
@@ -260,6 +264,76 @@ app.post('/distance',function(req, res){
 
 	});
 
+app.post('/distanceAddColumn',function(req, res){
+    var sql ="ALTER TABLE distance ADD "+ req.body.RoomName +" int(3);";
+    console.log("Sql: "+sql);
+
+    connection.query(sql, function (err, result) {
+    if (err){
+    res.writeHead(403);//already exists or other error
+    res.end();
+    } 
+    else{
+    console.log("1 record inserted");
+    res.writeHead(204);
+    res.end();
+        }
+    });  
+
+});
+app.post('/distanceDelete',function(req, res){
+    //first drop column
+    var sql="ALTER TABLE distance DROP COLUMN "+ req.body.RoomName;
+
+    connection.query(sql, function (err, result) {
+        if (err){
+            console.log(err);
+            res.writeHead(403);//already exists or other error
+            res.end();
+        } 
+         else{
+            var sql2 ="DELETE FROM distance WHERE Rooms = '" + req.body.RoomID + "';";
+            console.log("sql2: "+sql2);
+            connection.query(sql2, function (err, result) {
+            if (err){
+                console.log(err);
+            res.writeHead(403);//already exists or other error
+            res.end();
+            } 
+            else{
+            res.writeHead(204);
+            res.end();
+                  }
+                });
+        // console.log("1 record inserted");
+        // res.writeHead(204);
+        // res.end();
+            }
+        }); 
+
+});
+app.post('/distanceAddRow',function(req, res){
+    var sql = "INSERT INTO distance (Rooms) "+
+    "VALUES('" +
+    req.body.RoomID +
+            "');";
+    console.log("Sql: "+sql);
+
+    connection.query(sql, function (err, result) {
+    if (err){
+        console.log(err);
+    res.writeHead(403);//already exists or other error
+    res.end();
+    } 
+    else{
+    console.log("1 record inserted");
+    res.writeHead(204);
+    res.end();
+        }
+    });  
+    
+});
+
 //delete calculated distance
 app.delete('/distance/:id', function(req, res){
 
@@ -281,40 +355,18 @@ app.delete('/distance/:id', function(req, res){
 //update distance of room
 app.post('/distanceUpdate',function(req, res){
 
- var sql =
-            "UPDATE Distance SET Texas = '" +
-            req.body.Texas +
-            "', Colorado = '" +
-            req.body.Colorado +
-            "', Mississippi = '" +
-            req.body.Mississippi +
-            "', NewJersey = '" +
-            req.body.NewJersey +
-            "', NewYork = '" +
-            req.body.NewYork +
-            "', California = '" +
-            req.body.California +
-            "', Florida = '" +
-            req.body.Florida +
-            "', Pennsylvania = '" +
-            req.body.Pennsylvania +
-            "', Georgia = '" +
-            req.body.Georgia +
-            "', Tennessee = '" +
-            req.body.Tennessee +
-            "', Washington = '" +
-            req.body.Washington +
-            "' WHERE Rooms = '" +
-            req.body.Rooms +
-            "';";
+var sql = "UPDATE distance SET "+req.body.RoomName+"='" +req.body.dist+
+            "' WHERE Rooms ='" +req.body.Rooms +"';";
+
 
 	connection.query(sql, function (err, result) {
 	    if (err){
+            console.log(err);
 	    res.writeHead(403);//already exists or other error
 		res.end();
 	    } 
 	    else{
-	    console.log("1 record updated");
+	    console.log("1 record updated distanceUpdate");
 	    res.writeHead(204);
 		res.end();
 		}
@@ -361,7 +413,7 @@ app.get('/employeeDetails/:id', function(req, res){
 //add employee details
 app.post('/employeeDetails',function(req, res){
 		
-	var sql = "INSERT INTO employeedetails (FirstName, LastName,EmpEmail,EmpPassword,isAdmin,LocationID)"+
+	var sql = "INSERT INTO employeedetails (FirstName, LastName,EmpEmail,EmpPassword,isAdmin,LocationID,DistanceFromElevator)"+
 	"VALUES('" +
 			req.body.FirstName +
             "','" +
@@ -373,7 +425,9 @@ app.post('/employeeDetails',function(req, res){
             "','" +
             req.body.isAdmin +
             "','" +
-            req.body.LocationID +
+            req.body.RoomID +
+            "','" +
+            req.body.DistanceFromElevator +
             "');";
 
    connection.query(sql, function (err, result) {
@@ -410,7 +464,7 @@ app.delete('/employeeDetails/:id', function(req, res){
 
 //update employee details
 app.post('/employeeDetailsUpdate',function(req, res){
-
+console.log("req.body.isAdmin :"+req.body.isAdmin );
  var sql =
             "UPDATE EmployeeDetails SET FirstName = '" +
             req.body.FirstName +
