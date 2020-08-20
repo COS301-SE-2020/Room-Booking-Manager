@@ -82,9 +82,9 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://7079f3dac76e.ngrok.io/webhook",
+            notificationUrl: "https://e82da2037efb.ngrok.io/webhook",
             resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events
-            expirationDateTime: "2020-08-19T22:40:45.9356913Z",
+            expirationDateTime: "2020-08-18T20:30:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -154,11 +154,14 @@ async function beginProcess(eventDescription) {
             console.log("\nEvent Description Input: " + eventRes.bodyPreview);
 
             var Amenity;
-            if (extractedDetails.Attachments == true) {
+            if(extractedDetails.Attachments == true)
+            {
                 Amenity = "Projector";
-            } else {
+            }
+            else{
                 Amenity = await AmenityAI.identify(eventRes.bodyPreview).then((res) => res);
             }
+            
 
             console.log("\nAmenity: " + Amenity);
             var availRooms = await GatherFeasibleRooms.getFeasibleRooms(
@@ -184,17 +187,8 @@ async function beginProcess(eventDescription) {
             await bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
             var B2BEventList = await GlobalOptimization.getBackToBackList();
 
-            // Recurring Meetings:
-            // if (extractedDetails.Recurring != null) {
-            //     console.log("\nNow A Recurring Meeting!");
-            //     // only store recurring meeting meetings if they are explicitly stated.
-            //     await DatabaseQuerries.storeRecurringMeetings(extractedDetails, Amenity, ListOfRooms[0]);
-            // } else {
-            //     console.log("\nNO Recurring Meeting Stated Explicitly!");
-            // }
-
-            // console.log("\n\nPRINTING THE EXTRACTED DETAILS:");
-            // console.log(JSON.stringify(extractedDetails));
+            // console.log("B2B List If Identified Is:");
+            // console.log(B2BEventList);
 
             var checkB2B = await GlobalOptimization.checkBackToBack(B2BEventList);
 
@@ -224,19 +218,17 @@ async function beginProcess(eventDescription) {
 
                 // await B2BTimeOptimisation.CalculateEndTimes(B2BEventList);
 
-                var confirmed = await NotifyOrganiser.sendOrganiserBookingNotification(
-                    extractedDetails,
-                    roomName[0].RoomName,
-                    Amenity
-                );
+                // var confirmed = await NotifyOrganiser.sendOrganiserBookingNotification(
+                //     extractedDetails,
+                //     roomName[0].RoomName,
+                //     Amenity
+                // );
 
-                if (confirmed) {
-                    console.log("\nMeeting Room Confirmed! Check Mailbox.");
-                } else {
-                    console.log("\nCould NOT Confirm Meeting Room.");
-                }
-
-                // The above has been repeated because the minutes reduction has not returned a room yet.
+                // if (confirmed) {
+                //     console.log("\nMeeting Room Confirmed! Check Mailbox.");
+                // } else {
+                //     console.log("\nCould NOT Confirm Meeting Room.");
+                // }
 
                 console.log("\nGLOBAL OPTIMIZATION COMPLETED.");
             }

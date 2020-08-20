@@ -33,7 +33,7 @@ var B2BEvents = {
 function findJSONIndex(JSONFile, EmployeeArray) {
     // FORMAT: CurrentMeetingID, CurrentMeetingRoom, NextMeetingID, NextMeetingRoom, Email
 
-    if (JSONFile.Events.length >= 1 && JSONFile.Events[0].CurrentMeetingID != null) {
+    if (JSONFile.Events.length > 1 && JSONFile.Events[0].CurrentMeetingID != null) {
         for (var x = 0; x < JSONFile.Events.length; x++) {
             if (
                 JSONFile.Events[x].CurrentMeetingID == EmployeeArray[0] &&
