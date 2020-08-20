@@ -79,7 +79,7 @@ app.get('/FloorPlan/available', function(req, res){
 });
 //inserts new room in floorplan table
 app.post('/FloorPlan',function(req, res){
-		console.log(req.body);
+		//console.log("distance from elevator: "+req.body.DistanceFromElevator);
 	var sql = "INSERT INTO floorplan (RoomID, RoomName,DistanceFromElevator,FloorNumber,maxSeats,Amenity,Building,Whiteboard,Projector,Monitor,isExternal)"+
 	"VALUES('" +
 			req.body.RoomID +
@@ -413,7 +413,7 @@ app.get('/employeeDetails/:id', function(req, res){
 //add employee details
 app.post('/employeeDetails',function(req, res){
 		
-	var sql = "INSERT INTO employeedetails (FirstName, LastName,EmpEmail,EmpPassword,isAdmin,LocationID)"+
+	var sql = "INSERT INTO employeedetails (FirstName, LastName,EmpEmail,EmpPassword,isAdmin,LocationID,DistanceFromElevator)"+
 	"VALUES('" +
 			req.body.FirstName +
             "','" +
@@ -425,7 +425,9 @@ app.post('/employeeDetails',function(req, res){
             "','" +
             req.body.isAdmin +
             "','" +
-            req.body.LocationID +
+            req.body.RoomID +
+            "','" +
+            req.body.DistanceFromElevator +
             "');";
 
    connection.query(sql, function (err, result) {
