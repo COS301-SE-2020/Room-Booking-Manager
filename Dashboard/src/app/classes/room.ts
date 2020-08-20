@@ -11,5 +11,5 @@ export class Room
     Projector:boolean
     Monitor:boolean
     // isAvailable:boolean
-    Distance:number
+    DistanceFromElevator:number
 }

@@ -18,7 +18,7 @@ export class AddMeetingRoomInfoComponent implements OnInit {
   constructor(private _router: Router,private apiDB: apiService,public dialogRef:MatDialogRef<AddMeetingRoomInfoComponent>) { }
   
   amenityList: string[] = ['Projector', 'Whiteboard', 'Monitor', 'Polycom Telephone'];
-  floorNumbers: string[] = ['1','2','3','4'];
+  floorNumbers: string[] = ['1','2','3','4','5','6','7','8'];
   buildingList: string[] = ['A','B','C','D'];
   RoomInfo=new FormGroup({
     RoomNumber:new FormControl('',[Validators.required,Validators.pattern("^[0-9]*$")]),
@@ -53,7 +53,7 @@ export class AddMeetingRoomInfoComponent implements OnInit {
     rID = rID.concat(roomNumber);
     var dist = <number><any>this.RoomInfo.controls['Distance'].value;
     formData.RoomID = rID;
-    formData.Distance = dist;
+    formData.DistanceFromElevator = dist;
     console.log("Room ID- " + rID + "; distance from elevator- " + dist);
     if(formData.Amenity.includes("Whiteboard"))
     {
