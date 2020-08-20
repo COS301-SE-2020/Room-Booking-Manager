@@ -154,14 +154,11 @@ async function beginProcess(eventDescription) {
             console.log("\nEvent Description Input: " + eventRes.bodyPreview);
 
             var Amenity;
-            if(extractedDetails.Attachments == true)
-            {
+            if (extractedDetails.Attachments == true) {
                 Amenity = "Projector";
-            }
-            else{
+            } else {
                 Amenity = await AmenityAI.identify(eventRes.bodyPreview).then((res) => res);
             }
-            
 
             console.log("\nAmenity: " + Amenity);
             var availRooms = await GatherFeasibleRooms.getFeasibleRooms(
@@ -218,17 +215,17 @@ async function beginProcess(eventDescription) {
 
                 // await B2BTimeOptimisation.CalculateEndTimes(B2BEventList);
 
-                // var confirmed = await NotifyOrganiser.sendOrganiserBookingNotification(
-                //     extractedDetails,
-                //     roomName[0].RoomName,
-                //     Amenity
-                // );
+                confirmed = await NotifyOrganiser.sendOrganiserBookingNotification(
+                    extractedDetails,
+                    roomName[0].RoomName,
+                    Amenity
+                );
 
-                // if (confirmed) {
-                //     console.log("\nMeeting Room Confirmed! Check Mailbox.");
-                // } else {
-                //     console.log("\nCould NOT Confirm Meeting Room.");
-                // }
+                if (confirmed) {
+                    console.log("\nMeeting Room Confirmed! Check Mailbox.");
+                } else {
+                    console.log("\nCould NOT Confirm Meeting Room.");
+                }
 
                 console.log("\nGLOBAL OPTIMIZATION COMPLETED.");
             }

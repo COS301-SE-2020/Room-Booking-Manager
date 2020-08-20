@@ -57,7 +57,7 @@ export class RetrieveMeetingRoomInfoComponent implements OnInit,AfterViewInit {
     formData.Whiteboard = Whiteboard;
     formData.Projector = Projector;
     formData.Monitor = Monitor;
-    formData.isAvailable = is_Available;
+    // formData.isAvailable = is_Available;
     console.log(formData);
     this.setRoom = formData;
     // this.apiDB.getRecord(formData)
@@ -83,8 +83,8 @@ export class RetrieveMeetingRoomInfoComponent implements OnInit,AfterViewInit {
         data=>{
           console.log('Response post', data);
         });
-        window.location.reload();
-        //this.ngOnInit();
+        //window.location.reload();
+        this.ngOnInit();
     }
   }
 
@@ -95,5 +95,6 @@ export class RetrieveMeetingRoomInfoComponent implements OnInit,AfterViewInit {
     // configDialog.height='400px';
     this.dialog.open(AddMeetingRoomInfoComponent,configDialog);
     // window.location.reload();
+    this.ngOnInit();
   }
 }

@@ -8,7 +8,10 @@
             <input formControlName="RoomNumber" matInput>
             <!-- mat-error is for validation -->
             <mat-error *ngIf="RoomInfo.controls['RoomNumber'].hasError('required')">
-              Room Number is <strong>required</strong>
+              Room Number is required
+            </mat-error>
+            <mat-error *ngIf="RoomInfo.controls['RoomNumber'].hasError('pattern')">
+              please enter a valid integer
             </mat-error>
           </mat-form-field>
           <br/>
@@ -27,13 +30,9 @@
 
           <mat-form-field color="accent">
             <mat-label>Floor Number</mat-label>
-            <input formControlName="FloorNumber" matInput>
-            <mat-error *ngIf="RoomInfo.controls['FloorNumber'].hasError('required')">
-              Floor number is <strong>required</strong>
-            </mat-error>
-          <mat-error *ngIf="RoomInfo.controls['FloorNumber'].hasError('pattern')">
-            please enter a valid integer
-          </mat-error>
+            <mat-select formControlName="FloorNumber">
+              <mat-option style="color:black" *ngFor="let floors of floorNumbers" [value]="floors" >{{floors}}</mat-option>
+            </mat-select>
           </mat-form-field>
           <br/>
 
@@ -58,11 +57,19 @@
 
           <mat-form-field color="accent">
             <mat-label>Building number</mat-label>
-            <input formControlName="Building" matInput>
-            <mat-error *ngIf="RoomInfo.controls['Building'].hasError('required')">
-              Building Number is <strong>required</strong>
+            <mat-select formControlName="Building">
+              <mat-option style="color:black" *ngFor="let buildingNo of buildingList" [value]="buildingNo" >{{buildingNo}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br/>
+
+          <mat-form-field color="accent">
+            <mat-label>Distance from elevator(in meters)</mat-label>
+            <input formControlName="Distance" matInput>
+            <mat-error *ngIf="RoomInfo.controls['Distance'].hasError('required')">
+              Distance is <strong>required</strong>
             </mat-error>
-            <mat-error *ngIf="RoomInfo.controls['Building'].hasError('pattern')">
+            <mat-error *ngIf="RoomInfo.controls['Distance'].hasError('pattern')">
               please enter a valid integer
             </mat-error>
           </mat-form-field>

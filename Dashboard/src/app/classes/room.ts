@@ -10,5 +10,6 @@ export class Room
     Whiteboard:boolean
     Projector:boolean
     Monitor:boolean
-    isAvailable:boolean
+    // isAvailable:boolean
+    DistanceFromElevator:number
 }

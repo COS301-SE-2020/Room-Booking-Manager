@@ -38,15 +38,42 @@
                 </mat-error>
             </mat-form-field>
             <br/>
-            <mat-form-field color="accent" class="field">
-                <mat-label>Room ID</mat-label>
-                <input formControlName="roomID" matInput required>
-                <!-- mat-error is for validation -->
-                <mat-error *ngIf="registerForm.get('roomID').touched && registerForm.get('roomID').invalid">
-                    Room ID is <strong>required</strong>
-                </mat-error>
+            <mat-form-field color="accent">
+                <mat-label>Floor Number</mat-label>
+                <mat-select formControlName="floorNumber">
+                  <mat-option style="color:black" *ngFor="let floors of floorNumbers" [value]="floors" >{{floors}}</mat-option>
+                </mat-select>
             </mat-form-field>
             &nbsp;&nbsp;
+            <mat-form-field color="accent">
+                <mat-label>Building number</mat-label>
+                <mat-select formControlName="building">
+                  <mat-option style="color:black" *ngFor="let buildingNo of buildingList" [value]="buildingNo" >{{buildingNo}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            <br>
+            <mat-form-field color="accent" class="field">
+                <mat-label>Room/Cubicle Number</mat-label>
+                <input formControlName="roomNum" matInput required>
+                <!-- mat-error is for validation -->
+                <mat-error *ngIf="registerForm.get('roomNum').touched && registerForm.get('roomNum').invalid">
+                    Room/Cubicle Number is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="registerForm.controls['roomNum'].hasError('pattern')">
+                    please enter a valid integer
+                  </mat-error>
+            </mat-form-field>
+            &nbsp;&nbsp;
+            <mat-form-field color="accent">
+                <mat-label>Distance from elevator(in meters)</mat-label>
+                <input formControlName="distance" matInput>
+                <mat-error *ngIf="registerForm.controls['distance'].hasError('required')">
+                  Distance is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="registerForm.controls['distance'].hasError('pattern')">
+                  please enter a valid integer
+                </mat-error>
+              </mat-form-field>
             <!-- <mat-form-field color="accent" class="field">
                 <mat-label>Office Room No.</mat-label>
                 <input formControlName="officeID" matInput required>
