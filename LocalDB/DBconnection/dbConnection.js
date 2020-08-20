@@ -279,6 +279,58 @@ app.post('/distanceAddColumn',function(req, res){
     res.end();
         }
     });  
+
+});
+app.post('/distanceDelete',function(req, res){
+    //first drop column
+    var sql="ALTER TABLE distance DROP COLUMN "+ req.body.RoomName;
+
+    connection.query(sql, function (err, result) {
+        if (err){
+            console.log(err);
+            res.writeHead(403);//already exists or other error
+            res.end();
+        } 
+         else{
+            var sql2 ="DELETE FROM distance WHERE Rooms = '" + req.body.RoomID + "';";
+            console.log("sql2: "+sql2);
+            connection.query(sql2, function (err, result) {
+            if (err){
+                console.log(err);
+            res.writeHead(403);//already exists or other error
+            res.end();
+            } 
+            else{
+            res.writeHead(204);
+            res.end();
+                  }
+                });
+        // console.log("1 record inserted");
+        // res.writeHead(204);
+        // res.end();
+            }
+        }); 
+
+});
+app.post('/distanceAddRow',function(req, res){
+    var sql = "INSERT INTO distance (Rooms) "+
+    "VALUES('" +
+    req.body.RoomID +
+            "');";
+    console.log("Sql: "+sql);
+
+    connection.query(sql, function (err, result) {
+    if (err){
+        console.log(err);
+    res.writeHead(403);//already exists or other error
+    res.end();
+    } 
+    else{
+    console.log("1 record inserted");
+    res.writeHead(204);
+    res.end();
+        }
+    });  
     
 });
 
@@ -303,40 +355,18 @@ app.delete('/distance/:id', function(req, res){
 //update distance of room
 app.post('/distanceUpdate',function(req, res){
 
- var sql =
-            "UPDATE Distance SET Texas = '" +
-            req.body.Texas +
-            "', Colorado = '" +
-            req.body.Colorado +
-            "', Mississippi = '" +
-            req.body.Mississippi +
-            "', NewJersey = '" +
-            req.body.NewJersey +
-            "', NewYork = '" +
-            req.body.NewYork +
-            "', California = '" +
-            req.body.California +
-            "', Florida = '" +
-            req.body.Florida +
-            "', Pennsylvania = '" +
-            req.body.Pennsylvania +
-            "', Georgia = '" +
-            req.body.Georgia +
-            "', Tennessee = '" +
-            req.body.Tennessee +
-            "', Washington = '" +
-            req.body.Washington +
-            "' WHERE Rooms = '" +
-            req.body.Rooms +
-            "';";
+var sql = "UPDATE distance SET "+req.body.RoomName+"='" +req.body.dist+
+            "' WHERE Rooms ='" +req.body.Rooms +"';";
+
 
 	connection.query(sql, function (err, result) {
 	    if (err){
+            console.log(err);
 	    res.writeHead(403);//already exists or other error
 		res.end();
 	    } 
 	    else{
-	    console.log("1 record updated");
+	    console.log("1 record updated distanceUpdate");
 	    res.writeHead(204);
 		res.end();
 		}
