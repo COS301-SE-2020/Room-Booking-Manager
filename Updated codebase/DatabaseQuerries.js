@@ -15,7 +15,7 @@ connection.connect(function (err) {
     if (err) {
         throw err;
     } else {
-        console.log("Connected to DB!");
+        //console.log("Connected to DB!");
     }
 });
 
@@ -28,17 +28,24 @@ module.exports = {
             var locationID = [];
             var noBackToBack = [];
 
+            //Remove COS301@teamthreshold.onmicrosoft.com from the list
+            var finalAttendees = [];
+            for(var i = 0; i < Attendees.length; i++)
+            {
+                if(Attendees[i] != "COS301@teamthreshold.onmicrosoft.com")
+                    finalAttendees.push(Attendees[i]);
+            }
+
             //Store a list of participants in other meetings in 2D array
             var participants = [];
             var found = false;
 
             //Initialize the times
-            // var sTime = new Date(startTime);
             var before = new Date(startTime);
-            before.setMinutes(before.getMinutes() - 15);
+            before.setHours(before.getHours() + 2);
+            before.setMinutes(before.getMinutes() - 10);
 
             //Convert to string format for querying the database
-            // sTime = sTime.toISOString();
             before = before.toISOString();
 
             //Start database queries using times
@@ -54,10 +61,11 @@ module.exports = {
                     }
 
                     //Cross reference to find Employees with Back To Back Meetings
-                    for (var i = 0; i < Attendees.length; i++) {
+                    for (var i = 0; i < finalAttendees.length; i++) {
                         for (var j = 0; j < participants.length; j++) {
                             for (var k = 0; k < participants[j].length; k++) {
-                                if (Attendees[i] == participants[j][k]) {
+                                if (finalAttendees[i] == participants[j][k]) {
+
                                     //Store Employees with Back To Back Meetings
                                     BackToBackEmp.push(participants[j][k]);
 
@@ -68,27 +76,20 @@ module.exports = {
                         }
                     }
 
-                    for (var i = 0; i < Attendees.length; i++) {
+                    for (var i = 0; i < finalAttendees.length; i++) {
                         for (var j = 0; j < BackToBackEmp.length; j++) {
-                            if (Attendees[i] == BackToBackEmp[j]) {
+                            if (finalAttendees[i] == BackToBackEmp[j]) {
                                 found = true;
                             }
                         }
 
                         if (found == false) {
-                            noBackToBack.push(Attendees[i]);
+                            noBackToBack.push(finalAttendees[i]);
                         }
 
                         found = false;
                     }
                 }
-                // for(var i = 0; i < emailAddress.length; i++)
-                // {
-                //     if(emailAddress[i] != "COS301@teamthreshold.onmicrosoft.com")
-                //     {
-                //         Email.push(emailAddress[i]);
-                //     }
-                // }
 
                 //Get Location IDs for rest of Employees that dont have back to back
                 sqlQuery = "SELECT * FROM employeedetails WHERE EmpEmail = '" + noBackToBack[0] + "'";
@@ -117,17 +118,17 @@ module.exports = {
 
     //query retrieves distance of an employee from a their current location to a specific meeting room
     FindDistances: async function (MeetingRoom, attendLoc) {
-        console.log("\nStarting Find Distances Function:");
-        console.log(MeetingRoom + attendLoc);
+       // console.log("\nStarting Find Distances Function:");
+        //console.log(MeetingRoom + attendLoc);
 
         return new Promise((resolve, reject) => {
             var sql = "SELECT " + MeetingRoom + " FROM distance WHERE Rooms = '" + attendLoc + "';";
             connection.query(sql, function (err, result) {
                 if (err) {
-                    console.log("ERROR: Result is = " + JSON.stringify(err));
+                  //  console.log("ERROR: Result is = " + JSON.stringify(err));
                     reject(err);
                 } else {
-                    console.log("SUCCESS: Result is = " + JSON.stringify(result));
+                  //  console.log("SUCCESS: Result is = " + JSON.stringify(result));
                     resolve(result);
                 }
             });

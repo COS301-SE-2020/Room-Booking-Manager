@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 const port = process.env.PORT || 65000;
-
+var mysql = require('mysql');
 const http=require("http");
 
 var sql = require("mssql");
@@ -10,12 +10,12 @@ var sql = require("mssql");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// const config = {
-//     user: "threshold",
-//     password: "thresh#301",
-//     server: "rbmserver.database.windows.net",
-//     database: "RBM Database",
-// };
+// var connection = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "",
+//   database: "cos301"
+// });
 
 var table = "";
 var operation = "";
@@ -55,7 +55,7 @@ function callAPI(table, option, data, res) {
         }
 
         if (option == "delete") {
-            var x = delete_record(table, primaryKey, recordID, res);
+            var x = delete_record(table, primaryKey, recordID, res,data);
             return x;
         } else {
             var x = read_record(table, primaryKey, recordID, res);
@@ -75,7 +75,7 @@ function callAPI(table, option, data, res) {
         if (table == "EmployeeDetails") UD_update_record(data, res);
         else if (table == "FloorPlan") FP_update_record(data, res);
         else if (table == "Meetings") MEET_update_record(data, res);
-        else if (table == "Distance") DIST_update_record(data, res);
+        //else if (table == "Distance") DIST_update_record(data, res);
     }
 }
 
@@ -106,36 +106,12 @@ function read_record(table, primaryKey, recordID, res) {
 async function view_records(table, res) {
 
     if(table == "FloorPlan"){
-        http.get("http://localhost:10000/FloorPlan",httpRes=>{
-            var data="";
-
-            httpRes.on("data",chunk=>{
-                data+=chunk;
-            });
-
-            httpRes.on("end",()=>{
-                console.log(data);
-                res.send(data);
-            });
-        }).on("error",err=>{
-            console.log("ERROR view");
-        });
+      var data=await viewFloorPlan();
+        res.send(data);
     }
     else if(table == "EmployeeDetails"){
-        http.get("http://localhost:10000/employeeDetails",httpRes=>{
-            var data="";
-
-            httpRes.on("data",chunk=>{
-                data+=chunk;
-            });
-
-            httpRes.on("end",()=>{
-                console.log(data);
-                res.send(data);
-            });
-        }).on("error",err=>{
-            console.log("ERROR view");
-        });
+        var data=await ViewEmployeeDetails();
+        res.send(data);
     }
 
     else if(table == "Meetings"){
@@ -166,6 +142,7 @@ async function view_records(table, res) {
              }
           }
            data[i]["Participants"]=array;
+           data[i]["Organizer"]=array[0];
      } 
 
       console.log(data);
@@ -174,21 +151,76 @@ async function view_records(table, res) {
     }
 
     else if(table == "Distance"){
-        http.get("http://localhost:10000/distance",httpRes=>{
+        var data=await viewDistance();
+        res.send(data);
+    }
+}
+function viewFloorPlan(){
+  return new Promise((resolve, reject) =>
+    {
+      http.get("http://localhost:10000/FloorPlan",httpRes=>
+      {
+        var data="";
+
+        httpRes.on("data",chunk=>{
+            data+=chunk;
+        });
+
+        httpRes.on("end",()=>
+        {
+            resolve(data);
+        });
+      }).on("error",err=>
+      {
+        reject("ERROR");
+                      });
+    });
+}
+
+function ViewEmployeeDetails()
+{
+  return new Promise((resolve, reject) =>
+    {
+      http.get("http://localhost:10000/employeeDetails",httpRes=>
+      {
+        var data="";
+        httpRes.on("data",chunk=>{
+                data+=chunk;
+            });
+
+            httpRes.on("end",()=>
+        {
+            resolve(data);
+        });
+
+      }).on("error",err=>
+      {
+        reject("ERROR");
+                      });
+    });
+}
+
+function viewDistance()
+{
+  return new Promise((resolve, reject) => {
+
+    http.get("http://localhost:10000/distance",httpRes=>{
             var data="";
 
             httpRes.on("data",chunk=>{
                 data+=chunk;
             });
 
-            httpRes.on("end",()=>{
-                console.log(data);
-                res.send(data);
-            });
-        }).on("error",err=>{
-            console.log("ERROR view");
+            httpRes.on("end",()=>
+        {
+            resolve(data);
         });
-    }
+
+      }).on("error",err=>
+      {
+        reject("ERROR");
+                      });
+      });
 }
 
 function querySingleEmplDetails(id)
@@ -234,10 +266,83 @@ function viewMeeting(){
 
 // TABLE FLOOR PLAN
 
-function FP_create_record(body_data, res) {
+async function FP_create_record(body_data, res) {//creates floorplan record and calculates distance
+  var data=body_data;
+  inseartRoomInDB(body_data, res);
+  body_data=JSON.stringify(body_data);
+  console.log(body_data+"data suppose to be");
+
+  var plan= await viewFloorPlan();
+  var plan=JSON.parse(plan);
+// console.log("viewFloorPlan: "+plan[2]["RoomName"]);
+  // inseart column
+  var response=await inseartColumn(body_data);
+  var response=await insertRow(body_data);
+console.log("plan.length: "+plan.length);
+  console.log("response: "+ response);
+  if(response=="ok")
+  {
+    var singleFloorDist=2.5;//distance between floors
+    var buildDist=10;//assume every building is 10m apart
+    var temp,temp2,floorTemp;
+    var arr1=[];
+    var DataFloor=parseInt(data["RoomID"][0]);
+    var distance,t;
+    console.log("ok");
+    for(var t=0;t<plan.length;t++)
+    { 
+      temp=plan[t]["RoomID"];
+      temp2=plan[t]["RoomName"];
+      console.log("RoomName:"+temp2);
+      if(temp[0]==DataFloor && temp[1]==data["RoomID"][1]){ console.log("rooms on the same building and floor");}
+
+      else if(temp[1]==data["RoomID"][1])//meeting rooms on the same building
+      {
+        floorTemp=Math.abs(temp[0]-DataFloor);
+        floorTemp=floorTemp*singleFloorDist;
+        distance=parseInt(data["DistanceFromElevator"]) +floorTemp+parseInt(plan[t]["DistanceFromElevator"]);
+        //first insert for temp
+       // var arr={RoomName:data["RoomName"],dist:distance,Rooms:plan[t]["RoomID"]};
+       // console.log("Arr: "+JSON.stringify(arr));
+        var arr={RoomName:data["RoomName"],dist:distance,Rooms:plan[t]["RoomID"]};
+        console.log("Arr: "+JSON.stringify(arr));
+        DIST_update_record(JSON.stringify(arr));
+        
+        //then insert for datas row
+        var arr2={RoomName:temp2,dist:distance,Rooms:data["RoomID"]};
+         DIST_update_record(JSON.stringify(arr2));
+           
+      }
+
+      else{//different buildings
+
+        floorTemp=Math.abs(temp[0]-DataFloor);
+        floorTemp=floorTemp*singleFloorDist;
+        distance=parseInt(data["DistanceFromElevator"]) +floorTemp+parseInt(plan[t]["DistanceFromElevator"])+buildDist;
+        //first insert for temp
+        var arr={RoomName:data["RoomName"],dist:distance,Rooms:plan[t]["RoomID"]};
+        console.log("Arr: "+JSON.stringify(arr));
+        DIST_update_record(JSON.stringify(arr));
+      
+        var arr2={RoomName:temp2,dist:distance,Rooms:data["RoomID"]};
+         DIST_update_record(JSON.stringify(arr2));
+      
+      }
+    }
+    var arr2={RoomName:data["RoomName"],dist:0,Rooms:data["RoomID"]};
+         DIST_update_record(JSON.stringify(arr2));
+
+  }
+  else
+  {
+    console.log("an error has occured");
+  }
    
-   var stringbody_data=JSON.stringify(body_data);
-       console.log(body_data+"data suppose to be");
+}
+
+function inseartRoomInDB(body_data, res)
+{
+  var stringbody_data=JSON.stringify(body_data);
     const options = {
       hostname: 'localhost',
       port: '10000',
@@ -264,6 +369,76 @@ function FP_create_record(body_data, res) {
 
     httpreq.write(stringbody_data);
     httpreq.end();
+}
+
+function inseartColumn(body_data)//distance table
+{
+   return new Promise((resolve, reject) =>
+    { console.log("in insert col");
+      var stringbody_data=body_data;
+      const options = {
+      hostname: 'localhost',
+      port: '10000',
+      path: '/distanceAddColumn',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': stringbody_data.length
+          }
+        };
+
+      const httpreq = http.request(options, (httpres) => {
+     // console.log(`statusCode: ${httpres.statusCode}`);
+        resolve("ok");
+      httpres.on('data', (d) => {
+        process.stdout.write(d)
+
+        });
+       });
+
+      httpreq.on('error', (error) => {
+      console.error(error)
+      reject("error");
+      });
+
+      httpreq.write(stringbody_data);
+      httpreq.end();
+    });
+}
+
+function insertRow(body_data)//distance table row
+{
+   return new Promise((resolve, reject) =>
+    { 
+      var stringbody_data=body_data;
+      const options = {
+      hostname: 'localhost',
+      port: '10000',
+      path: '/distanceAddRow',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': stringbody_data.length
+          }
+        };
+
+      const httpreq = http.request(options, (httpres) => {
+     // console.log(`statusCode: ${httpres.statusCode}`);
+        resolve("ok");
+      httpres.on('data', (d) => {
+        process.stdout.write(d)
+
+        });
+       });
+
+      httpreq.on('error', (error) => {
+      console.error(error)
+      reject("error");
+      });
+
+      httpreq.write(stringbody_data);
+      httpreq.end();
+    });
 }
 
 function FP_update_record(body_data, res) {
@@ -298,32 +473,10 @@ function FP_update_record(body_data, res) {
     httpreq.end();
 }
 
-function delete_record(table, primaryKey, recordID, res) {
+function delete_record(table, primaryKey, recordID, res,data) {
     if(table == "FloorPlan"){
-        console.log("in delete");
-        const options = {
-          hostname: 'localhost',
-          port: '10000',
-          path: '/FloorPlan/'+recordID,
-          method: 'DELETE'
-            };
-
-        const httpreq = http.request(options, (httpres) => {
-
-          console.log(`statusCode: ${httpres.statusCode}`);
-            res.sendStatus(httpres.statusCode);
-
-          httpres.on('data', (d) => {
-            process.stdout.write(d)
-
-          });
-         });
-
-        httpreq.on('error', (error) => {
-          console.error(error)
-        });
-
-        httpreq.end();
+       deleteFP(recordID, res);
+       deleteFPmeetingR(res,data);
     }
     else if(table == "EmployeeDetails"){
         const options = {
@@ -404,11 +557,146 @@ function delete_record(table, primaryKey, recordID, res) {
     }
 }
 
+function deleteFP(recordID, res){
+ console.log("in delete");
+        const options = {
+          hostname: 'localhost',
+          port: '10000',
+          path: '/FloorPlan/'+recordID,
+          method: 'DELETE'
+            };
+
+        const httpreq = http.request(options, (httpres) => {
+
+          console.log(`statusCode: ${httpres.statusCode}`);
+           // res.sendStatus(httpres.statusCode);
+
+          httpres.on('data', (d) => {
+            process.stdout.write(d)
+
+          });
+         });
+
+        httpreq.on('error', (error) => {
+          console.error(error)
+        });
+
+        httpreq.end();
+}
+
+function deleteFPmeetingR(res,data){
+ console.log("in del api");
+var stringbody_data=JSON.stringify(data);
+      const options = {
+      hostname: 'localhost',
+      port: '10000',
+      path: '/distanceDelete',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': stringbody_data.length
+          }
+        };
+
+      const httpreq = http.request(options, (httpres) => {
+     // console.log(`statusCode: ${httpres.statusCode}`);
+       res.sendStatus(httpres.statusCode);
+      httpres.on('data', (d) => {
+        process.stdout.write(d)
+
+        });
+       });
+
+      httpreq.on('error', (error) => {
+      console.error(error)
+      console.log("error");
+      });
+
+      httpreq.write(stringbody_data);
+      httpreq.end();
+    }
+
 // TABLE EMPLOYEE DETAILS:
 
-function UD_create_record(body_data, res) {
+async function UD_create_record(body_data, res) {
 
-    var stringbody_data=JSON.stringify(body_data);
+    createEmployee(body_data, res);
+
+var data=body_data;
+  body_data=JSON.stringify(body_data);
+  console.log(body_data+"data suppose to be");
+
+  var plan= await viewFloorPlan();
+  var plan=JSON.parse(plan);
+// console.log("viewFloorPlan: "+plan[2]["RoomName"]);
+  // inseart column
+  var response=await inseartColumn(body_data);
+  var response=await insertRow(body_data);
+console.log("plan.length: "+plan.length);
+  console.log("response: "+ response);
+  if(response=="ok")
+  {
+    var singleFloorDist=2.5;//distance between floors
+    var buildDist=10;//assume every building is 10m apart
+    var temp,temp2,floorTemp;
+    var arr1=[];
+    var DataFloor=parseInt(data["RoomID"][0]);
+    var distance,t;
+    console.log("ok");
+    for(var t=0;t<plan.length;t++)
+    { 
+      temp=plan[t]["RoomID"];
+      temp2=plan[t]["RoomName"];
+      console.log("RoomName:"+temp2);
+      if(temp[0]==DataFloor && temp[1]==data["RoomID"][1]){ console.log("rooms on the same building and floor");}
+
+      else if(temp[1]==data["RoomID"][1])//meeting rooms on the same building
+      {
+        floorTemp=Math.abs(temp[0]-DataFloor);
+        floorTemp=floorTemp*singleFloorDist;
+        distance=parseInt(data["DistanceFromElevator"]) +floorTemp+parseInt(plan[t]["DistanceFromElevator"]);
+        //first insert for temp
+       // var arr={RoomName:data["RoomName"],dist:distance,Rooms:plan[t]["RoomID"]};
+       // console.log("Arr: "+JSON.stringify(arr));
+        var arr={RoomName:data["RoomName"],dist:distance,Rooms:plan[t]["RoomID"]};
+        console.log("Arr: "+JSON.stringify(arr));
+        DIST_update_record(JSON.stringify(arr));
+        
+        //then insert for datas row
+        var arr2={RoomName:temp2,dist:distance,Rooms:data["RoomID"]};
+         DIST_update_record(JSON.stringify(arr2));
+           
+      }
+
+      else{//different buildings
+
+        floorTemp=Math.abs(temp[0]-DataFloor);
+        floorTemp=floorTemp*singleFloorDist;
+        distance=parseInt(data["DistanceFromElevator"]) +floorTemp+parseInt(plan[t]["DistanceFromElevator"])+buildDist;
+        //first insert for temp
+        var arr={RoomName:data["RoomName"],dist:distance,Rooms:plan[t]["RoomID"]};
+        console.log("Arr: "+JSON.stringify(arr));
+        DIST_update_record(JSON.stringify(arr));
+      
+        var arr2={RoomName:temp2,dist:distance,Rooms:data["RoomID"]};
+         DIST_update_record(JSON.stringify(arr2));
+      
+      }
+    }
+    var arr2={RoomName:data["RoomName"],dist:0,Rooms:data["RoomID"]};
+         DIST_update_record(JSON.stringify(arr2));
+
+  }
+  else
+  {
+    console.log("an error has occured");
+  }
+   
+}
+
+function createEmployee(body_data, res)
+{
+  var stringbody_data=JSON.stringify(body_data);
        console.log(body_data+"data suppose to be");
     const options = {
       hostname: 'localhost',
@@ -504,9 +792,9 @@ function DIST_create_record(body_data, res) {
     httpreq.end();
 }
 
-function DIST_update_record(body_data, res) {
-    
-    var stringbody_data=JSON.stringify(body_data);
+function DIST_update_record(body_data) {
+  
+    var stringbody_data=body_data;
        console.log(body_data+"data suppose to be");
     const options = {
       hostname: 'localhost',
@@ -521,7 +809,7 @@ function DIST_update_record(body_data, res) {
 
     const httpreq = http.request(options, (httpres) => {
       console.log(`statusCode: ${httpres.statusCode}`);
-        res.sendStatus(httpres.statusCode);
+        return("ok");
       httpres.on('data', (d) => {
         process.stdout.write(d)
 
@@ -530,10 +818,12 @@ function DIST_update_record(body_data, res) {
 
     httpreq.on('error', (error) => {
       console.error(error)
+      return error;
     });
 
     httpreq.write(stringbody_data);
     httpreq.end();
+  
 }
 
 // TABLE MEETINGS:
