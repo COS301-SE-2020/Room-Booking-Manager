@@ -19,7 +19,9 @@ This software is being developed to optimize organizational facilities and reinv
 
 ## User Manual
 <a href="https://drive.google.com/file/d/12B57r9xFVmK43lMvh8IiXfAqt-rC_vZC/view?usp=sharing"> User Manual Part 1 </a><br>
-<a href="https://drive.google.com/file/d/1cvyxDaisxmqPd9V43_XiG-AAb4Z0Wm4u/view?usp=sharing"> User Manual Part 2 </a><br>
+
+## Technical Installation Manaul
+<a href="https://drive.google.com/file/d/1cvyxDaisxmqPd9V43_XiG-AAb4Z0Wm4u/view?usp=sharing"> Technical Installation Manaul </a><br>
 
 ## Team Members
 > <b>Abubakar Darki (Leader): </b> <br>
