@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gexf version="1.2" xmlns="http://www.gexf.net/1.2draft" xmlns:viz="http:///www.gexf.net/1.1draft/viz">
+  <meta/>
+  <graph defaultedgetype="directed">
+    <attributes class="node">
+      <attribute id="roomID" title="roomID" type="integer"/>
+      <attribute id="capacity" title="capacity" type="integer"/>
+      <attribute id="Projector" title="Projector" type="integer"/>
+      <attribute id="whiteboard" title="whiteboard" type="integer"/>
+      <attribute id="Monitor" title="Monitor" type="integer"/>
+    </attributes>
+    <attributes class="edge">
+      <attribute id="timeWeight" title="timeWeight" type="integer"/>
+    </attributes>
+    <nodes>
+      <node id="Room1">
+        <attvalues>
+          <attvalue for="roomID" value="1"/>
+          <attvalue for="capacity" value="24"/>
+          <attvalue for="Projector" value="1"/>
+          <attvalue for="whiteboard" value="0"/>
+          <attvalue for="Monitor" value="0"/>
+        </attvalues>
+      </node>
+      <node id="Room2">
+        <attvalues>
+          <attvalue for="roomID" value="2"/>
+          <attvalue for="capacity" value="6"/>
+          <attvalue for="Projector" value="0"/>
+          <attvalue for="whiteboard" value="1"/>
+          <attvalue for="Monitor" value="1"/>
+        </attvalues>
+      </node>
+      <node id="Room3">
+        <attvalues>
+          <attvalue for="roomID" value="3"/>
+          <attvalue for="capacity" value="8"/>
+          <attvalue for="Projector" value="1"/>
+          <attvalue for="whiteboard" value="0"/>
+          <attvalue for="Monitor" value="1"/>
+        </attvalues>
+      </node>
+      <node id="Room4">
+        <attvalues>
+          <attvalue for="roomID" value="4"/>
+          <attvalue for="capacity" value="4"/>
+          <attvalue for="Projector" value="1"/>
+          <attvalue for="whiteboard" value="1"/>
+          <attvalue for="Monitor" value="0"/>
+        </attvalues>
+      </node>
+    </nodes>
+    <edges>
+      <edge id="_geid0_" source="Room1" target="Room2">
+        <attvalues>
+          <attvalue for="timeWeight" value="300"/>
+        </attvalues>
+      </edge>
+      <edge id="_geid1_" source="Room1" target="Room3">
+        <attvalues>
+          <attvalue for="timeWeight" value="240"/>
+        </attvalues>
+      </edge>
+      <edge id="_geid2_" source="Room1" target="Room4">
+        <attvalues>
+          <attvalue for="timeWeight" value="180"/>
+        </attvalues>
+      </edge>
+      <edge id="_geid3_" source="Room2" target="Room1">
+        <attvalues>
+          <attvalue for="timeWeight" value="300"/>
+        </attvalues>
+      </edge>
+      <edge id="_geid4_" source="Room2" target="Room3">
+        <attvalues>
+          <attvalue for="timeWeight" value="60"/>
+        </attvalues>
+      </edge>
+      <edge id="_geid5_" source="Room2" target="Room4">
+        <attvalues>
+          <attvalue for="timeWeight" value="120"/>
+        </attvalues>
+      </edge>
+      <edge id="_geid6_" source="Room3" target="Room1">
+        <attvalues>
+          <attvalue for="timeWeight" value="240"/>
+        </attvalues>
+      </edge>
+      <edge id="_geid7_" source="Room3" target="Room2">
+        <attvalues>
+          <attvalue for="timeWeight" value="60"/>
+        </attvalues>
+      </edge>
+      <edge id="_geid8_" source="Room3" target="Room4">
+        <attvalues>
+          <attvalue for="timeWeight" value="320"/>
+        </attvalues>
+      </edge>
+      <edge id="_geid9_" source="Room4" target="Room1">
+        <attvalues>
+          <attvalue for="timeWeight" value="180"/>
+        </attvalues>
+      </edge>
+      <edge id="_geid10_" source="Room4" target="Room2">
+        <attvalues>
+          <attvalue for="timeWeight" value="120"/>
+        </attvalues>
+      </edge>
+      <edge id="_geid11_" source="Room4" target="Room3">
+        <attvalues>
+          <attvalue for="timeWeight" value="320"/>
+        </attvalues>
+      </edge>
+    </edges>
+  </graph>
+</gexf>
