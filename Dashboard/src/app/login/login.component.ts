@@ -132,6 +132,7 @@ export class LoginComponent implements OnInit {
           console.log("Passwords match");
           this._match = true;
           localStorage.setItem('loggedIn', "true");
+          localStorage.setItem('username',this.users[i].FirstName + " " + this.users[i].LastName);
           if(this.users[i].isAdmin)
           {
             this._admin = "true";
