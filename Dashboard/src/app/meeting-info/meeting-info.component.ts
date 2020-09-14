@@ -12,8 +12,10 @@ export class MeetingInfoComponent implements OnInit {
   constructor(private apiDB: apiService) { }
   listMeetings: Meeting[];
   ngOnInit(): void {
-
-    this.apiDB.getMeetings()
+    console.log("OnInitial");
+    // if(this.listMeetings == undefined)
+    // {
+      this.apiDB.getMeetings()
     .subscribe (
       data=>{
        this.listMeetings=data;//type casting into the  form listed in user.ts
@@ -21,6 +23,30 @@ export class MeetingInfoComponent implements OnInit {
       }
 
     );
+    // }
+  }
+
+  newList: Meeting[] = [];
+  myMeetings()
+  {
+    console.log("myMeetings");
+    var user = localStorage.getItem('username');
+    // var user = "kg";
+    console.log("Username =" + user);
+    this.listMeetings.forEach(element => {
+      console.log(element.Organizer);
+      var found = element.Organizer.includes(user)
+      console.log(found);
+
+      if(found)
+      {
+        this.newList.push(element);
+        console.log(this.newList);
+        
+      }
+      this.listMeetings = [];
+      this.listMeetings = this.newList;
+    });
   }
 
 }
