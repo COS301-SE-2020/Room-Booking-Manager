@@ -15,6 +15,15 @@ export class LoginPage implements OnInit {
   constructor(private _apiService: HttpService, private _router: Router) { }
   users:User[];
   ngOnInit() {
+    this._apiService.getUsers()
+    .subscribe
+    (
+      data=>
+      {
+          this.users = data;//typecast data to list of comments 
+          console.log("users: "+this.users);
+      }
+    )
   }
 
   form = new FormGroup({  
@@ -64,7 +73,8 @@ export class LoginPage implements OnInit {
           //this._admin = <string><any>this.users[i].isAdmin;
           localStorage.setItem('admin',this._admin)
           console.log(localStorage.getItem('admin'));
-          this._router.navigate(['dashboard']);
+          //this._router.navigate(['dashboard']);
+          console.log("logged in")
         }
         else
         {
