@@ -5,12 +5,13 @@ import gexf from 'graphology-gexf';
 const graph = new Graph();
 
 //Rooms 
-var room1 = graph.addNode('Room1',{
+var room1 = graph.addNode('Emp1Office',{
     roomID: 1,
     capacity: 24,
     Projector: 1,
     whiteboard:0,
     Monitor: 0,
+    meetingRoom: 0, // Not a meeting room? 
     EmployeesPresent: []
 
 });

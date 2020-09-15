@@ -1,16 +1,39 @@
-// 8-9 Time window 
-// All meetings within this time period are fed as input 
-// Population is = Rooms selected for these meetings 
-// Initial - Randomise the solution give random rooms to all meetings.
-// fitnessFunction: all nodes (employees) moving towards meeting room (node) must have minimal weight on average. Lesser is better
-// mutation function : randomly generate split points in chromosome, reversal, transposition
-// Crossover operations: combined HGA method, part 1 of parents is used as input to
-// the algortihm and the output is taken as part 1 of the child1 we got. Part2 of the other parent
-// use decoded parents as input of algorithm 1
 
+// Sources: http://abdulfatir.com/tutorials/tsp-simulatedannealing.html
+// https://github.com/dzhang55/travelling-salesman
+// Strategy 
 
-//Repeat for next time window using updated employee locations
+// Input sources: 
 
+// 1. Database entries of all events of a certain day. Store in an object array/ JSON object.
+// 2. Network graph. 
+// Chromosome representation : [ MeetingIndex roomVenue .. ..  ]
+
+// Initial population assignment : 
+// 1. Assign random rooms to each meeting taking place. 
+// 2, Selection criteria -> Amenity must match, capacity must match, time available.
+// 3. Time available how to check -> if there is another possible meeting that will have the same venue as its lowest time
+// then what will happen is there will be multiple of same venueIndex. However Once that occurs check if the meetings take place around
+// the same time.  If so then one of them needs to drop that venueIndex. 
+
+// With initial population now we start the process 
+// mutation function swaps every roomVenue based on simulated annealing algo
+// SA uses fitness function 
+
+// Fitness function 
+// Given meetingIndex and roomVenue calculate average minimal weights from each employee (NODE) to the specific roomVenue (NODE)
+// getEmployeeLocation will return the location around the time of the meeting 
+// How? 
+// 1.) Check other meetings within the day and if you identify another meetingIndex
+// where it has the same employee, then check the times. If the time is not within 15 mins i.e 
+// not 15 mins to next meeting then assume they are in their office location and use that otherwise you use the current
+// solutions as the starting point. 
+// See other acceptance funtions we may use, minimise all weights or sum of all weights for each pair of meetingIndex and roomVenue
+// What if there are more meetingIndexes than rooms available? Can you select rooms such that others dont get a chance ? 
+// 
+// Follow on with the SA process thereafter 
+// 
+ 
 
 
 
