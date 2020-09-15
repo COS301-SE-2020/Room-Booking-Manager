@@ -1,6 +1,8 @@
 
 // Sources: http://abdulfatir.com/tutorials/tsp-simulatedannealing.html
 // https://github.com/dzhang55/travelling-salesman
+// https://github.com/GigaMatt/ai-room-scheduleing
+// 
 // Strategy 
 
 // Input sources: 
