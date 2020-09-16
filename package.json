@@ -1,9 +1,9 @@
 {
-  "name": "demo",
+  "name": "room-booking-manager",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "node server.js",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -26,6 +26,7 @@
     "@ng-bootstrap/ng-bootstrap": "^6.1.0",
     "angular-dialog-service": "^5.3.0",
     "bootstrap": "^4.4.0",
+    "express": "^4.17.1",
     "ng-multiselect-dropdown": "^0.2.10",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
