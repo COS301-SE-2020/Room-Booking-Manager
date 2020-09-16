@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 17, 2020 at 12:30 PM
+-- Generation Time: Sep 16, 2020 at 06:18 PM
 -- Server version: 10.4.13-MariaDB
 -- PHP Version: 7.4.8
 
@@ -165,6 +165,20 @@ CREATE TABLE `meetings` (
   `OriginalAmenity` varchar(150) NOT NULL,
   `RoomID` varchar(3) NOT NULL,
   `BestRooms` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `recurringmeetings`
+--
+
+CREATE TABLE `recurringmeetings` (
+  `MeetingID` int(11) NOT NULL,
+  `StartTime` datetime NOT NULL,
+  `EndTime` datetime NOT NULL,
+  `Organizer` varchar(255) NOT NULL,
+  `RoomID` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
