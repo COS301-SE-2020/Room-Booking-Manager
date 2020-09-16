@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 16, 2020 at 06:18 PM
+-- Generation Time: Sep 17, 2020 at 01:49 AM
 -- Server version: 10.4.13-MariaDB
 -- PHP Version: 7.4.8
 
@@ -164,8 +164,21 @@ CREATE TABLE `meetings` (
   `Participants` varchar(150) NOT NULL,
   `OriginalAmenity` varchar(150) NOT NULL,
   `RoomID` varchar(3) NOT NULL,
-  `BestRooms` varchar(255) NOT NULL
+  `BestRooms` varchar(255) NOT NULL,
+  `isRecurring` bit(1) NOT NULL,
+  `Status` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `meetings`
+--
+
+INSERT INTO `meetings` (`MeetingID`, `StartTime`, `EndTime`, `Organizer`, `Participants`, `OriginalAmenity`, `RoomID`, `BestRooms`, `isRecurring`, `Status`) VALUES
+(90, '2020-09-14 08:00:00.000000', '2020-09-14 09:00:00.000000', 'AdeleV@onmicrosoft.com', 'AdeleV@onmicrosoft.com,AlexW@onmicrosoft.com', 'Projector', '1P2', '1Q2,1R2,1S2', b'1', ''),
+(94, '2020-09-21 08:00:00.000000', '2020-09-21 09:00:00.000000', 'AdeleV@onmicrosoft.com', 'AdeleV@onmicrosoft.com,AlexW@onmicrosoft.com', 'Projector', '1P2', '1Q2,1R2,1S2', b'1', ''),
+(95, '2020-09-21 08:00:00.000000', '2020-09-21 09:00:00.000000', 'AdeleV@onmicrosoft.com', 'AdeleV@onmicrosoft.com,AlexW@onmicrosoft.com', 'Projector', '1P2', '1Q2,1R2,1S2', b'1', ''),
+(96, '2020-09-21 08:00:00.000000', '2020-09-21 09:00:00.000000', 'AdeleV@onmicrosoft.com', 'AdeleV@onmicrosoft.com,AlexW@onmicrosoft.com', 'Projector', '1P2', '1Q2,1R2,1S2', b'1', ''),
+(97, '2020-09-21 08:00:00.000000', '2020-09-21 09:00:00.000000', 'AdeleV@onmicrosoft.com', 'AdeleV@onmicrosoft.com,AlexW@onmicrosoft.com', 'Projector', '1P2', '1Q2,1R2,1S2', b'1', 'Booked');
 
 -- --------------------------------------------------------
 
@@ -217,7 +230,7 @@ ALTER TABLE `meetings`
 -- AUTO_INCREMENT for table `meetings`
 --
 ALTER TABLE `meetings`
-  MODIFY `MeetingID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `MeetingID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
