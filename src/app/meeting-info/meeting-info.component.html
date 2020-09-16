@@ -1,0 +1,41 @@
+<h2>Meeting Information</h2>
+<div >
+    <div id="create">
+        <button class="btn btn-primary" id="button-create" (click)="myMeetings()">View my meetings</button>
+    </div>
+    <div class="table-wrapper-scroll-y table-wrapper-scroll-x my-custom-scrollbar">
+        <table class="table center tableRoom">
+            <tr>
+                <!-- <th>Meeting ID</th> -->
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Organizer</th>
+                <th>Participants</th>
+                <th>Amenities</th>
+                <th>Meeting Room</th>
+                <!-- <th>#</th> -->
+            </tr>
+            <tr *ngFor="let meeting of listMeetings">
+                <!-- <td attr.class="{{meeting.MeetingID}}">{{meeting.MeetingID}}</td> -->
+                <td attr.class="{{meeting.StartTime}}">{{meeting.StartTime}}</td>
+                <td attr.class="{{meeting.EndTime}}">{{meeting.EndTime}}</td>
+                <td attr.class="{{meeting.Organizer}}">{{meeting.Organizer}}</td>
+                <td attr.class="{{meeting.Participants}}">
+                   <ul *ngFor="let P of meeting.Participants"> 
+                    <li>{{P}}</li>
+                   </ul> 
+                   <!-- {{meeting.Participants}} -->
+                </td>
+                <td attr.class="{{meeting.OriginalAmenity}}">{{meeting.OriginalAmenity}}</td>
+                <td attr.class="{{meeting.RoomID}}">{{meeting.RoomID}}</td>
+                <!-- <td></td> -->
+                <td>
+                    <!-- <button class="btn btn-danger" >Delete</button>&nbsp;
+                    <button class="btn btn-success" (click)="edit(user.FirstName,user.LastName,user.EmpEmail,user.LocationID,user.EmpPassword)">Edit</button>
+                    <button class="btn btn-primary" >Assign Admin</button>&nbsp; -->
+                </td>
+            </tr>
+        
+        </table>
+    </div>
+</div>

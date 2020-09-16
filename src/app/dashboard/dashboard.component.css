@@ -1,0 +1,110 @@
+nav{
+    position: fixed;
+    z-index: 2;
+    width: 100%;
+    height:16%;
+    margin-right: 5px;
+    left:-2.5px;
+    top:-3px;
+  }
+  /* change the way these items are called eg ul */
+  ul.horizontal {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background-color: #333;
+    z-index: 2;
+  }
+  
+  .horizontal>li {
+    float: left;
+    z-index: 2;
+  }
+  
+  .horizontal>li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  .horizontal li a:hover {
+    background-color: #111;
+  }
+  /*side nav css below*/
+  .sidenav {
+    height: 100%;
+    width: 20%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    margin-top: 10px;
+    padding-top: 20px;
+  }
+  
+  .sidenav a {
+    padding: 20px 20px 10px 32px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #818181;
+    display: block;
+    /* border-top:0.2px solid grey; */
+    border-bottom:0.2px solid grey;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+  
+  .sidenav a:hover {
+    color: #f1f1f1;
+    border-left: 3px solid #f0ede8;
+    background: rgb(43, 41, 41);
+  }
+  
+  .main {
+    margin-left: 200px; /* Same as the width of the sidenav */
+  }
+  
+  /* @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  } */
+  
+  #routerPosition{
+      /* background-color: blue; */
+      position: fixed;
+      left:12.5%;
+      top:8%;
+      width:87%;
+      height:90%; ;
+     
+  }
+  
+  #toCenter{
+    margin-top: auto;
+    text-align: center
+  }
+  
+  #sideLinks{
+      position: relative;
+      top:8%;
+  }
+  
+  #h2{
+  color:white;
+  margin-left: 3%;
+  }
+  
+  #logout{
+    float: right;
+  }
+
+  hr{
+    border-color: white;
+    align-self: center;
+    width: 90%;
+  }

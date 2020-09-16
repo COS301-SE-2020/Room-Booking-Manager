@@ -1,0 +1,133 @@
+/* ================= */
+h1 {
+  text-align: center;
+  /* font-size: 16px; */
+  font-weight: 500;
+  font-size: 50px;
+  text-transform: uppercase;
+  display:inline-block;
+  margin: 40px 0px 40px 0px; 
+  /* color: #cccccc; */
+  width: 100%;
+}
+label
+{
+  text-transform: uppercase;
+}
+.wrapper {
+    display: flex;
+    align-items: center;
+    flex-direction: column; 
+    justify-content: center;
+    width: 100%;
+    /* min-height: 100%; */
+    padding: 20px;
+    /* background:#302e2e; */
+  }
+  .field{
+width:50%;
+font-size: 18px;
+  }
+#lable{
+  font-size: 23px;
+  text-align: center;
+}
+  #login{
+    margin-top:3%;
+    width:50%;
+
+  }
+#forgot{
+  position: relative;
+  left:-10%;
+  margin-bottom: 5%;
+}
+#registerlink{
+  color:rgb(0, 140, 255);
+}
+#registerlink:hover{
+  cursor: pointer;
+}
+  #formContent {
+    /* -webkit-border-radius: 10px 10px 10px 10px;
+    border-radius: 10px 10px 10px 10px;
+    background: #fff;
+    padding: 30px;
+    width: 90%;
+    position: relative;
+    padding: 0px;
+    -webkit-box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3); */
+    text-align: center;
+  }
+  
+  /* input[type=text]:focus, input[type=password]:focus {
+    background-color: #fff;
+    border-bottom: 2px solid #5fbae9;
+  } */
+  /* input[type=text],input[type=password] {
+    background-color: #f6f6f6;
+    border: none;
+    color: #0d0d0d;
+    padding: 15px 80px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 5px;
+    width: 85%;
+    border: 2px solid #f6f6f6;
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+  } */
+  /* button  {
+    background-color: #14a5ee;
+    border: none;
+    color: white;
+    padding: 15px 80px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    text-transform: uppercase;
+    font-size: 13px;
+    -webkit-box-shadow: 0 10px 30px 0 rgba(95,186,233,0.4);
+    box-shadow: 0 10px 30px 0 rgba(95,186,233,0.4);
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+    margin-top: 25px;
+  } */
+
+  /* pasword hide button */
+  #pbutton{
+    background-color: white;
+    border: none ;
+    color: grey;
+    border-radius: 5px 5px 5px 5px;
+   
+  } 
+#accountLink{
+  color:gray;
+}
+  #pbutton:active{
+    border: none !important;
+    border-color: white;
+    background-color: white;
+  }
+  /* #pIcon:{
+    border: none;
+  } */
+  .tab
+  {
+    position: relative;
+    /* padding-bottom: 10px; */
+    padding-right: 30%;
+    /* border-bottom: white; */
+    /* border: #0d0d0d solid; */
+  }
+  .tab .tab-button
+  {
+    border-radius:0;
+    border-bottom:none;
+    text-transform: uppercase;
+  }
+
