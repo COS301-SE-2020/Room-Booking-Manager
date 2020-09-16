@@ -54,7 +54,7 @@ async function addRecurring(){
                         
 
                         sql =
-                            "INSERT INTO meetings (StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,BestRooms,isRecurring)" +
+                            "INSERT INTO meetings (StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,BestRooms,isRecurring,Status)" +
                             "VALUES('" +
                             sTime +
                             "','" +
@@ -71,6 +71,8 @@ async function addRecurring(){
                             data[i].BestRooms +
                             "','" +
                             data[i].isRecurring +
+                            "','" +
+                            "Booked" +
                             "');";
 
                         connection.query(sql, function (err, result) {

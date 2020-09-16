@@ -178,7 +178,7 @@ module.exports = {
             //     isRecurring = 0;
 
             var sql =
-                "INSERT INTO meetings (MeetingID, StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,BestRooms,isRecurring)" +
+                "INSERT INTO meetings (MeetingID, StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,BestRooms,isRecurring,Status)" +
                 "VALUES('" +
                 MeetingID +
                 "','" +
@@ -197,6 +197,8 @@ module.exports = {
                 nextbest +
                 "','" +
                 extractedDetails.Recurring +
+                "','" +
+                "Booked" +
                 "');";
             connection.query(sql, function (err, result) {
                 if (err) {
