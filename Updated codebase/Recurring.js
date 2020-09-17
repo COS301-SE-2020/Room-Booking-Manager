@@ -4,10 +4,10 @@ var express = require("express");
 
 // Configure Database
 var connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "cos301",
+    host: "rbm-database.cu40lo4as93d.us-east-1.rds.amazonaws.com",
+    user: "admin",
+    password: "thresh#301",
+    database: "RBM",
 });
 
 connection.connect(function (err) {

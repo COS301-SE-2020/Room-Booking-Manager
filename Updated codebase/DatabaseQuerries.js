@@ -4,10 +4,10 @@ var express = require("express");
 
 //Configure Database
 var connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "cos301",
+    host: "rbm-database.cu40lo4as93d.us-east-1.rds.amazonaws.com",
+    user: "admin",
+    password: "thresh#301",
+    database: "RBM",
 });
 
 //connecting to db
@@ -174,8 +174,10 @@ module.exports = {
             // else
             //     isRecurring = 0;
 
+            console.log(extractedDetails.isRecurring);
+
             var sql =
-                "INSERT INTO meetings (StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,BestRooms)" +
+                "INSERT INTO meetings (StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,BestRooms,isRecurring,Status)" +
                 "VALUES('" +
                 extractedDetails.Start +
                 "','" +
@@ -191,7 +193,7 @@ module.exports = {
                 "','" +
                 nextbest +
                 "','" +
-                extractedDetails.Recurring +
+                isRecurring +
                 "','" +
                 "Booked" +
                 "');";
