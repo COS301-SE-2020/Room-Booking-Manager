@@ -166,15 +166,15 @@ module.exports = {
                 nextbest.push(ListOfRooms[i]);
             }
 
-            // var isRecurring;
-            // if(extractedDetails.Recurring == true)
-            // {
-            //     isRecurring = 1;
-            // }
-            // else
-            //     isRecurring = 0;
+            var isRecurring;
+            if(extractedDetails.Recurring == null)
+            {
+                isRecurring = 0;
+            }
+            else
+                isRecurring = 1;
 
-            console.log(extractedDetails.isRecurring);
+            console.log(isRecurring);
 
             var sql =
                 "INSERT INTO meetings (StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,BestRooms,isRecurring,Status)" +
@@ -197,10 +197,12 @@ module.exports = {
                 "','" +
                 "Booked" +
                 "');";
+
             connection.query(sql, function (err, result) {
                 if (err) {
                     throw err;
                 } else {
+                    console.log("Inserted");
                     resolve(result);
                 }
             });
