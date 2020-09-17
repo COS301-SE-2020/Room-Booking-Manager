@@ -165,6 +165,15 @@ module.exports = {
             for (var i = 1; i < ListOfRooms.length; i++) {
                 nextbest.push(ListOfRooms[i]);
             }
+
+            // var isRecurring;
+            // if(extractedDetails.Recurring == true)
+            // {
+            //     isRecurring = 1;
+            // }
+            // else
+            //     isRecurring = 0;
+
             var sql =
                 "INSERT INTO meetings (StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,BestRooms)" +
                 "VALUES('" +
@@ -181,6 +190,10 @@ module.exports = {
                 ListOfRooms[0] +
                 "','" +
                 nextbest +
+                "','" +
+                extractedDetails.Recurring +
+                "','" +
+                "Booked" +
                 "');";
             connection.query(sql, function (err, result) {
                 if (err) {
