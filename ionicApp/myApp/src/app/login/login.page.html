@@ -5,5 +5,43 @@
 </ion-header>
 
 <ion-content>
+  <div id="content">
+    <form  [formGroup]="form" (ngSubmit)="onSubmit()">
+      <mat-form-field color="accent" class="field">
+        <mat-label>email</mat-label>
+        <input formControlName="username"  type="email" matInput required>
+        <!-- mat-error is for validation -->
+        <mat-error *ngIf="form.controls['username'].hasError('email') && !form.controls['username'].hasError('required')">
+          Please enter a valid email address
+        </mat-error>
+        <mat-error *ngIf="form.controls['username'].hasError('required')">
+          email is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    <br/>
+      <mat-form-field color="accent" class="field">
+        <mat-label>password</mat-label>
+        <input formControlName="password" matInput required [type]="hide ? 'password' : 'text'">
+        <mat-error *ngIf="form.controls['password'].hasError('required')">
+          Password is <strong>required</strong>
+        </mat-error>
+        
+        <button id="pbutton"  mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+        <mat-icon id="pIcon">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+        
+      </mat-form-field>
+      <br/>
 
+      
+    <div class="form-group" >
+      <ion-button expand="block" id="login" class="btn btn-primary"  type="submit" >Login</ion-button><br><br>
+      <!-- <p *ngIf="buttonLogin != '' && !_match" class="alert alert-danger"> 
+        Invalid Username or Password !              
+      </p>  -->
+    </div>
+  
+    </form>
+  </div>
 </ion-content>
+
