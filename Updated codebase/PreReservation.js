@@ -30,15 +30,19 @@ async function PreReservation(){
         lastWeek.setDate(lastWeek.getDate() - 14);
         lastWeek = lastWeek.toISOString();
 
+        var nextWeek = new Date();
+        nextWeek.setDate(nextWeek.getDate() - 7);
+        nextWeek = nextWeek.toISOString();
+
         var sql =
-        "SELECT * FROM meetings WHERE isRecurring = 0 AND StartTime >= '" + lastWeek + "'";
+        "SELECT * FROM meetings WHERE isRecurring = 0 AND StartTime >= '" + lastWeek + "' AND StartTime <= '" + nextWeek + "'";
 
         connection.query(sql, function (err, data) {
             if (err) {
                 reject(new Error(err));
             } 
             else {
-                console.log(data.length);
+                // console.log(data.length);
 
                 for(var i = 0; i < data.length; i++)
                 {
