@@ -30,10 +30,8 @@ module.exports = {
 
             //Remove COS301@teamthreshold.onmicrosoft.com from the list
             var finalAttendees = [];
-            for(var i = 0; i < Attendees.length; i++)
-            {
-                if(Attendees[i] != "COS301@teamthreshold.onmicrosoft.com")
-                    finalAttendees.push(Attendees[i]);
+            for (var i = 0; i < Attendees.length; i++) {
+                if (Attendees[i] != "COS301@teamthreshold.onmicrosoft.com") finalAttendees.push(Attendees[i]);
             }
 
             //Store a list of participants in other meetings in 2D array
@@ -65,7 +63,6 @@ module.exports = {
                         for (var j = 0; j < participants.length; j++) {
                             for (var k = 0; k < participants[j].length; k++) {
                                 if (finalAttendees[i] == participants[j][k]) {
-
                                     //Store Employees with Back To Back Meetings
                                     BackToBackEmp.push(participants[j][k]);
 
@@ -118,17 +115,17 @@ module.exports = {
 
     //query retrieves distance of an employee from a their current location to a specific meeting room
     FindDistances: async function (MeetingRoom, attendLoc) {
-       // console.log("\nStarting Find Distances Function:");
+        // console.log("\nStarting Find Distances Function:");
         //console.log(MeetingRoom + attendLoc);
 
         return new Promise((resolve, reject) => {
             var sql = "SELECT " + MeetingRoom + " FROM distance WHERE Rooms = '" + attendLoc + "';";
             connection.query(sql, function (err, result) {
                 if (err) {
-                  //  console.log("ERROR: Result is = " + JSON.stringify(err));
+                    //  console.log("ERROR: Result is = " + JSON.stringify(err));
                     reject(err);
                 } else {
-                  //  console.log("SUCCESS: Result is = " + JSON.stringify(result));
+                    //  console.log("SUCCESS: Result is = " + JSON.stringify(result));
                     resolve(result);
                 }
             });
@@ -162,17 +159,15 @@ module.exports = {
         });
     },
     //stores the best meeting room in db
-    storeRooms: async function (MeetingID,extractedDetails, amenity, ListOfRooms) {
+    storeRooms: async function (extractedDetails, amenity, ListOfRooms) {
         return new Promise((resolve, reject) => {
             var nextbest = [];
             for (var i = 1; i < ListOfRooms.length; i++) {
                 nextbest.push(ListOfRooms[i]);
             }
             var sql =
-                "INSERT INTO meetings (MeetingID, StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,BestRooms)" +
+                "INSERT INTO meetings (StartTime,EndTime,Organizer,Participants,OriginalAmenity,RoomID,BestRooms)" +
                 "VALUES('" +
-                MeetingID +
-                "','" +
                 extractedDetails.Start +
                 "','" +
                 extractedDetails.End +

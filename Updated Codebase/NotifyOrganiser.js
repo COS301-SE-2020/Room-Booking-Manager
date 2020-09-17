@@ -48,6 +48,8 @@ module.exports = {
 
     sendOrganiserBookingNotification: async function (extractedDetails, RoomName, Amenity) {
         return new Promise(async (resolve, reject) => {
+            console.log("Sending the email notification!");
+
             // Send confirmation notification:
             var message =
                 " Has Been Reserved For Your Meeting On " +
