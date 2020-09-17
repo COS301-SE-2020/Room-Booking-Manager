@@ -82,7 +82,7 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://179424cfb6c2.ngrok.io/webhook",
+            notificationUrl: "https://75cf92791698.ngrok.io/webhook",
             resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events
             expirationDateTime: "2020-09-18T01:30:45.9356913Z",
             clientState: "secretClientValue",
