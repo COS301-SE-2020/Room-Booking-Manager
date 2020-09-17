@@ -1,10 +1,12 @@
 {
-  "name": "room-booking-manager",
+  "name": "demo",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node server.js",
-    "build": "ng build",
+    "start": "npm run build & concurrently --kill-others \"npm run serve-api\" \"npm run serve\"",
+    "serve": "ng serve --proxy-config proxy.conf.json",
+    "build": "ng build --output-path=public",
+    "serve-api": "node server.js",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
