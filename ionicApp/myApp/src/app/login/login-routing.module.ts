@@ -7,7 +7,15 @@ const routes: Routes = [
   {
     path: '',
     component: LoginPage
-  }
+  },
+  // {
+  //   path: 'menu',
+  //   loadChildren: () => import('../pages/menu/menu.module').then( m => m.MenuPageModule)
+  // }
+  {
+    path: 'all-meetings',
+    loadChildren: () => import('../pages/all-meetings/all-meetings.module').then( m => m.AllMeetingsPageModule)
+  }  
 ];
 
 @NgModule({

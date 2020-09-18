@@ -70,10 +70,13 @@ export class LoginPage implements OnInit {
           {
             this._admin = "false";
           }
-          //this._admin = <string><any>this.users[i].isAdmin;
-          localStorage.setItem('admin',this._admin)
-          console.log(localStorage.getItem('admin'));
-          //this._router.navigate(['dashboard']);
+         let temp=this.users[i].FirstName;
+         temp+=" "+this.users[i].LastName;
+         
+          localStorage.setItem('name',temp);
+          //console.log(localStorage.getItem('email'));
+          //localStorage.setItem('admin',this._admin)
+         this._router.navigate(['all-meetings']);
           console.log("logged in")
         }
         else
