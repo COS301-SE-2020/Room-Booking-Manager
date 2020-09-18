@@ -19,4 +19,13 @@ export class HttpService {
         };
         return this.httpclient.post("http://localhost:65000/",body); 
     }
+    getMeetings(): Observable<any>
+    {
+        let body={
+            table:"Meetings",
+            request:"view",
+            data:""
+        };
+        return this.httpclient.post("http://localhost:65000/",body); 
+    }
 }
