@@ -6,10 +6,10 @@ var app = express();
 
 // Configure Database
 var connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "cos301",
+    host: "rbm-database.cu40lo4as93d.us-east-1.rds.amazonaws.com",
+    user: "admin",
+    password: "thresh#301",
+    database: "RBM",
 });
 
 // Connecting to Database
@@ -48,6 +48,8 @@ module.exports = {
 
     sendOrganiserBookingNotification: async function (extractedDetails, RoomName, Amenity) {
         return new Promise(async (resolve, reject) => {
+            console.log("Sending the email notification!");
+
             // Send confirmation notification:
             var message =
                 " Has Been Reserved For Your Meeting On " +

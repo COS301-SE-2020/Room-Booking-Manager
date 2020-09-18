@@ -82,9 +82,9 @@ async function getEventdetails(accessToken) {
     return new Promise((resolve, reject) => {
         const subscription = {
             changeType: "created",
-            notificationUrl: "https://webhook.site/a190d811-221d-45ea-b716-aacf3e9f17c7",
+            notificationUrl: "https://75cf92791698.ngrok.io/webhook",
             resource: "users/b84f0efb-8f72-4604-837d-7ce7ca57fdd4/events", // Subscribe to each employees events
-            expirationDateTime: "2020-08-20T08:30:45.9356913Z",
+            expirationDateTime: "2020-09-18T01:30:45.9356913Z",
             clientState: "secretClientValue",
             latestSupportedTlsVersion: "v1_2",
         };
@@ -180,6 +180,10 @@ async function beginProcess(eventDescription) {
                 extractedDetails.Start,
                 roomName[0].RoomName
             );
+
+            // console.log("\n\nLOGGING THE LIST OF ROOMS NOW");
+            // console.log(ListOfRooms);
+            // console.log("\n\n");
 
             await bestRoomsInAsc.bookMeetingRoom(extractedDetails, Amenity, ListOfRooms);
             var B2BEventList = await GlobalOptimization.getBackToBackList();
